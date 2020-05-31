@@ -13,7 +13,7 @@ class PostInstallCommand(install):
     def run(self):
         os.system("mkdir -p $CONDA_PREFIX/etc/conda/activate.d")
         os.system("mkdir -p $CONDA_PREFIX/etc/bsstudio")
-        os.system('echo "from bsstudio.qtplugins import *"> $CONDA_PREFIX/etc/bsstudio/load_plugins.py')
+        os.system('echo "from bsstudio.qtplugins import *"> $CONDA_PREFIX/etc/bsstudio/load_plugin.py')
         os.system('echo "export PYQTDESIGNERPATH=$CONDA_PREFIX/etc/bsstudio"> $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh')
 
         os.system("conda install --yes --file requirements.txt")
