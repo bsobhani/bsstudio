@@ -9,6 +9,7 @@ import inspect
 from itertools import dropwhile
 import textwrap
 from .Base import BaseWidget
+import sys
 
 
 class CodeObject(BaseWidget):
@@ -29,7 +30,8 @@ class CodeObject(BaseWidget):
 	def default_code(self):
 		return ""
 
-	def run_code(self, ns=None):
+	def run_code(self):
+		ns = vars(sys.modules[self.__class__.__module__])
 		exec(self._code, ns)
 	
 

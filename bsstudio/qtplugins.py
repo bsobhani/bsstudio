@@ -8,7 +8,7 @@ from ophyd.sim import det
 import inspect
 from itertools import dropwhile
 import textwrap
-from bsstudio.widgets import REButton, CodeButton, TextUpdate, MplWidget
+from bsstudio.widgets import REButton, CodeButton, TextUpdate, MplWidget, Scan1DButton
 
 class GeoLocationTaskMenuFactory(QExtensionFactory):
 
@@ -86,3 +86,4 @@ pCodeButton = plugin_factory(CodeButton)
 pREButton = plugin_factory(REButton)
 pTextUpdate = plugin_factory(TextUpdate)
 pMplWidget = plugin_factory(MplWidget)
+pScan1DButton = plugin_factory(Scan1DButton)

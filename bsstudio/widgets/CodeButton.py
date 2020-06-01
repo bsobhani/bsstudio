@@ -9,12 +9,14 @@ import inspect
 from itertools import dropwhile
 import textwrap
 from .CodeObject import CodeObject
+from functools import partial
 
 class CodeButton(QPushButton, CodeObject):
 	def __init__(self, parent=None):
 		self.parent = parent
 		QPushButton.__init__(self, parent)
 		CodeObject.__init__(self, parent)
+		#self.clicked.connect(partial(self.run_code, None))
 		self.clicked.connect(self.run_code)
 
 	def default_code(self):

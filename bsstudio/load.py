@@ -1,25 +1,44 @@
 from PyQt5 import uic, QtWidgets, QtCore
 import sys
 from bsstudio.widgets.REButton import Worker
+import typing
 
-f = "/home/bsobhani/bsw/bss_test8.ui"
-#class MainWindow(QtWidgets.QMainWindow):
-class MainWindow(*uic.loadUiType(f)):
-	def __init__(self, f, parent=None):
-		super().__init__(parent)
+def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
+	# Global function to find the (open) QMainWindow in application
+	app = QtWidgets.QApplication.instance()
+	for widget in app.topLevelWidgets():
+		#if issubclass(widget.__class__, QtWidgets.QMainWindow):
+		#if widget.__class__.__name__ == 'MainWindow':
+		if isinstance(widget, MainWindow):
+			print(widget.__class__.__module__)
+			return widget
+	return None
 
-		self.setupUi(self)
-		#self.ui = uic.loadUi(f)
-		#self.worker = Worker(self.ui.show)
-		self.worker = Worker(self.show)
+mainWindow = None
 
-		def call_func(func, params):
-			func(*params)
+def create_main_window(f):
+	#f = "/home/bsobhani/bsw/bss_test9.ui"
+	#class MainWindow(QtWidgets.QMainWindow):
+	global MainWindow
+	class MainWindow(*uic.loadUiType(f)):
+		def __init__(self, parent=None):
+			super().__init__(parent)
 
-		self.threadpool = QtCore.QThreadPool(self)
-		self.threadpool.start(self.worker)
-		#self.ui.show()
-		self.worker.signals.trigger.connect(call_func)
+			self.setupUi(self)
+			#self.ui = uic.loadUi(f)
+			#self.worker = Worker(self.ui.show)
+			self.worker = Worker(self.show)
+
+			def call_func(func, params):
+				func(*params)
+
+			self.threadpool = QtCore.QThreadPool(self)
+			self.threadpool.start(self.worker)
+			#self.ui.show()
+			self.worker.signals.trigger.connect(call_func)
+
+	global mainWindow
+	mainWindow = MainWindow()
 
 		
 
@@ -30,7 +49,10 @@ def load(f):
 	#app = QtWidgets.QApplication([])
 
 
-	mainWindow = MainWindow(f)
+	from .load import mainWindow
+	#mainWindow = MainWindow(f)
+	global mainWindow
+	create_main_window(f)
 	mainWindow.show()
 	#app.exec_()
 	app.exit(app.exec_())

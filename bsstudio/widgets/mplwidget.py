@@ -10,7 +10,7 @@ from .Base import BaseWidget
 matplotlib.use('QT5Agg')
 
 # Matplotlib canvas class to create figure
-class MplCanvas(Canvas, BaseWidget):
+class MplCanvas(Canvas):
     def __init__(self):
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
