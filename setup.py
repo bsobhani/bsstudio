@@ -18,7 +18,7 @@ class PostInstallCommand(install):
 
         os.system("conda install --yes --file requirements.txt")
         os.system("conda install --yes -c conda-forge/label/cf201901 pyqt")
-        os.system("conda install --yes bluesky -c lightsource2-tag")
+        #os.system("conda install --yes bluesky -c lightsource2-tag")
         install.run(self)
         
 setuptools.setup(

@@ -30,9 +30,12 @@ class Worker(QtCore.QRunnable):
 
 def parseField(field):
 	ip = get_ipython()
-	obj = eval(field, ip.user_ns)
+	#obj = eval(field, ip.user_ns)
+	#obj = eval(field)
+	obj = field
 	if isinstance(obj, QComboBox):
 		obj = eval(obj.currentText(), ip.user_ns)
+		#obj = eval(obj.currentText())
 	return obj
 		
 

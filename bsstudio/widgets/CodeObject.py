@@ -16,6 +16,7 @@ class CodeObject(BaseWidget):
 
 	def __init__(self, parent=None):
 		self.parent = parent
+		super().__init__(parent)
 		code = textwrap.dedent(self.default_code())
 		self._code = bytes(code, "utf-8")
 
@@ -31,7 +32,13 @@ class CodeObject(BaseWidget):
 		return ""
 
 	def run_code(self):
-		ns = vars(sys.modules[self.__class__.__module__])
-		exec(self._code, ns)
-	
+		#ns = vars(sys.modules[self.__class__.__module__])
+		ip = get_ipython()
+		ns = ip.user_ns.copy()
+		ns['self'] = self
+		try:
+			exec(self._code, ns)
+		except BaseException as e:
+			additional_info = " Check code in "+self.objectName()+" widget"
+			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
 
