@@ -37,6 +37,11 @@ def parseField(field):
 		obj = eval(obj.currentText(), ip.user_ns)
 		#obj = eval(obj.currentText())
 	return obj
+
+
+
+	
+	
 		
 
 
@@ -63,17 +68,22 @@ class Scan1DButton(REButton):
 	def __init__(self, parent):
 		super().__init__(parent)
 		self._motor = ""
+		self._detector_list = "[]"
 	def default_code(self):
 
 		return """
-		ip = get_ipython()
-		RE = ip.user_ns["RE"]
-		det = ip.user_ns["det"]
-		motor = ip.user_ns["motor"]
-		scan = ip.user_ns["scan"]
-		#RE(scan([det], motor, -1, 1, 10))
-		plan = scan([det], motor, -1, 1, 10)
-		Worker.signals.trigger.emit(RE, [plan])
+		from bsstudio import ui
+		from bsstudio.functions import isWidget, widgetValue
+		detector_list = eval(self.detectorList)[:]
+		ophyd_detector_list = []
+		for w in detector_list:
+			while isWidget(w):
+				w = widgetValue(w)
+			ophyd_detector_list.append(w)
+	
+		plan = scan(ophyd_detector_list, motor, -1, 1, 10)
+		#Worker.signals.trigger.emit(RE, [plan])
+		RE(plan)
 		"""[1:]
 
 	@Property(str)
@@ -83,3 +93,11 @@ class Scan1DButton(REButton):
 	@motor.setter
 	def motor(self, val):
 		self._motor = val
+
+	@Property(str)
+	def detectorList(self):
+		return self._detector_list
+
+	@detectorList.setter
+	def detectorList(self, val):
+		self._detector_list = val[:]
