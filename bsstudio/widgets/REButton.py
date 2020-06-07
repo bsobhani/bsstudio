@@ -64,28 +64,64 @@ class REButton(CodeButton):
 	#	g = globals()
 	#	CodeObject.run_code(self, g)
 
+def makeProperty(name):
+	propertyType = str
+	storageVarName = "_"+name
+	def g(self):
+		return eval("self."+storageVarName)
+
+	def s(self, val):
+		exec("self."+storageVarName+"=val")	
+	
+	return Property(propertyType, g, s)
+
 class Scan1DButton(REButton):
 	def __init__(self, parent):
 		super().__init__(parent)
 		self._motor = ""
 		self._detector_list = "[]"
+		self._startPosition = "-1"
+		self._endPosition = "1"
+		self._numSteps = "10"
 	def default_code(self):
 
 		return """
 		from bsstudio import ui
 		from bsstudio.functions import isWidget, widgetValue
+
 		detector_list = eval(self.detectorList)[:]
+		motor = eval(self.motor)
+		endPosition = eval(self.endPosition)
+		startPosition = eval(self.startPosition)
+		numSteps = eval(self.numSteps)
+
 		ophyd_detector_list = []
 		for w in detector_list:
 			while isWidget(w):
 				w = widgetValue(w)
 			ophyd_detector_list.append(w)
+
+
+		while isWidget(motor):
+			motor = widgetValue(motor)
+		while isWidget(endPosition):
+			endPosition = widgetValue(endPosition)
+		while isWidget(startPosition):
+			startPosition = widgetValue(startPosition)
+		while isWidget(numSteps):
+			numSteps = widgetValue(numSteps)
 	
-		plan = scan(ophyd_detector_list, motor, -1, 1, 10)
+		plan = scan(ophyd_detector_list, motor, startPosition, endPosition, numSteps)
 		#Worker.signals.trigger.emit(RE, [plan])
 		RE(plan)
 		"""[1:]
 
+	startPosition = makeProperty("startPosition")
+	endPosition = makeProperty("endPosition")
+	numSteps = makeProperty("numSteps")
+	motor = makeProperty("motor")
+
+	"""
 	@Property(str)
 	def motor(self):
 		return self._motor
@@ -93,6 +129,7 @@ class Scan1DButton(REButton):
 	@motor.setter
 	def motor(self, val):
 		self._motor = val
+	"""
 
 	@Property(str)
 	def detectorList(self):

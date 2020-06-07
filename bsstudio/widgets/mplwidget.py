@@ -1,5 +1,5 @@
 # Imports
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as Canvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
@@ -31,3 +31,6 @@ class MplWidget(QtWidgets.QWidget, BaseWidget):
         self.vbl.addWidget(self.toolbar)
         self.vbl.addWidget(self.canvas)
         self.setLayout(self.vbl)
+
+    def sizeHint(self):
+        return QtCore.QSize(400, 300) 

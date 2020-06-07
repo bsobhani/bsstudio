@@ -19,6 +19,7 @@ class CodeObject(BaseWidget):
 		super().__init__(parent)
 		code = textwrap.dedent(self.default_code())
 		self._code = bytes(code, "utf-8")
+		self._paused = False
 
 	@Property("QByteArray", designable=True)
 	def code(self):
@@ -31,7 +32,12 @@ class CodeObject(BaseWidget):
 	def default_code(self):
 		return ""
 
+	def pause_widget(self):
+		self._paused = True
+
 	def run_code(self):
+		if self._paused:
+			return
 		#ns = vars(sys.modules[self.__class__.__module__])
 		ip = get_ipython()
 		ns = ip.user_ns.copy()
