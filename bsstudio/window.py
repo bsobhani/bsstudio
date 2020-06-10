@@ -1,8 +1,10 @@
 from PyQt5 import uic, QtWidgets, QtCore
 import sys
-from bsstudio.widgets.REButton import Worker
+#from .widgets.REButton import Worker
+from .worker import Worker
 import typing
-from bsstudio.widgets import all_bss_widgets
+from .widgets import BaseWidget
+#from .widgets import all_bss_widgets
 
 def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 	# Global function to find the (open) QMainWindow in application
@@ -13,6 +15,9 @@ def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 		if isinstance(widget, MainWindow):
 			return widget
 	return None
+
+def isMainWindow(w):
+	return isinstance(w, MainWindow)
 
 def ui():
 	return getMainWindow()
@@ -58,10 +63,13 @@ def load(f):
 	#app = QtWidgets.QApplication([])
 
 
-	from .load import mainWindow
 	#mainWindow = MainWindow(f)
 	global mainWindow
 	create_main_window(f)
 	mainWindow.show()
+	widgets = app.allWidgets()
+	for w in widgets:
+		if issubclass(w.__class__, BaseWidget):
+			w.resume_widget()
 	#app.exec_()
 	app.exit(app.exec_())

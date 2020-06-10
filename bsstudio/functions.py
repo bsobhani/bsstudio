@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox
+from bluesky.callbacks import LivePlot
 
 def defaultValueField(w):
 	if isinstance(w, QComboBox):
@@ -30,14 +31,16 @@ def comboBoxValue(w):
 	
 	
 
-def widgetValue(w, continuous=False):
+def widgetValue(w, continuous=True):
+	if not isWidget(w):
+		return w
 	if isinstance(w, QComboBox):
 		wv = comboBoxValue(w)
 	prop = w.property("valueField")
 	if prop == None:
 		prop = defaultValueField(w)
 	wv = fieldValue(w, prop)
-	if continuous and isWidget(wv):
+	if continuous:
 		return widgetValue(wv, True)
 	return wv
 	
@@ -46,3 +49,28 @@ def widgetValue(w, continuous=False):
 def isWidget(obj):
 	return issubclass(obj.__class__, QWidget)
 	
+def makeLivePlots(plots, plotFields):
+	"""
+	ts = []
+	plots = eval(self.plots)[:]
+	plotFields = eval(self.plotFields)
+	for i in range(len(plots)):
+		for j in range(len(plotFields[i])):
+			p = plotFields[i][j]
+			if isinstance(p, list):
+				lp = LivePlot(*p, ax=plots[i].canvas.ax)
+			else:
+				lp = LivePlot(p, ax=plots[i].canvas.ax)
+			ts.append(RE.subscribe(lp))
+	"""
+	livePlots = []
+	for i in range(len(plots)):
+		for j in range(len(plotFields[i])):
+			p = plotFields[i][j]
+			if isinstance(p, list):
+				lp = LivePlot(*p, ax=plots[i].canvas.ax)
+			else:
+				lp = LivePlot(p, ax=plots[i].canvas.ax)
+			livePlots.append(lp)
+	return livePlots
+

@@ -14,6 +14,11 @@ all_bss_widgets = []
 
 global_id = 1
 
+class dotdict(dict):
+	__getattr__ = dict.get
+	__setattr__ = dict.__setitem__
+	__delattr__ = dict.__delitem__
+
 class BaseWidget:
 	signal = pyqtSignal()
 
@@ -29,9 +34,33 @@ class BaseWidget:
 		global all_bss_widgets
 		all_bss_widgets.append(self)
 		global_id += 1
+		self.topLevel = False
 
 	def pause_widget(self):
 		pass
+
+	def resume_widget(self):
+		pass
+
+	def ui(self):
+		from ..window import isMainWindow
+		obj = self.parentWidget()
+		while obj!=None:
+			if hasattr(obj, "topLevel"):
+				if obj.topLevel==True:
+					#return obj
+					break
+			if isMainWindow(obj):
+				#print(obj.findChildren(QWidget))
+				#return obj
+				break
+			obj = obj.parentWidget()
+		#return None
+		children = obj.findChildren(QWidget)
+		d = {c.objectName(): c for c in children}
+
+		d = dotdict(d)
+		return d
 
 	@Property(int, designable=True, notify=signal, stored=True, final=True, constant=True)
 	def id(self):

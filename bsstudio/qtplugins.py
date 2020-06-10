@@ -1,6 +1,6 @@
 from PyQt5 import QtDesigner, QtGui, QtWidgets, QtCore
 #from qtpy.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPushButton
-from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPushButton, QPlainTextEdit, QWidget
+from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPushButton, QPlainTextEdit, QWidget, QAction
 #from qtpy.QtDesigner import QExtensionFactory
 from PyQt5.QtDesigner import QExtensionFactory, QDesignerPropertyEditorInterface 
 from PyQt5.QtCore import pyqtProperty as Property
@@ -10,7 +10,7 @@ from ophyd.sim import det
 import inspect
 from itertools import dropwhile
 import textwrap
-from bsstudio.widgets import REButton, CodeButton, TextUpdate, MplWidget, Scan1DButton
+from .widgets import REButton, CodeButton, TextUpdate, MplWidget, Scan1DButton, EmbedFrame
 from .widgets import Base
 
 class GeoLocationTaskMenuFactory(QExtensionFactory):
@@ -29,6 +29,7 @@ class GeoLocationTaskMenuFactory(QExtensionFactory):
 
       return None
 
+core_initialized = False
 def plugin_factory(cls):
 	class PyBSPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
 		def __init__(self, cls):
@@ -92,12 +93,80 @@ def plugin_factory(cls):
 			"""
 			return w
 
+		def init_core(self):
+			global core_initialized
+			if core_initialized:
+				return
+			core = self.core
+			children = core.formWindowManager().children()
+			#print(dir(core.formWindowManager()))
+			a = QAction("zzz",core.formWindowManager())
+			for c in children:
+				if hasattr(c, "iconText"):
+					def hi():
+						print("aaaaa")
+						print(c.actionGroup().parent())
+						a.setActionGroup(c.actionGroup())
+						return "Hello"
+					#c.setToolTip("asdfb")
+					#c.triggered.connect(hi)
+
+			a.setToolTip("nnnnn")
+			a.setIconText("abcd")
+			a.setText("zzz")
+			print(dir(core.formWindowManager()))
+			print(core.formWindowManager().activeFormWindow())
+			print(dir(core))
+			#print(dir(a))
+			#print(a.menuRole())
+			#print(a.isVisible())
+			def preview():
+				import os
+				print("preview")
+				fileName = core.formWindowManager().activeFormWindow().fileName()
+				cmd = 'ipython --profile=collection --matplotlib=qt5 -c "import bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
+				#os.spawnl(os.P_NOWAIT, cmd)
+				#print(dir(core.formWindowManager().activeFormWindow()))
+				#os.system(cmd + " &")
+
+				p = core.findChildren(QWidget)
+				print(p)
+	
+				
+			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
+			p.triggered.disconnect()
+			p.triggered.connect(preview)
+			
+			#print(core.formWindowManager().children())
+			core_initialized = True
 
 		def initialize(self, core):
 			if self.initialized:
 				return
+			#get_ipython()
 			self.manager = core.extensionManager()
 			self.core = core
+			self.init_core()
+			"""
+			print(dir(core.formWindowManager()))
+			children = core.formWindowManager().children()
+			for c in children:
+				if hasattr(c, "iconText"):
+					print(c.iconText())
+					def hi():
+						print("aaaaa")
+						return "Hello"
+					#c.iconText = hi
+					c.setIconText("asdf")
+					#c.setToolTip("asdfb")
+					c.toolTip = hi
+					print(c.iconText())
+					print(c.trigger)
+					print(c.toolTip)
+					c.triggered.connect(hi)
+					c.toggled.connect(hi)
+				print(dir(c))
+			"""
 			if self.manager:
 				factory = GeoLocationTaskMenuFactory(parent=self.manager)
 				#factory = QExtensionFactory(parent=self.manager)
@@ -116,3 +185,4 @@ pREButton = plugin_factory(REButton)
 pTextUpdate = plugin_factory(TextUpdate)
 pMplWidget = plugin_factory(MplWidget)
 pScan1DButton = plugin_factory(Scan1DButton)
+pEmbedFrame = plugin_factory(EmbedFrame)

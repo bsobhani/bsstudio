@@ -10,22 +10,7 @@ from itertools import dropwhile
 import textwrap
 from .CodeButton import CodeButton
 from .CodeObject import CodeObject
-
-class WorkerSignals(QtCore.QObject):
-	trigger = QtCore.pyqtSignal(object, list)
-
-
-class Worker(QtCore.QRunnable):
-	signals = WorkerSignals()
-	def __init__(self, fn, *args, **kwargs):
-		super(Worker, self).__init__()
-		self.fn = fn
-		self.args = args
-		self.kwargs = kwargs
-
-	@QtCore.pyqtSlot()
-	def run(self):
-		self.fn(*self.args, **self.kwargs)
+from ..worker import Worker, WorkerSignals
 
 
 def parseField(field):
@@ -64,8 +49,7 @@ class REButton(CodeButton):
 	#	g = globals()
 	#	CodeObject.run_code(self, g)
 
-def makeProperty(name):
-	propertyType = str
+def makeProperty(name, propertyType=str):
 	storageVarName = "_"+name
 	def g(self):
 		return eval("self."+storageVarName)
@@ -75,6 +59,9 @@ def makeProperty(name):
 	
 	return Property(propertyType, g, s)
 
+
+
+
 class Scan1DButton(REButton):
 	def __init__(self, parent):
 		super().__init__(parent)
@@ -83,11 +70,13 @@ class Scan1DButton(REButton):
 		self._startPosition = "-1"
 		self._endPosition = "1"
 		self._numSteps = "10"
+		self._plots = "[]"
+		self._plotFields = "[[]]"
 	def default_code(self):
 
 		return """
 		from bsstudio import ui
-		from bsstudio.functions import isWidget, widgetValue
+		from bsstudio.functions import isWidget, widgetValue, makeLivePlots
 
 		detector_list = eval(self.detectorList)[:]
 		motor = eval(self.motor)
@@ -95,31 +84,31 @@ class Scan1DButton(REButton):
 		startPosition = eval(self.startPosition)
 		numSteps = eval(self.numSteps)
 
-		ophyd_detector_list = []
-		for w in detector_list:
-			while isWidget(w):
-				w = widgetValue(w)
-			ophyd_detector_list.append(w)
+		ophyd_detector_list = [widgetValue(w) for w in detector_list]
 
+		motor = widgetValue(motor)
+		endPosition = widgetValue(endPosition)
+		startPosition = widgetValue(startPosition)
+		numSteps = widgetValue(numSteps)
 
-		while isWidget(motor):
-			motor = widgetValue(motor)
-		while isWidget(endPosition):
-			endPosition = widgetValue(endPosition)
-		while isWidget(startPosition):
-			startPosition = widgetValue(startPosition)
-		while isWidget(numSteps):
-			numSteps = widgetValue(numSteps)
+		plots = eval(self.plots)[:]
+		plotFields = eval(self.plotFields)[:]
+		livePlots = makeLivePlots(plots, plotFields)
+		ts = [RE.subscribe(lp) for lp in livePlots]
 	
 		plan = scan(ophyd_detector_list, motor, startPosition, endPosition, numSteps)
 		#Worker.signals.trigger.emit(RE, [plan])
 		RE(plan)
+		for t in ts:
+			RE.unsubscribe(t)
 		"""[1:]
 
 	startPosition = makeProperty("startPosition")
 	endPosition = makeProperty("endPosition")
 	numSteps = makeProperty("numSteps")
 	motor = makeProperty("motor")
+	plots = makeProperty("plots")
+	plotFields = makeProperty("plotFields")
 
 	"""
 	@Property(str)
