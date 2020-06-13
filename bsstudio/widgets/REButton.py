@@ -25,30 +25,6 @@ def parseField(field):
 
 
 
-	
-	
-		
-
-
-class REButton(CodeButton):
-	def default_code(self):
-
-		return """
-		ip = get_ipython()
-		RE = ip.user_ns["RE"]
-		det = ip.user_ns["det"]
-		motor = ip.user_ns["motor"]
-		scan = ip.user_ns["scan"]
-		#RE(scan([det], motor, -1, 1, 10))
-		plan = scan([det], motor, -1, 1, 10)
-		Worker.signals.trigger.emit(RE, [plan])
-		"""[1:]
-	
-	#def run_code(self):
-	#	print(globals())
-	#	g = globals()
-	#	CodeObject.run_code(self, g)
-
 def makeProperty(name, propertyType=str):
 	storageVarName = "_"+name
 	def g(self):
@@ -60,6 +36,40 @@ def makeProperty(name, propertyType=str):
 	return Property(propertyType, g, s)
 
 
+	
+		
+
+
+class REButton(CodeButton):
+	def __init__(self, parent):
+		super().__init__(parent)
+		self._plots = "[]"
+		self._plotFields = "[[]]"
+	plots = makeProperty("plots")
+	plotFields = makeProperty("plotFields")
+
+
+def RECustomPlan(REButton):
+	def __init__(self, parent):
+		super().__init__(parent)
+
+	arguments = makeProperty("arguments", "QStringList")
+	plan = makeProperty("plan", "QStringList")
+	def default_code(self):
+		return """
+			from bsstudio.functions import widgetValue
+			ui = self.ui
+			argList = []
+			for arg in arguments:
+				sp = args.split("=")
+				sp[-1] = widgetValue(sp[-1])
+				newArg = "=".join(sp)
+				argList.append(newArg)
+			plan = eval(plan)
+			RE(plan(*argList))
+			"""[1:]
+			
+
 
 
 class Scan1DButton(REButton):
@@ -70,13 +80,12 @@ class Scan1DButton(REButton):
 		self._startPosition = "-1"
 		self._endPosition = "1"
 		self._numSteps = "10"
-		self._plots = "[]"
-		self._plotFields = "[[]]"
+
 	def default_code(self):
 
 		return """
-		from bsstudio import ui
 		from bsstudio.functions import isWidget, widgetValue, makeLivePlots
+		ui = self.ui
 
 		detector_list = eval(self.detectorList)[:]
 		motor = eval(self.motor)
@@ -107,18 +116,6 @@ class Scan1DButton(REButton):
 	endPosition = makeProperty("endPosition")
 	numSteps = makeProperty("numSteps")
 	motor = makeProperty("motor")
-	plots = makeProperty("plots")
-	plotFields = makeProperty("plotFields")
-
-	"""
-	@Property(str)
-	def motor(self):
-		return self._motor
-
-	@motor.setter
-	def motor(self, val):
-		self._motor = val
-	"""
 
 	@Property(str)
 	def detectorList(self):

@@ -16,19 +16,19 @@ def isOphyd(obj):
 
 class TextUpdate(QLabel, CodeObject):
 	def __init__(self, parent=None):
-		self.parent = parent
-		#super().__init__(self.parent)
-		QLabel.__init__(self, self.parent)
-		CodeObject.__init__(self, self.parent)
+		#self.parent = parent
+		#super().__init__(parent)
+		QLabel.__init__(self, parent)
+		CodeObject.__init__(self, parent)
 		self._source = ""
 		self.timer_update_time = QtCore.QTimer(self) 
 		self.timer_update_time.setInterval(1500)
 		self.timer_update_time.timeout.connect(self.run_code)
 		self.timer_update_time.start()
-	
+
 	def default_code(self):
 		return """
-			from bsstudio import ui
+			ui = self.ui
 			self.setText(str(eval(self.source)))
 			"""[1:]
 

@@ -10,21 +10,47 @@ from ophyd.sim import det
 import inspect
 from itertools import dropwhile
 import textwrap
-from .widgets import REButton, CodeButton, TextUpdate, MplWidget, Scan1DButton, EmbedFrame
+from .widgets import REButton, RECustomPlan, CodeButton, TextUpdate, MplWidget, Scan1DButton, EmbedFrame, LineInput
 from .widgets import Base
+from PyQt5.QtDesigner import QPyDesignerTaskMenuExtension 
+
+class GeoLocationMenuEntry(QPyDesignerTaskMenuExtension):
+
+  def __init__(self, widget, parent):
+
+      QPyDesignerTaskMenuExtension.__init__(self, parent)
+
+      self.widget = widget
+      self.editStateAction = QAction(
+          self.tr("Update Location..."), self)
+      self.connect(self.editStateAction,
+          SIGNAL("triggered()"), self.updateLocation)
+
+  def preferredEditAction(self):
+      return self.editStateAction
+
+  def taskActions(self):
+      return [self.editStateAction]
+
+  def updateLocation(self):
+      dialog = GeoLocationDialog(self.widget)
+      dialog.exec_()
 
 class GeoLocationTaskMenuFactory(QExtensionFactory):
 
   def __init__(self, parent = None):
 
       QExtensionFactory.__init__(self, parent)
+      print("factory...", self.createExtension)
 
   def createExtension(self, obj, iid, parent):
+      print("create extensions...")
 
       if iid != "com.trolltech.Qt.Designer.TaskMenu":
           return None
 
-      if isinstance(obj, GeoLocationWidget):
+      if isinstance(obj, CodeButton):
+          print("wrhwrt")
           return GeoLocationMenuEntry(obj, parent)
 
       return None
@@ -105,8 +131,9 @@ def plugin_factory(cls):
 				if hasattr(c, "iconText"):
 					def hi():
 						print("aaaaa")
-						print(c.actionGroup().parent())
-						a.setActionGroup(c.actionGroup())
+						#print(c.actionGroup().parent())
+						#a.setActionGroup(c.actionGroup())
+						print(core.actionEditor())
 						return "Hello"
 					#c.setToolTip("asdfb")
 					#c.triggered.connect(hi)
@@ -116,6 +143,7 @@ def plugin_factory(cls):
 			a.setText("zzz")
 			print(dir(core.formWindowManager()))
 			print(core.formWindowManager().activeFormWindow())
+			print(core.actionEditor())
 			print(dir(core))
 			#print(dir(a))
 			#print(a.menuRole())
@@ -127,10 +155,13 @@ def plugin_factory(cls):
 				cmd = 'ipython --profile=collection --matplotlib=qt5 -c "import bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
 				#os.spawnl(os.P_NOWAIT, cmd)
 				#print(dir(core.formWindowManager().activeFormWindow()))
-				#os.system(cmd + " &")
+				os.system(cmd + " &")
 
 				p = core.findChildren(QWidget)
 				print(p)
+				#core.actionEditor().addAction(a)
+				#print(core.actionEditor().actions())
+				#print(dir(core.formWindowManager().actionGroup()))
 	
 				
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
@@ -144,32 +175,14 @@ def plugin_factory(cls):
 			if self.initialized:
 				return
 			#get_ipython()
-			self.manager = core.extensionManager()
 			self.core = core
 			self.init_core()
-			"""
-			print(dir(core.formWindowManager()))
-			children = core.formWindowManager().children()
-			for c in children:
-				if hasattr(c, "iconText"):
-					print(c.iconText())
-					def hi():
-						print("aaaaa")
-						return "Hello"
-					#c.iconText = hi
-					c.setIconText("asdf")
-					#c.setToolTip("asdfb")
-					c.toolTip = hi
-					print(c.iconText())
-					print(c.trigger)
-					print(c.toolTip)
-					c.triggered.connect(hi)
-					c.toggled.connect(hi)
-				print(dir(c))
-			"""
+
+			self.manager = core.extensionManager()
 			if self.manager:
 				factory = GeoLocationTaskMenuFactory(parent=self.manager)
 				#factory = QExtensionFactory(parent=self.manager)
+				#print(self.manager.registerExtensions, factory)
 				self.manager.registerExtensions(factory,'com.trolltech.Qt.Designer.TaskMenu')	
 			self.initialized = True
 
@@ -186,3 +199,5 @@ pTextUpdate = plugin_factory(TextUpdate)
 pMplWidget = plugin_factory(MplWidget)
 pScan1DButton = plugin_factory(Scan1DButton)
 pEmbedFrame = plugin_factory(EmbedFrame)
+pLineInput = plugin_factory(LineInput)
+pRECustomPlan = plugin_factory(RECustomPlan)

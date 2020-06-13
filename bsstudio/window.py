@@ -51,6 +51,10 @@ def create_main_window(f):
 			#self.ui.show()
 			self.worker.signals.trigger.connect(call_func)
 
+		def closeEvent(self, evt):
+			print("close event")
+			self.deleteLater()
+
 	global mainWindow
 	mainWindow = MainWindow()
 

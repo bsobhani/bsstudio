@@ -34,7 +34,7 @@ class BaseWidget:
 		global all_bss_widgets
 		all_bss_widgets.append(self)
 		global_id += 1
-		self.topLevel = False
+		self.isTopLevel = False
 
 	def pause_widget(self):
 		pass
@@ -45,9 +45,9 @@ class BaseWidget:
 	def ui(self):
 		from ..window import isMainWindow
 		obj = self.parentWidget()
-		while obj!=None:
-			if hasattr(obj, "topLevel"):
-				if obj.topLevel==True:
+		while True:
+			if hasattr(obj, "isTopLevel"):
+				if obj.isTopLevel==True:
 					#return obj
 					break
 			if isMainWindow(obj):

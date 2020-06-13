@@ -14,12 +14,13 @@ import sys
 
 class CodeObject(BaseWidget):
 
-	def __init__(self, parent=None):
+	def __init__(self, parent=None, copyNameSpace=True):
 		self.parent = parent
 		super().__init__(parent)
 		code = textwrap.dedent(self.default_code())
 		self._code = bytes(code, "utf-8")
 		self._paused = False
+		self._copyNameSpace = copyNameSpace
 
 	@Property("QByteArray", designable=True)
 	def code(self):
@@ -40,7 +41,11 @@ class CodeObject(BaseWidget):
 			return
 		#ns = vars(sys.modules[self.__class__.__module__])
 		ip = get_ipython()
-		ns = ip.user_ns.copy()
+		if self._copyNameSpace:
+			ns = ip.user_ns.copy()
+		else:
+			ns = ip.user_ns
+			
 		ns['self'] = self
 		try:
 			exec(self._code, ns)
