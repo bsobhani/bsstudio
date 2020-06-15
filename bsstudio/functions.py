@@ -32,6 +32,8 @@ def comboBoxValue(w):
 	
 
 def widgetValue(w, continuous=True):
+	if type(w) is list:
+		return [widgetValue(x, continuous) for x in w]
 	if not isWidget(w):
 		return w
 	if isinstance(w, QComboBox):
@@ -49,28 +51,15 @@ def widgetValue(w, continuous=True):
 def isWidget(obj):
 	return issubclass(obj.__class__, QWidget)
 	
-def makeLivePlots(plots, plotFields):
-	"""
-	ts = []
-	plots = eval(self.plots)[:]
-	plotFields = eval(self.plotFields)
-	for i in range(len(plots)):
-		for j in range(len(plotFields[i])):
-			p = plotFields[i][j]
-			if isinstance(p, list):
-				lp = LivePlot(*p, ax=plots[i].canvas.ax)
-			else:
-				lp = LivePlot(p, ax=plots[i].canvas.ax)
-			ts.append(RE.subscribe(lp))
-	"""
+def makeLivePlots(plots, plotFields, plotKwargsList):
 	livePlots = []
+	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
+	print(plotKwargsList)
 	for i in range(len(plots)):
-		for j in range(len(plotFields[i])):
-			p = plotFields[i][j]
-			if isinstance(p, list):
-				lp = LivePlot(*p, ax=plots[i].canvas.ax)
-			else:
-				lp = LivePlot(p, ax=plots[i].canvas.ax)
-			livePlots.append(lp)
+		p = plotFields[i]
+		plotKwargs = plotKwargsList[i]
+		plotKwargs['ax'] = plots[i].canvas.ax
+		lp = LivePlot(*p, **plotKwargs)
+		livePlots.append(lp)
 	return livePlots
 

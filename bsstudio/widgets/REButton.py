@@ -45,28 +45,40 @@ class REButton(CodeButton):
 		super().__init__(parent)
 		self._plots = "[]"
 		self._plotFields = "[[]]"
+		self._plotKwargsList = "[{}]"
 	plots = makeProperty("plots")
 	plotFields = makeProperty("plotFields")
+	plotKwargsList = makeProperty("plotKwargsList")
 
 
-def RECustomPlan(REButton):
+class RECustomPlan(REButton):
 	def __init__(self, parent):
+		print("here custom plan")
 		super().__init__(parent)
+		self._arguments = []
+		self._plan = ""
 
 	arguments = makeProperty("arguments", "QStringList")
-	plan = makeProperty("plan", "QStringList")
+	plan = makeProperty("plan")
 	def default_code(self):
 		return """
 			from bsstudio.functions import widgetValue
 			ui = self.ui
-			argList = []
-			for arg in arguments:
-				sp = args.split("=")
-				sp[-1] = widgetValue(sp[-1])
-				newArg = "=".join(sp)
-				argList.append(newArg)
-			plan = eval(plan)
-			RE(plan(*argList))
+			args = []
+			kwargs = {}
+			for arg in self.arguments:
+				sp = arg.split("=")
+				left = sp[0]
+				right = widgetValue(eval(sp[-1]))
+				if len(sp)==1:
+					args.append(right)
+				else:
+					kwargs[left] = right
+			#plan = widgetValue(eval(self.plan)).name+"("+",".join(argList)+")"
+			print(args)
+			print(kwargs)
+			plan = widgetValue(eval(self.plan))
+			RE(plan(*args,**kwargs))
 			"""[1:]
 			
 
@@ -102,7 +114,8 @@ class Scan1DButton(REButton):
 
 		plots = eval(self.plots)[:]
 		plotFields = eval(self.plotFields)[:]
-		livePlots = makeLivePlots(plots, plotFields)
+		plotKwargsList = eval(self.plotKwargsList)[:]
+		livePlots = makeLivePlots(plots, plotFields, plotKwargsList)
 		ts = [RE.subscribe(lp) for lp in livePlots]
 	
 		plan = scan(ophyd_detector_list, motor, startPosition, endPosition, numSteps)

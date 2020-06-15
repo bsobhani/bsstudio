@@ -57,6 +57,7 @@ class GeoLocationTaskMenuFactory(QExtensionFactory):
 
 core_initialized = False
 def plugin_factory(cls):
+	print(cls)
 	class PyBSPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
 		def __init__(self, cls):
 			QtDesigner.QPyDesignerCustomWidgetPlugin.__init__(self)
