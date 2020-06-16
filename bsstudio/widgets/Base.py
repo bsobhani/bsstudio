@@ -36,6 +36,9 @@ class BaseWidget:
 		global_id += 1
 		self.isTopLevel = False
 
+	def initialize(self):
+		pass
+
 	def pause_widget(self):
 		pass
 

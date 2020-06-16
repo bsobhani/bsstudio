@@ -19,7 +19,7 @@ class CodeObject(BaseWidget):
 		super().__init__(parent)
 		code = textwrap.dedent(self.default_code())
 		self._code = bytes(code, "utf-8")
-		self._paused = False
+		self._paused = True
 		self._copyNameSpace = copyNameSpace
 
 	@Property("QByteArray", designable=True)
@@ -27,14 +27,17 @@ class CodeObject(BaseWidget):
 		return self._code
 
 	@code.setter
-	def code(self, new_severity):
-		self._code = new_severity
+	def code(self, val):
+		self._code = val
 	
 	def default_code(self):
 		return ""
 
 	def pause_widget(self):
 		self._paused = True
+
+	def resume_widget(self):
+		self._paused = False
 
 	def run_code(self):
 		if self._paused:

@@ -40,8 +40,9 @@ class TextUpdate(QLabel, CodeObject):
 	def source(self, val):
 		self._source = val
 
-	def print_hi(self):
-		print("hi")
-	
 	def pause_widget(self):
 		self.timer_update_time.stop()
+
+	def resume_widget(self):
+		self._paused = False
+		#self.timer_update_time.start()

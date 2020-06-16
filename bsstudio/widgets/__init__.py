@@ -3,5 +3,6 @@ from .CodeButton import CodeButton
 from .TextUpdate import TextUpdate
 from .mplwidget import MplWidget
 from .Base import all_bss_widgets, BaseWidget
-from .embedframe import EmbedFrame
+from .embedframe import EmbedFrame, CodeContainer
 from .lineinput import LineInput
+from .databrowser import DataBrowser

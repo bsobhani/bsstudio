@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox
 from bluesky.callbacks import LivePlot
+import matplotlib.pyplot as plt
 
 def defaultValueField(w):
 	if isinstance(w, QComboBox):
@@ -51,15 +52,50 @@ def widgetValue(w, continuous=True):
 def isWidget(obj):
 	return issubclass(obj.__class__, QWidget)
 	
-def makeLivePlots(plots, plotFields, plotKwargsList):
+"""
+def makePlots(plotFields, plotKwargsList, cls):
 	livePlots = []
-	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
-	print(plotKwargsList)
-	for i in range(len(plots)):
+	for i in range(len(plotKwargsList)):
 		p = plotFields[i]
 		plotKwargs = plotKwargsList[i]
-		plotKwargs['ax'] = plots[i].canvas.ax
+		if cls==LivePlot:
+			lp = cls(*p, **plotKwargs)
+		else:
+			lp = plotKwargsList[i]["Figure"].plot(*p)
+		livePlots.append(lp)
+	return livePlots
+
+def makeLivePlots(plots, plotFields, plotKwargsList):
+	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
+	for i in range(len(plots)):
+		plotKwargsList[i]["ax"] = plots[i].canvas.ax
+	return makePlots(plotFields, plotKwargsList, LivePlot)
+	
+
+def makeMplPlots(plots, plotFields, plotKwargsList):
+	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
+	for i in range(len(plots)):
+		plotKwargsList[i]["Figure"] = plots[i].canvas.ax
+	makePlots(plotFields, plotKwargsList, plt.plot)
+	
+"""
+
+def makePlots(plotFields, plotKwargsList):
+	livePlots = []
+	for i in range(len(plotKwargsList)):
+		p = plotFields[i]
+		plotKwargs = plotKwargsList[i]
 		lp = LivePlot(*p, **plotKwargs)
 		livePlots.append(lp)
 	return livePlots
 
+def makeLivePlots(plots, plotFields, plotKwargsList):
+	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
+	for i in range(len(plots)):
+		plotKwargsList[i]["ax"] = plots[i].canvas.ax
+	return makePlots(plotFields, plotKwargsList)
+
+def plotHeader(livePlot, header):
+	livePlot.start(header.start)
+	for e in header.events():
+		livePlot.event(e)

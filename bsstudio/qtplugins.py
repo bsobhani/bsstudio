@@ -12,6 +12,8 @@ from itertools import dropwhile
 import textwrap
 from .widgets import REButton, RECustomPlan, CodeButton, TextUpdate, MplWidget, Scan1DButton, EmbedFrame, LineInput
 from .widgets import Base
+from .widgets import CodeContainer
+from .widgets import DataBrowser
 from PyQt5.QtDesigner import QPyDesignerTaskMenuExtension 
 
 class GeoLocationMenuEntry(QPyDesignerTaskMenuExtension):
@@ -56,7 +58,7 @@ class GeoLocationTaskMenuFactory(QExtensionFactory):
       return None
 
 core_initialized = False
-def plugin_factory(cls):
+def plugin_factory(cls, is_container=False):
 	print(cls)
 	class PyBSPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
 		def __init__(self, cls):
@@ -72,7 +74,7 @@ def plugin_factory(cls):
 			return "group1"
 
 		def isContainer(self):
-			return False
+			return is_container
 
 		def icon(self):
 			return QtGui.QIcon()
@@ -92,6 +94,7 @@ def plugin_factory(cls):
 
 		def createWidget(self, parent):
 			w = self.cls(parent)
+			#w.initialize()
 			w.pause_widget()
 			"""
 			#w.id = 5
@@ -202,3 +205,5 @@ pScan1DButton = plugin_factory(Scan1DButton)
 pEmbedFrame = plugin_factory(EmbedFrame)
 pLineInput = plugin_factory(LineInput)
 pRECustomPlan = plugin_factory(RECustomPlan)
+pCodeContainter = plugin_factory(CodeContainer, is_container=True)
+pDataBrowser = plugin_factory(DataBrowser)

@@ -25,13 +25,15 @@ def parseField(field):
 
 
 
-def makeProperty(name, propertyType=str):
+def makeProperty(name, propertyType=str, **kwargs):
 	storageVarName = "_"+name
 	def g(self):
 		return eval("self."+storageVarName)
 
 	def s(self, val):
 		exec("self."+storageVarName+"=val")	
+		if "notify" in kwargs.keys():
+			kwargs["notify"].emit()
 	
 	return Property(propertyType, g, s)
 

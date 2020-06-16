@@ -72,6 +72,10 @@ def load(f):
 	create_main_window(f)
 	mainWindow.show()
 	widgets = app.allWidgets()
+	print("all widgets", widgets)
+	print("app children", mainWindow.findChildren(QtWidgets.QWidget))
+	for w in widgets:
+		print(type(w))
 	for w in widgets:
 		if issubclass(w.__class__, BaseWidget):
 			w.resume_widget()
