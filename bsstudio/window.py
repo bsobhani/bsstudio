@@ -60,7 +60,7 @@ def create_main_window(f):
 
 		
 
-def load(f):
+def load(f, noexec=False):
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
 	if not app: # create QApplication if it doesnt exist 
 		app = QtWidgets.QApplication(sys.argv)
@@ -80,4 +80,5 @@ def load(f):
 		if issubclass(w.__class__, BaseWidget):
 			w.resume_widget()
 	#app.exec_()
-	app.exit(app.exec_())
+	if not noexec:
+		app.exit(app.exec_())

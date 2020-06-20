@@ -15,12 +15,13 @@ def isOphyd(obj):
 	return issubclass(obj, OphydObject)
 
 class TextUpdate(QLabel, CodeObject):
-	def __init__(self, parent=None):
+	def __init__(self, parent=None,*,sig=""):
 		#self.parent = parent
 		#super().__init__(parent)
 		QLabel.__init__(self, parent)
 		CodeObject.__init__(self, parent)
 		self._source = ""
+		self.source = sig
 		self.timer_update_time = QtCore.QTimer(self) 
 		self.timer_update_time.setInterval(1500)
 		self.timer_update_time.timeout.connect(self.run_code)

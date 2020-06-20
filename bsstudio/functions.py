@@ -1,12 +1,16 @@
-from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox
-from bluesky.callbacks import LivePlot
+from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox
+from bluesky.callbacks import LivePlot, LiveGrid
 import matplotlib.pyplot as plt
+from collections import Iterable
 
 def defaultValueField(w):
 	if isinstance(w, QComboBox):
 		return "currentText"
 	if isinstance(w, QSpinBox):
 		return "value"
+	if isinstance(w, QDoubleSpinBox):
+		return "value"
+
 	return None
 
 def fieldValueAsString(w, field):
@@ -80,22 +84,46 @@ def makeMplPlots(plots, plotFields, plotKwargsList):
 	
 """
 
-def makePlots(plotFields, plotKwargsList):
+def makeLivePlots(plots, plotFields, plotKwargsList):
+	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
 	livePlots = []
-	for i in range(len(plotKwargsList)):
+	for i in range(len(plots)):
+		plot_tuple = plots[i]
+		if not isinstance(plot_tuple, Iterable):
+			plot_tuple = (plot_tuple, "LivePlot")
+		plotWidget,cls = plot_tuple
+		if cls == "LiveGrid":
+			plotWidget.canvas.wipe()
 		p = plotFields[i]
 		plotKwargs = plotKwargsList[i]
-		lp = LivePlot(*p, **plotKwargs)
+		plotKwargs["ax"] = plotWidget.canvas.ax
+		lp = eval(cls)(*p, **plotKwargs)
 		livePlots.append(lp)
 	return livePlots
 
+"""
 def makeLivePlots(plots, plotFields, plotKwargsList):
 	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
 	for i in range(len(plots)):
 		plotKwargsList[i]["ax"] = plots[i].canvas.ax
-	return makePlots(plotFields, plotKwargsList)
+	return makePlots(plots, plotFields, plotKwargsList)
+"""
 
 def plotHeader(livePlot, header):
 	livePlot.start(header.start)
 	for e in header.events():
 		livePlot.event(e)
+
+def openFileAsString(filename, macros=[]):
+	try:
+		fileContents = open(filename).read()
+	except:
+		print("Read error")
+		return
+
+	for m in macros:
+		left, right = m.split(":")
+		fileContents = fileContents.replace("$("+left+")", right)
+	return fileContents
+
+

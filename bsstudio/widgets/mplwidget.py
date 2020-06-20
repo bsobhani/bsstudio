@@ -17,7 +17,12 @@ class MplCanvas(Canvas):
         Canvas.__init__(self, self.fig)
         Canvas.setSizePolicy(self, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         Canvas.updateGeometry(self)
-        self.ax.plot([0, 1], [1, 1])
+        #self.ax.plot([0, 1], [1, 1])
+
+    def wipe(self):
+        self.fig.clf()
+        self.ax = self.fig.add_subplot(111)
+		
 
 # Matplotlib widget
 class MplWidget(QtWidgets.QWidget, BaseWidget):

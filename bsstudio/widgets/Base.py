@@ -65,6 +65,11 @@ class BaseWidget:
 		d = dotdict(d)
 		return d
 
+	def resume_children(self):
+		children = self.findChildren(BaseWidget)
+		for c in children:
+			c.resume_widget()
+
 	@Property(int, designable=True, notify=signal, stored=True, final=True, constant=True)
 	def id(self):
 		return self._id

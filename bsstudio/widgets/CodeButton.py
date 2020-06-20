@@ -22,6 +22,7 @@ class CodeButton(QPushButton, CodeObject):
 	def default_code(self):
 
 		code_string = """
+		ui = self.ui
 		print(self.objectName()+" pressed...")
 		"""[1:]
 		return code_string

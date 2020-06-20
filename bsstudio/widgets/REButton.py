@@ -64,7 +64,9 @@ class RECustomPlan(REButton):
 	plan = makeProperty("plan")
 	def default_code(self):
 		return """
-			from bsstudio.functions import widgetValue
+			from bsstudio.functions import widgetValue, makeLivePlots
+			from bluesky.callbacks import LiveGrid
+			from bluesky.plans import grid_scan
 			ui = self.ui
 			args = []
 			kwargs = {}
@@ -76,11 +78,23 @@ class RECustomPlan(REButton):
 					args.append(right)
 				else:
 					kwargs[left] = right
-			#plan = widgetValue(eval(self.plan)).name+"("+",".join(argList)+")"
-			print(args)
-			print(kwargs)
+			plots = widgetValue(eval(self.plots)[:])
+			plotFields = widgetValue(eval(self.plotFields)[:])
+			plotKwargsList = eval(self.plotKwargsList)[:]
+			livePlots = makeLivePlots(plots, plotFields, plotKwargsList)
+			ts = [RE.subscribe(lp) for lp in livePlots]
+	
 			plan = widgetValue(eval(self.plan))
+			#RE(plan(*args,**kwargs),LiveGrid((6, 10), 'det4'))
 			RE(plan(*args,**kwargs))
+			for p in plots:
+				try:
+					x = p[0]
+				except:
+					x = p
+				x.canvas.draw()
+			for t in ts:
+				RE.unsubscribe(t)
 			"""[1:]
 			
 

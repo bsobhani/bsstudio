@@ -14,7 +14,7 @@ class REAbortButton(CodeButton):
 	def default_code(self):
 
 		return """
-		RE = ip.user_ns["RE"]
+		ui = self.ui
 		RE.abort()
 		"""[1:]
 	
