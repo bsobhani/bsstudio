@@ -16,9 +16,9 @@ class PostInstallCommand(install):
         os.system('echo "from bsstudio.qtplugins import *"> $CONDA_PREFIX/etc/bsstudio/load_plugin.py')
         os.system('echo "export PYQTDESIGNERPATH=$CONDA_PREFIX/etc/bsstudio"> $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh')
 
-        os.system("conda install --yes --file requirements.txt")
-        os.system("conda install --yes -c conda-forge/label/cf201901 pyqt")
-        os.system("conda install --yes bluesky -c lightsource2-tag")
+        #os.system("conda install --yes --file requirements.txt")
+        #os.system("conda install --yes -c conda-forge/label/cf201901 pyqt")
+        #os.system("conda install --yes bluesky -c lightsource2-tag")
         install.run(self)
         
 setuptools.setup(
