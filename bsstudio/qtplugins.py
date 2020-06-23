@@ -158,7 +158,11 @@ def plugin_factory(cls, is_container=False):
 				import os
 				print("preview")
 				fileName = core.formWindowManager().activeFormWindow().fileName()
-				cmd = 'ipython --profile=collection --matplotlib=qt5 -c "import bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
+				import inspect
+				import bsstudio
+				path = os.path.dirname(inspect.getfile(bsstudio))
+
+				cmd = 'ipython --profile=collection --matplotlib=qt5 -c "cd '+path+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
 				#os.spawnl(os.P_NOWAIT, cmd)
 				#print(dir(core.formWindowManager().activeFormWindow()))
 				os.system(cmd + " &")
