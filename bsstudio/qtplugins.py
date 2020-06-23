@@ -164,7 +164,7 @@ def plugin_factory(cls, is_container=False):
 				path_import = "import sys\nsys.path.insert(0, '"+path+"')"
 
 				#cmd = 'ipython --profile=collection --matplotlib=qt5 -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
-				cmd = 'bsui -c "cd '+path+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
+				cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
 				#os.spawnl(os.P_NOWAIT, cmd)
 				#print(dir(core.formWindowManager().activeFormWindow()))
 				os.system(cmd + " &")
