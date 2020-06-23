@@ -38,10 +38,11 @@ class OphydProperties(CodeContainer):
 			w.setFixedHeight(25)
 			w.setFixedWidth(100)
 			hlayout.addWidget(w)
-			if sig.write_access:
-				w = LineInput(self, sig=obj.name+"."+name+".value")
-				w.setFixedWidth(100)
-				hlayout.addWidget(w)
+			try:
+				if sig.write_access:
+					w = LineInput(self, sig=obj.name+"."+name+".value")
+					w.setFixedWidth(100)
+					hlayout.addWidget(w)
 			layout.addLayout(hlayout)
 		self.setLayout(layout)
 			
