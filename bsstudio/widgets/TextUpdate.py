@@ -30,7 +30,10 @@ class TextUpdate(QLabel, CodeObject):
 	def default_code(self):
 		return """
 			ui = self.ui
-			self.setText(str(eval(self.source)))
+			try:
+				self.setText(str(eval(self.source)))
+			except:
+				self.setText("unknown")
 			"""[1:]
 
 	@Property(str, designable=True)

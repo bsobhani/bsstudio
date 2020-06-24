@@ -34,13 +34,8 @@ class OphydProperties(CodeContainer):
 			w.setFixedHeight(25)
 			w.setFixedWidth(100)
 			hlayout.addWidget(w)
-			#obj_name_dot = ".".join(obj.name.split("_"))
 			obj_name = widgetValueString(self, obj_name) 
-			#w = TextUpdate(self, sig=obj_name_dot+"."+name+".value")
-			try:
-				w = TextUpdate(self, sig=obj_name+"."+name+".value")
-			except:
-				w = TextUpdate(self, sig="'unknown'")
+			w = TextUpdate(self, sig=obj_name+"."+name+".value")
 			#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 			w.setFixedHeight(25)
 			w.setFixedWidth(100)
