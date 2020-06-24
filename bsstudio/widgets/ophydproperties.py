@@ -5,6 +5,7 @@ from PyQt5.Qt import Qt
 from .embedframe import CodeContainer
 from .TextUpdate import TextUpdate
 from .lineinput import LineInput
+from ..functions import widgetValueString
 
 class OphydProperties(CodeContainer):
 	ophydObject = makeProperty("ophydObject")
