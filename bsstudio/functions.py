@@ -100,7 +100,7 @@ def widgetValueString(w_string, continuous=True):
 
 def widgetValueString(self, w_string, continuous=True):
 	#ui = makeUiFunction(w)
-	w = evalInNs(w_string)
+	w = evalInNs(self w_string)
 	if type(w) is list:
 		return [widgetValueString(x, continuous) for x in w]
 	if not isWidget(w):
