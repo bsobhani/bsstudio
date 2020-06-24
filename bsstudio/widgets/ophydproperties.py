@@ -34,7 +34,6 @@ class OphydProperties(CodeContainer):
 			w.setFixedHeight(25)
 			w.setFixedWidth(100)
 			hlayout.addWidget(w)
-			obj_name = widgetValueString(self, obj_name) 
 			w = TextUpdate(self, sig=obj_name+"."+name+".value")
 			#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 			w.setFixedHeight(25)
@@ -57,8 +56,9 @@ class OphydProperties(CodeContainer):
 
 	def default_code(self):
 		return """
-			from bsstudio.functions import widgetValue
+			from bsstudio.functions import widgetValueString
 			ui = self.ui
-			ophydObject = widgetValue(eval(self.ophydObject))
-			self.createFields(ophydObject, self.ophydObject)
+			obj_name = widgetValueString(self, self.ophydObject) 
+			ophydObject = eval(obj_name)
+			self.createFields(ophydObject, obj_name)
 			"""[1:]
