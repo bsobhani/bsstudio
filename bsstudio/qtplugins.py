@@ -96,8 +96,9 @@ def plugin_factory(cls, is_container=False):
 
 		def createWidget(self, parent):
 			w = self.cls(parent)
-			#w.initialize()
+			w.core = self.core
 			w.pause_widget()
+			#w.initialize()
 			"""
 			#w.id = 5
 			#w.setProperty("id", 50)

@@ -19,8 +19,8 @@ def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 def isMainWindow(w):
 	return isinstance(w, MainWindow)
 
-def ui():
-	return getMainWindow()
+#def ui():
+#	return getMainWindow()
 
 def getWidgetById(id):
 	for w in all_bss_widgets:
@@ -34,9 +34,11 @@ def create_main_window(f):
 	#f = "/home/bsobhani/bsw/bss_test9.ui"
 	#class MainWindow(QtWidgets.QMainWindow):
 	global MainWindow
+	print(dir(uic.loadUiType(f)[0]))
 	class MainWindow(*uic.loadUiType(f)):
 		def __init__(self, parent=None):
 			super().__init__(parent)
+			uiFilePath = f
 
 			self.setupUi(self)
 			#self.ui = uic.loadUi(f)
