@@ -37,7 +37,10 @@ class OphydProperties(CodeContainer):
 			#obj_name_dot = ".".join(obj.name.split("_"))
 			obj_name = widgetValueString(self, obj_name) 
 			#w = TextUpdate(self, sig=obj_name_dot+"."+name+".value")
-			w = TextUpdate(self, sig=obj_name+"."+name+".value")
+			try:
+				w = TextUpdate(self, sig=obj_name+"."+name+".value")
+			except:
+				w = TextUpdate(self, sig="'unknown'")
 			#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 			w.setFixedHeight(25)
 			w.setFixedWidth(100)
