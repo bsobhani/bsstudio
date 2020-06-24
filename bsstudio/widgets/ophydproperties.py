@@ -32,12 +32,12 @@ class OphydProperties(CodeContainer):
 			w = QLabel(name)
 			#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 			w.setFixedHeight(25)
-			w.setFixedWidth(100)
+			w.setFixedWidth(200)
 			hlayout.addWidget(w)
 			w = TextUpdate(self, sig=obj_name+"."+name+".value")
 			#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 			w.setFixedHeight(25)
-			w.setFixedWidth(100)
+			w.setFixedWidth(200)
 			hlayout.addWidget(w)
 			try:
 				if sig.write_access:
