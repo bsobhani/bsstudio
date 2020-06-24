@@ -13,12 +13,12 @@ import textwrap
 all_bss_widgets = []
 
 global_id = 1
-
+"""
 class dotdict(dict):
 	__getattr__ = dict.get
 	__setattr__ = dict.__setitem__
 	__delattr__ = dict.__delitem__
-
+"""
 class BaseWidget:
 	signal = pyqtSignal()
 
@@ -45,6 +45,7 @@ class BaseWidget:
 	def resume_widget(self):
 		pass
 
+	"""
 	def ui(self):
 		from ..window import isMainWindow
 		obj = self.parentWidget()
@@ -64,6 +65,12 @@ class BaseWidget:
 
 		d = dotdict(d)
 		return d
+	"""
+
+	def ui(self):
+		from ..functions import makeUiFunction
+		_ui = makeUiFunction(self)
+		return _ui()
 
 	def resume_children(self):
 		children = self.findChildren(BaseWidget)

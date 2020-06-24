@@ -33,6 +33,8 @@ class DataBrowser(CodeContainer):
 
 	def replot(self, plots, db):
 		for p in plots:
+			if not hasattr(p, "ax"):
+				p._LivePlot__setup()
 			p.ax.clear()
 		item = self.listWidget.currentItem()
 		if item is None:

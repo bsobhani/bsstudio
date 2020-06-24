@@ -18,10 +18,6 @@ class CodeContainer(QFrame, CodeObject):
 			ui = self.ui
 			"""[1:]
 
-	def pause_widget(self):
-		pass
-	
-
 	def resume_widget(self):
 		self._paused = False
 		self.run_code()

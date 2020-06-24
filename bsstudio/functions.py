@@ -3,6 +3,34 @@ from bluesky.callbacks import LivePlot, LiveGrid
 import matplotlib.pyplot as plt
 from collections import Iterable
 
+
+class dotdict(dict):
+	__getattr__ = dict.get
+	__setattr__ = dict.__setitem__
+	__delattr__ = dict.__delitem__
+
+def makeUiFunction(self):
+	def ui():
+		from .window import isMainWindow
+		obj = self.parentWidget()
+		while True:
+			if hasattr(obj, "isTopLevel"):
+				if obj.isTopLevel==True:
+					#return obj
+					break
+			if isMainWindow(obj):
+				#print(obj.findChildren(QWidget))
+				#return obj
+				break
+			obj = obj.parentWidget()
+		#return None
+		children = obj.findChildren(QWidget)
+		d = {c.objectName(): c for c in children}
+
+		d = dotdict(d)
+		return d
+	return ui
+
 def defaultValueField(w):
 	if isinstance(w, QComboBox):
 		return "currentText"
@@ -25,6 +53,9 @@ def fieldValue(w, field):
 	ip = get_ipython()
 	ns = ip.user_ns.copy()
 	ns['self'] = w
+	if "ui" not in ns.keys():
+		ui = makeUiFunction(w)
+		ns["ui"] = ui
 	return eval(fieldValueAsString(w, field), ns)
 
 def comboBoxValue(w):
@@ -51,7 +82,8 @@ def widgetValue(w, continuous=True):
 		return widgetValue(wv, True)
 	return wv
 	
-		
+
+
 
 def isWidget(obj):
 	return issubclass(obj.__class__, QWidget)
