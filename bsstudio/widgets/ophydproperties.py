@@ -13,7 +13,7 @@ class OphydProperties(CodeContainer):
 		super().__init__(parent)
 		self._ophydObject = ""
 		
-	def createFields(self, obj):
+	def createFields(self, obj, obj_name):
 		print("create fields")
 		layout = QVBoxLayout()
 		hlayout = QHBoxLayout()
@@ -33,8 +33,10 @@ class OphydProperties(CodeContainer):
 			w.setFixedHeight(25)
 			w.setFixedWidth(100)
 			hlayout.addWidget(w)
-			obj_name_dot = ".".join(obj.name.split("_"))
-			w = TextUpdate(self, sig=obj_name_dot+"."+name+".value")
+			#obj_name_dot = ".".join(obj.name.split("_"))
+			obj_name = widgetValueString(self, obj_name) 
+			#w = TextUpdate(self, sig=obj_name_dot+"."+name+".value")
+			w = TextUpdate(self, sig=obj_name+"."+name+".value")
 			#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 			w.setFixedHeight(25)
 			w.setFixedWidth(100)
@@ -56,7 +58,8 @@ class OphydProperties(CodeContainer):
 
 	def default_code(self):
 		return """
+			from bsstudio.functions import widgetValue
 			ui = self.ui
-			ophydObject = eval(self.ophydObject)
-			self.createFields(ophydObject)
+			ophydObject = widgetValue(eval(self.ophydObject))
+			self.createFields(ophydObject, self.ophydObject)
 			"""[1:]

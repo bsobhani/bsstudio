@@ -48,8 +48,18 @@ def fieldValueAsString(w, field):
 		return str(getattr(w, field)())
 	return str(w.property(field))
 
+def evalInNs(w, cmd):
+	ip = get_ipython()
+	ns = ip.user_ns.copy()
+	ns['self'] = w
+	if "ui" not in ns.keys():
+		ui = makeUiFunction(w)
+		ns["ui"] = ui
+	return eval(cmd, ns)
+
 
 def fieldValue(w, field):
+	"""
 	ip = get_ipython()
 	ns = ip.user_ns.copy()
 	ns['self'] = w
@@ -57,6 +67,8 @@ def fieldValue(w, field):
 		ui = makeUiFunction(w)
 		ns["ui"] = ui
 	return eval(fieldValueAsString(w, field), ns)
+	"""
+	return evalInNs(w, fieldValueAsString(w, field))
 
 def comboBoxValue(w):
 	key = w.currentText()
@@ -66,8 +78,37 @@ def comboBoxValue(w):
 	return fieldValue(w, key)
 	
 	
+"""
+def widgetValueString(w_string, continuous=True):
+	#ui = makeUiFunction(w)
+	w = evalInNs(w, w_string)
+	if type(w) is list:
+		return [widgetValueString(x, continuous) for x in w]
+	if not isWidget(w):
+		return w_string
+	if isinstance(w, QComboBox):
+		wv = comboBoxValue(w)
+	prop = w.property("valueField")
+	if prop == None:
+		prop = defaultValueField(w)
+	#wv = fieldValue(w, prop)
+	wv_string = fieldValueAsString(w, prop)
+	if continuous:
+		return widgetValueString(wv_string, True)
+	return wv_string
+"""
 
-def widgetValue(w, continuous=True):
+def widgetValueString(self, w_string, continuous=True):
+	#ui = makeUiFunction(w)
+	w = evalInNs(w_string)
+	if type(w) is list:
+		return [widgetValueString(x, continuous) for x in w]
+	if not isWidget(w):
+		return w_string
+	return widgetValue(w, continuous, asString=True)
+
+
+def widgetValue(w, continuous=True,*,asString=False):
 	if type(w) is list:
 		return [widgetValue(x, continuous) for x in w]
 	if not isWidget(w):
@@ -78,10 +119,10 @@ def widgetValue(w, continuous=True):
 	if prop == None:
 		prop = defaultValueField(w)
 	wv = fieldValue(w, prop)
+	wv_string = fieldValueAsString(w, prop)
 	if continuous:
-		return widgetValue(wv, True)
+		return widgetValue(wv, True, asString=asString)
 	return wv
-	
 
 
 
