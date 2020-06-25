@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>251</width>
+    <height>46</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="OpenWindowButton" name="openwindowbutton">
+     <property name="text">
+      <string>$(ophydObject)</string>
+     </property>
+     <property name="fileName" stdset="0">
+      <url>
+       <string>file:ophydPropertyWindow.ui</string>
+      </url>
+     </property>
+     <property name="useRelativePath" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="macros" stdset="0">
+      <stringlist>
+       <string>ophydObject:$(ophydObject)</string>
+      </stringlist>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="TextUpdate" name="textupdate">
+     <property name="source" stdset="0">
+      <string>$(displayValue)</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CodeButton</class>
+   <extends>QPushButton</extends>
+   <header>bsstudio.widgets.CodeButton</header>
+  </customwidget>
+  <customwidget>
+   <class>TextUpdate</class>
+   <extends>QLabel</extends>
+   <header>bsstudio.widgets.TextUpdate</header>
+  </customwidget>
+  <customwidget>
+   <class>OpenWindowButton</class>
+   <extends>CodeButton</extends>
+   <header>bsstudio.widgets.embedframe</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
