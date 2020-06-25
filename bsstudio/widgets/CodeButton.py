@@ -16,8 +16,7 @@ class CodeButton(QPushButton, CodeObject):
 		self.parent = parent
 		QPushButton.__init__(self, parent)
 		CodeObject.__init__(self, parent)
-		#self.clicked.connect(partial(self.run_code, None))
-		self.clicked.connect(self.run_code)
+		self.clicked.connect(self.runCode)
 
 	def default_code(self):
 

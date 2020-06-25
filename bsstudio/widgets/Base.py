@@ -6,6 +6,7 @@ from PyQt5.QtDesigner import QExtensionFactory
 from PyQt5.QtCore import pyqtProperty as Property
 from PyQt5.QtCore import pyqtSignal
 from ophyd.sim import det
+from ..functions import getTopObject
 import inspect
 from itertools import dropwhile
 import textwrap
@@ -44,6 +45,17 @@ class BaseWidget:
 
 	def resume_widget(self):
 		pass
+
+
+	def windowFileName(self):
+		if not self._paused:
+			fileName = getTopObject(self).uiFilePath
+		else:
+			try:
+				fileName = self.core.formWindowManager().activeFormWindow().fileName()
+			except:
+				fileName = None
+		return fileName
 
 	"""
 	def ui(self):

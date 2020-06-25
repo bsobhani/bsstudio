@@ -34,9 +34,9 @@ def create_main_window(f):
 	#f = "/home/bsobhani/bsw/bss_test9.ui"
 	#class MainWindow(QtWidgets.QMainWindow):
 	global MainWindow
-	print(dir(uic.loadUiType(f)[0]))
 	class MainWindow(*uic.loadUiType(f)):
 		def __init__(self, parent=None):
+			self.isLoaded = False
 			super().__init__(parent)
 			self.uiFilePath = f
 
@@ -52,6 +52,7 @@ def create_main_window(f):
 			self.threadpool.start(self.worker)
 			#self.ui.show()
 			self.worker.signals.trigger.connect(call_func)
+			self.isLoaded = True
 
 		def closeEvent(self, evt):
 			print("close event")
@@ -74,10 +75,6 @@ def load(f, noexec=False):
 	create_main_window(f)
 	mainWindow.show()
 	widgets = app.allWidgets()
-	print("all widgets", widgets)
-	print("app children", mainWindow.findChildren(QtWidgets.QWidget))
-	for w in widgets:
-		print(type(w))
 	for w in widgets:
 		if issubclass(w.__class__, BaseWidget):
 			w.resume_widget()

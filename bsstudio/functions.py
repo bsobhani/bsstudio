@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox
 from bluesky.callbacks import LivePlot, LiveGrid
 import matplotlib.pyplot as plt
 from collections import Iterable
+import time
 
 
 class dotdict(dict):
@@ -18,6 +19,8 @@ def getTopObject(w):
 				#return obj
 				break
 		if isMainWindow(obj):
+			while not obj.isLoaded:
+				time.sleep(1)
 			#print(obj.findChildren(QWidget))
 			#return obj
 			break

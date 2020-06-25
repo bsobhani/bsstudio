@@ -108,8 +108,6 @@ def plugin_factory(cls, is_container=False):
 				print("asdf1234")
 				return QVariant(5)
 			if self.core.propertyEditor():
-				#print(dir(self.core))
-				#print(dir(self.core.propertyEditor()))
 				#self.core.propertyEditor().setObject(self.core.propertyEditor().object())
 				#self.core.propertyEditor().setObject(QWidget(parent))
 				self.core.propertyEditor().setPropertyValue("id", QVariant(66), True)
@@ -132,7 +130,6 @@ def plugin_factory(cls, is_container=False):
 				return
 			core = self.core
 			children = core.formWindowManager().children()
-			#print(dir(core.formWindowManager()))
 			a = QAction("zzz",core.formWindowManager())
 			for c in children:
 				if hasattr(c, "iconText"):
@@ -148,13 +145,6 @@ def plugin_factory(cls, is_container=False):
 			a.setToolTip("nnnnn")
 			a.setIconText("abcd")
 			a.setText("zzz")
-			print(dir(core.formWindowManager()))
-			print(core.formWindowManager().activeFormWindow())
-			print(core.actionEditor())
-			print(dir(core))
-			#print(dir(a))
-			#print(a.menuRole())
-			#print(a.isVisible())
 			def preview():
 				import os
 				print("preview")
@@ -167,14 +157,12 @@ def plugin_factory(cls, is_container=False):
 				#cmd = 'ipython --profile=collection --matplotlib=qt5 -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
 				cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
 				#os.spawnl(os.P_NOWAIT, cmd)
-				#print(dir(core.formWindowManager().activeFormWindow()))
 				os.system(cmd + " &")
 
 				p = core.findChildren(QWidget)
 				print(p)
 				#core.actionEditor().addAction(a)
 				#print(core.actionEditor().actions())
-				#print(dir(core.formWindowManager().actionGroup()))
 	
 				
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
@@ -207,7 +195,7 @@ def plugin_factory(cls, is_container=False):
 	return Plugin
 
 pCodeButton = plugin_factory(CodeButton)
-pREButton = plugin_factory(REButton)
+#pREButton = plugin_factory(REButton)
 pTextUpdate = plugin_factory(TextUpdate)
 pMplWidget = plugin_factory(MplWidget)
 pScan1DButton = plugin_factory(Scan1DButton)

@@ -51,7 +51,7 @@ class OphydProperties(CodeContainer):
 			
 	def resume_widget(self):
 		self._paused = False
-		self.run_code()
+		self.runCode()
 		self.resume_children()
 
 	def default_code(self):

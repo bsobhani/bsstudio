@@ -39,7 +39,7 @@ class CodeObject(BaseWidget):
 	def resume_widget(self):
 		self._paused = False
 
-	def run_code(self):
+	def runCode(self):
 		if self._paused:
 			return
 		#ns = vars(sys.modules[self.__class__.__module__])

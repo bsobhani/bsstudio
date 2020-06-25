@@ -9,7 +9,7 @@ class LineInput(QLineEdit, CodeObject):
 		CodeObject.__init__(self,parent,copyNameSpace=False)
 		self._destination = ""
 		self.destination = sig
-		self.returnPressed.connect(self.run_code)
+		self.returnPressed.connect(self.runCode)
 
 	def default_code(self):
 		return """

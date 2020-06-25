@@ -24,7 +24,7 @@ class TextUpdate(QLabel, CodeObject):
 		self.source = sig
 		self.timer_update_time = QtCore.QTimer(self) 
 		self.timer_update_time.setInterval(1500)
-		self.timer_update_time.timeout.connect(self.run_code)
+		self.timer_update_time.timeout.connect(self.runCode)
 		self.timer_update_time.start()
 
 	def default_code(self):
