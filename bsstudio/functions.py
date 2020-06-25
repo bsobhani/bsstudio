@@ -9,9 +9,25 @@ class dotdict(dict):
 	__setattr__ = dict.__setitem__
 	__delattr__ = dict.__delitem__
 
+def getTopObject(w):
+	from .window import isMainWindow
+	obj = w.parentWidget()
+	while True:
+		if hasattr(obj, "isTopLevel"):
+			if obj.isTopLevel==True:
+				#return obj
+				break
+		if isMainWindow(obj):
+			#print(obj.findChildren(QWidget))
+			#return obj
+			break
+		obj = obj.parentWidget()
+	return obj
+
+
 def makeUiFunction(self):
 	def ui():
-		from .window import isMainWindow
+		"""
 		obj = self.parentWidget()
 		while True:
 			if hasattr(obj, "isTopLevel"):
@@ -23,7 +39,8 @@ def makeUiFunction(self):
 				#return obj
 				break
 			obj = obj.parentWidget()
-		#return None
+		"""
+		obj = getTopObject(self)
 		children = obj.findChildren(QWidget)
 		d = {c.objectName(): c for c in children}
 

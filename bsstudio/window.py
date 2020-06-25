@@ -38,7 +38,7 @@ def create_main_window(f):
 	class MainWindow(*uic.loadUiType(f)):
 		def __init__(self, parent=None):
 			super().__init__(parent)
-			uiFilePath = f
+			self.uiFilePath = f
 
 			self.setupUi(self)
 			#self.ui = uic.loadUi(f)

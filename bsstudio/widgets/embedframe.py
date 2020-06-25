@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtProperty as Property
 from .REButton import makeProperty
 from .CodeButton import CodeButton
 from .Base import BaseWidget
-from bsstudio.functions import openFileAsString
+from bsstudio.functions import openFileAsString, getTopObject
 import os
 
 
@@ -46,13 +46,8 @@ class EmbedFrame(QFrame, CodeObject):
 	fileChanged = pyqtSignal()
 
 	def windowFileName(self):
-		ui = self.ui
-		#self.subWindow.uiFilePath = filename
-		#fileName = self.core.formWindowManager().activeFormWindow().fileName()
-		print(self._paused)
 		if not self._paused:
-			print("ui", ui())
-			fileName = ui().uiFilePath
+			fileName = getTopObject(self).uiFilePath
 		else:
 			try:
 				fileName = self.core.formWindowManager().activeFormWindow().fileName()
@@ -66,13 +61,11 @@ class EmbedFrame(QFrame, CodeObject):
 		QFrame.__init__(self,parent)
 		CodeObject.__init__(self,parent)
 		self._fileName = QUrl()
-		#self.pause_widget()
 		self._macros = []
 		self._useRelativePath = True
 		self.fileChanged.connect(self.updateUi)
 		original = self.resizeEvent
 		def resizeEvent(event):
-			print("resizing")
 			original(event)
 			self.updateUi()
 		self.resizeEvent = resizeEvent
@@ -89,27 +82,23 @@ class EmbedFrame(QFrame, CodeObject):
 			for c in self.subWindow.children():
 				c.deleteLater()
 			self.subWindow.deleteLater()
-			#del self.subWindow
 
 		self.subWindow = QWidget(self)
 		
 		self.subWindow.isTopLevel = True
 		filename = self.fileName.toLocalFile()
-		print("here")
-		print("filename", filename)
-		if filename=="" or filename==None:
-			return
+		#if filename=="" or filename==None:
+		#	return
 		if not QDir.isAbsolutePath(filename):
-			print("if block",self.windowFileName(), filename)
 			filename = absPath(self.windowFileName(), filename)
-		if filename=="":
-			return
-		print("opening filename", filename)
+		#if filename=="":
+		#	return
 		fileContents = openFileAsString(filename, self.macros)
 		fileObject = io.StringIO(fileContents)
 		try:
 			uic.loadUi(fileObject, self.subWindow)
 		except:
+			print("Error opening file")
 			return
 		self.subWindow.resize(self.size())
 		self.subWindow.show()
@@ -149,31 +138,16 @@ class EmbedFrame(QFrame, CodeObject):
 
 	@fileName.setter
 	def fileName(self, val):
-		print("type", type(val))
-		print("dir", dir(val))
-		#w = val
-		#print("w", w.toLocalFile())
-		print("val", val.toLocalFile())
 		valPath = val.toLocalFile()
-		if self.windowFileName()=="":
-			self._fileName=val
-			return
+		#if self.windowFileName()=="":
+		#	self._fileName=val
+		#	return
 		rp = relPath(self.windowFileName(), valPath)
-		print("relpath", rp)
-		#self._fileName=QUrl(path)
-		print(self.windowFileName(), rp)
+		#if rp=="":
+		#	self._fileName=val
+		#	return
 		ap = absPath(self.windowFileName(), rp)
-		print("absPath", ap)
-		#val.setPath("file://"+ap)
-		#val.setPath(ap)
-		if rp=="":
-			self._fileName=val
-			print("HERE")
-			return
-		#val.setPath(rp)
-		#self._fileName=val
 		self._fileName=QUrl("file:"+rp)
-		#self._fileName=QUrl("file://"+val.toLocalFile())
 		print(self._fileName, val, ap)
 		self.fileChanged.emit()
 
