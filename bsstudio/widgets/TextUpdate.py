@@ -29,9 +29,10 @@ class TextUpdate(QLabel, CodeObject):
 
 	def default_code(self):
 		return """
+			from bsstudio.functions import widgetValue
 			ui = self.ui
 			try:
-				self.setText(str(eval(self.source)))
+				self.setText(str(widgetValue(eval(self.source))))
 			except:
 				self.setText("unknown")
 			"""[1:]
