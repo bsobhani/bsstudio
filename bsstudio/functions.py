@@ -19,7 +19,7 @@ def getTopObject(w):
 				#return obj
 				break
 		if isMainWindow(obj):
-			while not obj.isLoaded:
+			if not obj.isLoaded:
 				time.sleep(1)
 			#print(obj.findChildren(QWidget))
 			#return obj
