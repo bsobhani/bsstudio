@@ -21,6 +21,10 @@ class CodeObject(BaseWidget):
 		self._code = bytes(code, "utf-8")
 		self._paused = True
 		self._copyNameSpace = copyNameSpace
+		self.ns_extras = {}
+
+	def addToNameSpace(self, key, val):
+		self.ns_extras[key] = val
 
 	@Property("QByteArray", designable=True)
 	def code(self):
@@ -50,6 +54,9 @@ class CodeObject(BaseWidget):
 			ns = ip.user_ns
 			
 		ns['self'] = self
+		ns.update(self.ns_extras)
+		print("ns",ns)
+		print("ns extras",self.ns_extras)
 		try:
 			exec(self._code, ns)
 		except BaseException as e:

@@ -48,9 +48,11 @@ class REButton(CodeButton):
 		self._plots = "[]"
 		self._plotFields = "[[]]"
 		self._plotKwargsList = "[{}]"
+		self._RunEngine = "RE"
 	plots = makeProperty("plots")
 	plotFields = makeProperty("plotFields")
 	plotKwargsList = makeProperty("plotKwargsList")
+	RunEngine = makeProperty("RunEngine")
 
 
 class RECustomPlan(REButton):
@@ -120,6 +122,7 @@ class Scan1DButton(REButton):
 		endPosition = eval(self.endPosition)
 		startPosition = eval(self.startPosition)
 		numSteps = eval(self.numSteps)
+		RE = eval(self.RunEngine)
 
 		ophyd_detector_list = [widgetValue(w) for w in detector_list]
 
@@ -127,6 +130,7 @@ class Scan1DButton(REButton):
 		endPosition = widgetValue(endPosition)
 		startPosition = widgetValue(startPosition)
 		numSteps = widgetValue(numSteps)
+		RE = widgetValue(RE)
 
 		plots = eval(self.plots)[:]
 		plotFields = eval(self.plotFields)[:]

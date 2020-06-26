@@ -10,6 +10,7 @@ from ..functions import getTopObject
 import inspect
 from itertools import dropwhile
 import textwrap
+import time
 
 all_bss_widgets = []
 
@@ -48,13 +49,14 @@ class BaseWidget:
 
 
 	def windowFileName(self):
+		fileName = None
 		if not self._paused:
 			fileName = getTopObject(self).uiFilePath
 		else:
 			try:
 				fileName = self.core.formWindowManager().activeFormWindow().fileName()
 			except:
-				fileName = None
+				print("Error getting window filename in designer")
 		return fileName
 
 	"""

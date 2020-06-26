@@ -10,36 +10,54 @@ import os
 
 
 def relPath(selfPath, filePath):
-	cp = os.path.commonpath([selfPath, filePath])
+	#cp = os.path.commonpath([selfPath, filePath])
+	print("rel ins:",selfPath, filePath)
+	selfDir = os.path.dirname(selfPath)
 	try:
-		path = os.path.relpath(filePath, cp)
+		path = os.path.relpath(filePath, selfDir)
 	except:
 		path = ""
+	print("rel out:",path)
 	return path
 
 def absPath(selfPath, relFilePath):
+	print("selfpath", selfPath)
+	print("relfilepath",relFilePath)
 	prefix = os.path.dirname(selfPath)
-	return os.path.join(prefix, relFilePath)
+	ap = os.path.join(prefix, relFilePath)
+	print("abs path", ap)
+	return ap
 
 def convertPath(w, fileUrl,*,toRelative):
 	val = fileUrl
 	valPath = val.toLocalFile()
 	self = w
+	print(self.windowFileName(), fileUrl)
 	if self.windowFileName()=="":
 		alert = QMessageBox(self)
 		alert.setText("Current file has no name. Please save the current file first and try again.")
 		alert.show()
 		#self._fileName=val
 		return None
+	if valPath=="":
+		alert = QMessageBox(self)
+		alert.setText("Empty filename")
+		alert.show()
+		#self._fileName=val
+		return None
 	if self.windowFileName() is None:
 		#self._fileName=val
 		#return None
+		print("self.windowFileName is None")
+		#return None
 		return val
-	rp = relPath(self.windowFileName(), valPath)
-	ap = absPath(self.windowFileName(), rp)
 	if toRelative:
+		rp = relPath(self.windowFileName(), valPath)
+		print("w rp", rp)
 		return QUrl("file:"+rp)
 	else:
+		ap = absPath(self.windowFileName(), valPath)
+		print("w ap", ap)
 		return QUrl("file:"+ap)
 
 
@@ -82,6 +100,7 @@ class EmbedFrame(QFrame, CodeObject):
 		self.resizeEvent = resizeEvent
 	
 	def updateUi(self):
+		print("update ui")
 		from PyQt5.QtWidgets import QWidget
 		from PyQt5.QtWidgets import QVBoxLayout
 		ui = self.ui
@@ -100,6 +119,8 @@ class EmbedFrame(QFrame, CodeObject):
 		filename = self.fileName.toLocalFile()
 		#if filename=="" or filename==None:
 		#	return
+		if self.windowFileName() is None:
+			return
 		if not QDir.isAbsolutePath(filename):
 			filename = absPath(self.windowFileName(), filename)
 		self.subWindow.uiFilePath = filename
@@ -113,6 +134,7 @@ class EmbedFrame(QFrame, CodeObject):
 			print("Error opening file "+filename)
 			return
 		self.subWindow.resize(self.size())
+		print("subwindow show")
 		self.subWindow.show()
 		if not self._paused:
 			self.resume_children()
@@ -161,7 +183,9 @@ class EmbedFrame(QFrame, CodeObject):
 			
 		path = convertPath(self, val, toRelative=self._useRelativePath)
 		if path is not None:
+			print("path",path)
 			self._fileName=path
+			self.fileChanged.emit()
 		return
 			
 			
