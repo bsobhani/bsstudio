@@ -55,8 +55,6 @@ class CodeObject(BaseWidget):
 			
 		ns['self'] = self
 		ns.update(self.ns_extras)
-		print("ns",ns)
-		print("ns extras",self.ns_extras)
 		try:
 			exec(self._code, ns)
 		except BaseException as e:
