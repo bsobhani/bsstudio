@@ -55,7 +55,11 @@ class DataBrowser(CodeContainer):
 			self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			plots = eval(self.plots)
-			plotArgsList = eval(self.plotArgsList)
+			try:
+				plotArgsList = eval(self.plotArgsList)
+			except:
+				print("databrowser plotargslist exception")
+				plotArgsList = [[]]
 			plotKwargsList = eval(self.plotKwargsList)
 			plots = makeLivePlots(plots, plotArgsList, plotKwargsList)
 			self.replot(plots, db)
