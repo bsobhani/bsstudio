@@ -27,11 +27,11 @@ class DataBrowser(CodeContainer):
 		self.endDateTime.dateTimeChanged.connect(self.runCode)
 		self.listWidget.currentTextChanged.connect(self.runCode)
 
-	def updateTable(self, db):
+	def updateTable(self, db, dbKwargs):
 		self.listWidget.clear()
 		since = self.startDateTime.dateTime().toString("yyyy-MM-dd HH:mm:ss")
 		until = self.endDateTime.dateTime().toString("yyyy-MM-dd HH:mm:ss")
-		results = db(since=since, until=until)
+		results = db(since=since, until=until, **dbKwargs)
 		for r in results:
 			self.listWidget.addItem(r.start['uid'])
 
@@ -58,7 +58,6 @@ class DataBrowser(CodeContainer):
 			from bsstudio.functions import widgetValue
 			from bsstudio.functions import makeLivePlots 
 			db = widgetValue(eval(self.db))
-			self.updateTable(db)
 			#self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			#self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			plots = eval(self.plots)
@@ -68,14 +67,17 @@ class DataBrowser(CodeContainer):
 				print("databrowser plotargslist exception")
 				plotArgsList = [[]]
 			plotKwargsList = eval(self.plotKwargsList)
+			dbKwargs = eval(self.dbKwargs)
 			plots = makeLivePlots(plots, plotArgsList, plotKwargsList)
 			self.replot(plots, db)
+			self.updateTable(db, dbkwargs)
 			#self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
 			
 			
 			"""[1:]
 
 	db = makeProperty("db")
+	dbKwargs = makeProperty("dbKwargs")
 	plots = makeProperty("plots")
 	plotArgsList = makeProperty("plotArgsList")
 	plotKwargsList = makeProperty("plotKwargsList")
