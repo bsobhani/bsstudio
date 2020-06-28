@@ -36,14 +36,15 @@ class DataBrowser(CodeContainer):
 			self.listWidget.addItem(r.start['uid'])
 
 	def replot(self, plots, db):
-		for p in plots:
-			if not hasattr(p, "ax"):
-				p._LivePlot__setup()
-			p.ax.clear()
 		item = self.listWidget.currentItem()
 		print("item",item)
 		if item is None:
 			return
+		for p in plots:
+			if not hasattr(p, "ax"):
+				p._LivePlot__setup()
+			p.ax.clear()
+		
 		uid = item.text()
 		print("uid",uid)
 		for p in plots:
