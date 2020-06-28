@@ -53,6 +53,8 @@ class DataBrowser(CodeContainer):
 		print("item",item)
 		if item is None:
 			return
+		if plots is None:
+			return
 		for p in plots:
 			if not hasattr(p, "ax"):
 				p._LivePlot__setup()
@@ -78,7 +80,7 @@ class DataBrowser(CodeContainer):
 				plotArgsList = eval(self.plotArgsList)
 			except:
 				print("databrowser plotargslist exception")
-				plotArgsList = [[]]
+				plotArgsList = None
 			plotKwargsList = eval(self.plotKwargsList)
 			dbKwargs = eval(self.dbKwargs)
 			plots = makeLivePlots(plots, plotArgsList, plotKwargsList)
