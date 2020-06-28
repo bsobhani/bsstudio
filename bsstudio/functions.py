@@ -179,7 +179,7 @@ def makeMplPlots(plots, plotFields, plotKwargsList):
 """
 
 def makeLivePlots(plots, plotFields, plotKwargsList):
-	if plots is None:
+	if plotFields is None:
 		return None
 	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
 	livePlots = []
