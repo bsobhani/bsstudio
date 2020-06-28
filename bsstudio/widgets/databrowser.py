@@ -24,9 +24,21 @@ class DataBrowser(CodeContainer):
 		layout.addWidget(self.listWidget)
 		self.setLayout(layout)
 
-		self.startDateTime.dateTimeChanged.connect(self.runCode)
-		self.endDateTime.dateTimeChanged.connect(self.runCode)
-		self.listWidget.currentTextChanged.connect(self.runCode)
+		#self.startDateTime.dateTimeChanged.connect(self.runCode)
+		#self.endDateTime.dateTimeChanged.connect(self.runCode)
+		#self.listWidget.currentTextChanged.connect(self.runCode)
+		self.startDateTime.dateTimeChanged.connect(self.__updateTable)
+		self.endDateTime.dateTimeChanged.connect(self.__updateTable)
+		self.listWidget.currentTextChanged.connect(self.__replot)
+
+	def __updateTable(self):
+		self.runCode()
+		self._updateTable()
+
+
+	def __replot(self):
+		self.runCode()
+		self._replot()
 
 	def updateTable(self, db, dbKwargs):
 		self.listWidget.clear()
@@ -70,9 +82,11 @@ class DataBrowser(CodeContainer):
 			plotKwargsList = eval(self.plotKwargsList)
 			dbKwargs = eval(self.dbKwargs)
 			plots = makeLivePlots(plots, plotArgsList, plotKwargsList)
-			self.replot(plots, db)
-			self.updateTable(db, dbkwargs)
+			#self.replot(plots, db)
+			#self.updateTable(db, dbKwargs)
 			#self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
+			self._replot = partial(self.replot, plots, db)
+			self._updateTable = partial(self.updateTable, db, dbKwargs)
 			
 			
 			"""[1:]
