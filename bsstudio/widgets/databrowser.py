@@ -10,6 +10,7 @@ class DataBrowser(CodeContainer):
 	def __init__(self, parent):
 		super().__init__(parent)
 		self._db = ""
+		self._dbKwargs = "{}"
 		self._plots = "[]"
 		self._plotArgsList = "[[]]"
 		self._plotKwargsList = "[{}]"
