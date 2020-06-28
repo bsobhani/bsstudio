@@ -23,6 +23,10 @@ class DataBrowser(CodeContainer):
 		layout.addWidget(self.listWidget)
 		self.setLayout(layout)
 
+		self.startDateTime.dateTimeChanged.connect(self.runCode)
+		self.endDateTime.dateTimeChanged.connect(self.runCode)
+		self.listWidget.currentTextChanged.connect(self.runCode)
+
 	def updateTable(self, db):
 		self.listWidget.clear()
 		since = self.startDateTime.dateTime().toString("yyyy-MM-dd HH:mm:ss")
@@ -52,8 +56,8 @@ class DataBrowser(CodeContainer):
 			from bsstudio.functions import makeLivePlots 
 			db = widgetValue(eval(self.db))
 			self.updateTable(db)
-			self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
-			self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
+			#self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
+			#self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			plots = eval(self.plots)
 			try:
 				plotArgsList = eval(self.plotArgsList)
@@ -63,7 +67,7 @@ class DataBrowser(CodeContainer):
 			plotKwargsList = eval(self.plotKwargsList)
 			plots = makeLivePlots(plots, plotArgsList, plotKwargsList)
 			self.replot(plots, db)
-			self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
+			#self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
 			
 			
 			"""[1:]
