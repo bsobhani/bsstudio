@@ -41,9 +41,11 @@ class DataBrowser(CodeContainer):
 				p._LivePlot__setup()
 			p.ax.clear()
 		item = self.listWidget.currentItem()
+		print("item",item)
 		if item is None:
 			return
 		uid = item.text()
+		print("uid",uid)
 		for p in plots:
 			plotHeader(p, db[uid])
 
