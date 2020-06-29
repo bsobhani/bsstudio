@@ -88,7 +88,7 @@ class DataBrowser(CodeContainer):
 				print("databrowser plotargslist exception")
 				plotArgsList = None
 			plotKwargsList = eval(self.plotKwargsList)
-			dbKwargs = eval(self.dbKwargs)
+			dbKwargs = widgetValue(eval(self.dbKwargs))
 			plots = makeLivePlots(plots, plotArgsList, plotKwargsList)
 			#self.replot(plots, db)
 			#self.updateTable(db, dbKwargs)
