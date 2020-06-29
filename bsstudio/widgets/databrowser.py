@@ -60,7 +60,8 @@ class DataBrowser(CodeContainer):
 		if plots is None:
 			return
 		for p in plots:
-			p._LivePlot__setup()
+			if not hasattr(p, "ax"):
+				p._LivePlot__setup()
 				
 		
 		uid = item.text()
