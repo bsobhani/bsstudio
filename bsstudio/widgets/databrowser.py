@@ -3,7 +3,7 @@ from . import CodeContainer
 from .REButton import makeProperty
 from PyQt5.QtCore import QDateTime
 from PyQt5.QtWidgets import QDateTimeEdit
-from PyQt5.QtWidgets import QListWidget, QFrame, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QListWidget, QFrame, QVBoxLayout, QLabel, QPushButton
 from bsstudio.functions import widgetValue, plotHeader
 
 class DataBrowser(CodeContainer):
@@ -19,16 +19,19 @@ class DataBrowser(CodeContainer):
 		now = QDateTime.currentDateTime()
 		self.startDateTime = QDateTimeEdit(now.addMonths(-6))
 		self.endDateTime = QDateTimeEdit(now)
+		self.loadScansButton = QPushButton("Load Scans")
 		layout.addWidget(self.startDateTime)
 		layout.addWidget(self.endDateTime)
+		layout.addWidget(self.loadScansButton)
 		layout.addWidget(self.listWidget)
 		self.setLayout(layout)
 
 		#self.startDateTime.dateTimeChanged.connect(self.runCode)
 		#self.endDateTime.dateTimeChanged.connect(self.runCode)
 		#self.listWidget.currentTextChanged.connect(self.runCode)
-		self.startDateTime.dateTimeChanged.connect(self.__updateTable)
-		self.endDateTime.dateTimeChanged.connect(self.__updateTable)
+		#self.startDateTime.dateTimeChanged.connect(self.__updateTable)
+		#self.endDateTime.dateTimeChanged.connect(self.__updateTable)
+		self.loadScansButton.clicked.connect(self.__updateTable)
 		self.listWidget.currentTextChanged.connect(self.__replot)
 
 	def __updateTable(self):
