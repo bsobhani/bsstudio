@@ -132,6 +132,8 @@ def widgetValueString(self, w_string, continuous=True):
 def widgetValue(w, continuous=True,*,asString=False):
 	if type(w) is list:
 		return [widgetValue(x, continuous) for x in w]
+	if type(w) is dict:
+		return {k : widgetValue(w[k], continuous) for k in w.keys()}
 	if not isWidget(w):
 		return w
 	if isinstance(w, QComboBox):

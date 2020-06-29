@@ -83,7 +83,7 @@ class DataBrowser(CodeContainer):
 			for plot in plots:
 				plot.canvas.ax.clear()
 			try:
-				plotArgsList = eval(self.plotArgsList)
+				plotArgsList = widgetValue(eval(self.plotArgsList))
 			except:
 				print("databrowser plotargslist exception")
 				plotArgsList = None
