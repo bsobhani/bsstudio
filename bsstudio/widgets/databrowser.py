@@ -49,6 +49,7 @@ class DataBrowser(CodeContainer):
 			self.listWidget.addItem(r.start['uid'])
 
 	def replot(self, plots, db):
+		from copy import copy
 		item = self.listWidget.currentItem()
 		print("item",item)
 		if item is None:
@@ -56,9 +57,8 @@ class DataBrowser(CodeContainer):
 		if plots is None:
 			return
 		for p in plots:
-			if not hasattr(p, "ax"):
-				p._LivePlot__setup()
-			p.ax.clear()
+			p._LivePlot__setup()
+				
 		
 		uid = item.text()
 		print("uid",uid)
@@ -76,6 +76,8 @@ class DataBrowser(CodeContainer):
 			#self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			#self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			plots = eval(self.plots)
+			for plot in plots:
+				plot.canvas.ax.clear()
 			try:
 				plotArgsList = eval(self.plotArgsList)
 			except:
