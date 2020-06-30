@@ -13,6 +13,7 @@ class DataBrowser(CodeContainer):
 	def __init__(self, parent):
 		super().__init__(parent)
 		self._db = ""
+		self.dbObj = None
 		self._dbKwargs = "{}"
 		self._plots = "[]"
 		self._plotArgsList = "[[]]"
@@ -79,14 +80,23 @@ class DataBrowser(CodeContainer):
 				return i
 		return None
 
-	def replot(self, plots, db):
-		from copy import copy
-		#item = self.listWidget.currentItem()
+	def currentUid(self):
 		row = self.listWidget.currentRow()
 		uid_col = self.findHorizontalHeaderIndex("uid")
 		item = self.listWidget.item(row,uid_col)
-		print("item",item)
 		if item is None:
+			return None
+		return item.text()
+
+	def startData(self,key):
+		return self.dbObj[self.currentUid()].start[key]
+		
+
+	def replot(self, plots, db):
+		from copy import copy
+		#item = self.listWidget.currentItem()
+		uid = self.currentUid()
+		if uid is None:
 			return
 		if plots is None:
 			return
@@ -95,10 +105,9 @@ class DataBrowser(CodeContainer):
 				p._LivePlot__setup()
 				
 		
-		uid = item.text()
-		print("uid",uid)
 		for p in plots:
 			plotHeader(p, db[uid])
+			p.ax.figure.tight_layout()
 
 
 	def default_code(self):
@@ -108,6 +117,7 @@ class DataBrowser(CodeContainer):
 			from bsstudio.functions import widgetValue
 			from bsstudio.functions import makeLivePlots 
 			db = widgetValue(eval(self.db))
+			self.dbObj = db
 			#self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			#self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 			plots = eval(self.plots)
@@ -115,7 +125,8 @@ class DataBrowser(CodeContainer):
 				plot.canvas.ax.clear()
 			try:
 				plotArgsList = widgetValue(eval(self.plotArgsList))
-			except:
+			except TypeError:
+				print(self.plotArgsList)
 				print("databrowser plotargslist exception")
 				plotArgsList = None
 			plotKwargsList = eval(self.plotKwargsList)
