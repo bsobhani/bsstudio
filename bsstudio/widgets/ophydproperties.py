@@ -39,13 +39,10 @@ class OphydProperties(CodeContainer):
 			w.setFixedHeight(25)
 			w.setFixedWidth(200)
 			hlayout.addWidget(w)
-			try:
-				if sig.write_access:
-					w = LineInput(self, sig=obj.name+"."+name+".value")
-					w.setFixedWidth(100)
-					hlayout.addWidget(w)
-			except:
-				None
+			if not hasattr(sig, "write_access") or sig.write_access:
+				w = LineInput(self, sig=obj.name+"."+name+".value")
+				w.setFixedWidth(100)
+				hlayout.addWidget(w)
 			layout.addLayout(hlayout)
 		self.setLayout(layout)
 			
