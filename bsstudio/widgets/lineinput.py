@@ -1,15 +1,21 @@
 from .CodeObject import CodeObject
+from .TextUpdate import TextUpdateBase
 from .REButton import makeProperty
 from PyQt5.QtWidgets import QLineEdit
 
-class LineInput(QLineEdit, CodeObject):
+class LineInput(QLineEdit, TextUpdateBase):
 	def __init__(self, parent=None,*, sig=""):
 		#super().__init__(parent)
 		QLineEdit.__init__(self,parent)
-		CodeObject.__init__(self,parent,copyNameSpace=False)
+		TextUpdateBase.__init__(self,parent)
+		#CodeObject.__init__(self,parent,copyNameSpace=False)
 		self._destination = ""
 		self.destination = sig
 		self.returnPressed.connect(self.runCode)
+
+	def timeout(self):
+		if not self.hasFocus():
+			self.runCode()
 
 	def default_code(self):
 		return """
@@ -17,7 +23,10 @@ class LineInput(QLineEdit, CodeObject):
 			ui = self.ui
 			#destination = widgetValue(eval(self.destination))
 			#val = widgetValue(eval(self.text()))
-			exec(self.destination+" = "+self.text())
+			if self.hasFocus() and self.destination!="":
+				exec(self.destination+" = "+self.text())
+			else:
+				self.updateText(str(widgetValue(eval(self.source))))
 			"""[1:]
 		
 	destination = makeProperty("destination")

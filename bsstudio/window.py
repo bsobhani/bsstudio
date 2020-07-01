@@ -1,4 +1,4 @@
-from PyQt5 import uic, QtWidgets, QtCore
+from PyQt5 import uic, QtWidgets, QtCore, QtGui
 import sys
 #from .widgets.REButton import Worker
 from .worker import Worker
@@ -53,6 +53,12 @@ def create_main_window(f):
 			#self.ui.show()
 			self.worker.signals.trigger.connect(call_func)
 			self.isLoaded = True
+
+		def mousePressEvent(self, event):
+			focused_widget = QtWidgets.QApplication.focusWidget()
+			if issubclass(focused_widget.__class__, QtWidgets.QLineEdit):
+				focused_widget.clearFocus()
+			QtWidgets.QWidget.mousePressEvent(self, event)	
 
 		def closeEvent(self, evt):
 			print("close event")

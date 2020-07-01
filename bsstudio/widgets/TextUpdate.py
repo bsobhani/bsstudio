@@ -14,27 +14,35 @@ from ophyd.ophydobj import OphydObject
 def isOphyd(obj):
 	return issubclass(obj, OphydObject)
 
-class TextUpdate(QLabel, CodeObject):
+class TextUpdateBase(CodeObject):
 	def __init__(self, parent=None,*,sig=""):
 		#self.parent = parent
 		#super().__init__(parent)
-		QLabel.__init__(self, parent)
+		#QLabel.__init__(self, parent)
 		CodeObject.__init__(self, parent)
 		self._source = ""
 		self.source = sig
 		self.timer_update_time = QtCore.QTimer(self) 
 		self.timer_update_time.setInterval(1500)
-		self.timer_update_time.timeout.connect(self.runCode)
+		#self.timer_update_time.timeout.connect(self.runCode)
+		self.timer_update_time.timeout.connect(self.timeout)
 		self.timer_update_time.start()
+
+	def timeout(self):
+		self.runCode()
+
+	def updateText(self, val):
+		try:
+			self.setText(val)
+		except:
+			self.setText("unknown")
+	
 
 	def default_code(self):
 		return """
 			from bsstudio.functions import widgetValue
 			ui = self.ui
-			try:
-				self.setText(str(widgetValue(eval(self.source))))
-			except:
-				self.setText("unknown")
+			self.updateText(str(widgetValue(eval(self.source))))
 			"""[1:]
 
 	@Property(str, designable=True)
@@ -51,3 +59,11 @@ class TextUpdate(QLabel, CodeObject):
 	def resume_widget(self):
 		self._paused = False
 		#self.timer_update_time.start()
+
+
+class TextUpdate(QLabel, TextUpdateBase):
+	def __init__(self, parent=None,*,sig=""):
+		#self.parent = parent
+		#super().__init__(parent)
+		QLabel.__init__(self, parent)
+		TextUpdateBase.__init__(self, parent)
