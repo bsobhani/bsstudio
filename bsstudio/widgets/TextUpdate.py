@@ -42,7 +42,8 @@ class TextUpdateBase(CodeObject):
 		return """
 			from bsstudio.functions import widgetValue
 			ui = self.ui
-			self.updateText(str(widgetValue(eval(self.source))))
+			if self.source != "":
+				self.updateText(str(widgetValue(eval(self.source))))
 			"""[1:]
 
 	@Property(str, designable=True)
