@@ -43,7 +43,9 @@ class CodeObject(BaseWidget):
 	def resume_widget(self):
 		self._paused = False
 
-	def runCode(self):
+		
+
+	def runInNameSpace(self, codeString):
 		if self._paused:
 			return
 		#ns = vars(sys.modules[self.__class__.__module__])
@@ -56,8 +58,12 @@ class CodeObject(BaseWidget):
 		ns['self'] = self
 		ns.update(self.ns_extras)
 		try:
-			exec(self._code, ns)
+			#exec(self._code, ns)
+			exec(codeString, ns)
 		except BaseException as e:
 			additional_info = " Check code in "+self.objectName()+" widget"
 			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
 
+
+	def runCode(self):
+		self.runInNameSpace(self._code)
