@@ -67,4 +67,4 @@ class TextUpdate(QLabel, TextUpdateBase):
 		#self.parent = parent
 		#super().__init__(parent)
 		QLabel.__init__(self, parent)
-		TextUpdateBase.__init__(self, parent)
+		TextUpdateBase.__init__(self, parent, sig)
