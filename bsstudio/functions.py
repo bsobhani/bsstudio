@@ -3,6 +3,7 @@ from bluesky.callbacks import LivePlot, LiveGrid
 import matplotlib.pyplot as plt
 from collections import Iterable
 import time
+import re
 
 
 class dotdict(dict):
@@ -31,22 +32,14 @@ def getTopObject(w):
 
 def makeUiFunction(self):
 	def ui():
-		"""
-		obj = self.parentWidget()
-		while True:
-			if hasattr(obj, "isTopLevel"):
-				if obj.isTopLevel==True:
-					#return obj
-					break
-			if isMainWindow(obj):
-				#print(obj.findChildren(QWidget))
-				#return obj
-				break
-			obj = obj.parentWidget()
-		"""
 		obj = getTopObject(self)
 		children = obj.findChildren(QWidget)
 		d = {c.objectName(): c for c in children}
+		d["parent"] = obj.parent
+		def parentUi():
+			return obj.parent().ui()
+		d["parentUi"] = parentUi
+		
 
 		d = dotdict(d)
 		return d
@@ -80,15 +73,6 @@ def evalInNs(w, cmd):
 
 
 def fieldValue(w, field):
-	"""
-	ip = get_ipython()
-	ns = ip.user_ns.copy()
-	ns['self'] = w
-	if "ui" not in ns.keys():
-		ui = makeUiFunction(w)
-		ns["ui"] = ui
-	return eval(fieldValueAsString(w, field), ns)
-	"""
 	return evalInNs(w, fieldValueAsString(w, field))
 
 def comboBoxValue(w):
@@ -99,29 +83,10 @@ def comboBoxValue(w):
 	return fieldValue(w, key)
 	
 	
-"""
-def widgetValueString(w_string, continuous=True):
-	#ui = makeUiFunction(w)
-	w = evalInNs(w, w_string)
-	if type(w) is list:
-		return [widgetValueString(x, continuous) for x in w]
-	if not isWidget(w):
-		return w_string
-	if isinstance(w, QComboBox):
-		wv = comboBoxValue(w)
-	prop = w.property("valueField")
-	if prop == None:
-		prop = defaultValueField(w)
-	#wv = fieldValue(w, prop)
-	wv_string = fieldValueAsString(w, prop)
-	if continuous:
-		return widgetValueString(wv_string, True)
-	return wv_string
-"""
-
 def widgetValueString(self, w_string, continuous=True):
 	#ui = makeUiFunction(w)
 	w = evalInNs(self, w_string)
+	print("w in widgetValueString", w)
 	if type(w) is list:
 		return [widgetValueString(x, continuous) for x in w]
 	if not isWidget(w):
@@ -142,7 +107,11 @@ def widgetValue(w, continuous=True,*,asString=False):
 	if prop == None:
 		prop = defaultValueField(w)
 	wv = fieldValue(w, prop)
+	print("fieldvalue", wv)
 	wv_string = fieldValueAsString(w, prop)
+	if not isWidget(wv) and asString:
+		return wv_string
+	print("fieldvaluestring", wv_string)
 	if continuous:
 		return widgetValue(wv, True, asString=asString)
 	return wv
@@ -152,34 +121,6 @@ def widgetValue(w, continuous=True,*,asString=False):
 def isWidget(obj):
 	return issubclass(obj.__class__, QWidget)
 	
-"""
-def makePlots(plotFields, plotKwargsList, cls):
-	livePlots = []
-	for i in range(len(plotKwargsList)):
-		p = plotFields[i]
-		plotKwargs = plotKwargsList[i]
-		if cls==LivePlot:
-			lp = cls(*p, **plotKwargs)
-		else:
-			lp = plotKwargsList[i]["Figure"].plot(*p)
-		livePlots.append(lp)
-	return livePlots
-
-def makeLivePlots(plots, plotFields, plotKwargsList):
-	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
-	for i in range(len(plots)):
-		plotKwargsList[i]["ax"] = plots[i].canvas.ax
-	return makePlots(plotFields, plotKwargsList, LivePlot)
-	
-
-def makeMplPlots(plots, plotFields, plotKwargsList):
-	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
-	for i in range(len(plots)):
-		plotKwargsList[i]["Figure"] = plots[i].canvas.ax
-	makePlots(plotFields, plotKwargsList, plt.plot)
-	
-"""
-
 def makeLivePlots(plots, plotFields, plotKwargsList):
 	if plotFields is None:
 		return None
@@ -199,14 +140,6 @@ def makeLivePlots(plots, plotFields, plotKwargsList):
 		livePlots.append(lp)
 	return livePlots
 
-"""
-def makeLivePlots(plots, plotFields, plotKwargsList):
-	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
-	for i in range(len(plots)):
-		plotKwargsList[i]["ax"] = plots[i].canvas.ax
-	return makePlots(plots, plotFields, plotKwargsList)
-"""
-
 def plotHeader(livePlot, header):
 	livePlot.start(header.start)
 	for e in header.events():
@@ -222,6 +155,7 @@ def openFileAsString(filename, macros=[]):
 	for m in macros:
 		left, right = m.split(":")
 		fileContents = fileContents.replace("$("+left+")", right)
+		#fileContents = re.sub("\$\("+left+"=(.*?)\)", right, fileContents)
 	return fileContents
 
 
