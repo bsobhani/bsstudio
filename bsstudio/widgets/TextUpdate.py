@@ -62,9 +62,17 @@ class TextUpdateBase(CodeObject):
 		#self.timer_update_time.start()
 
 
+
 class TextUpdate(QLabel, TextUpdateBase):
 	def __init__(self, parent=None,*,sig=""):
 		#self.parent = parent
 		#super().__init__(parent)
 		QLabel.__init__(self, parent)
 		TextUpdateBase.__init__(self, parent, sig=sig)
+
+
+	def runCode(self):
+		try:
+			TextUpdateBase.runCode(self)
+		except:
+			self.setText("unknown")

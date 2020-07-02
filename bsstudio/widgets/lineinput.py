@@ -19,7 +19,10 @@ class LineInput(QLineEdit, TextUpdateBase):
 
 	def timeout(self):
 		if not self.hasFocus():
-			self.runInNameSpace(self.textUpdateCode)
+			try:
+				self.runInNameSpace(self.textUpdateCode)
+			except:
+				self.setText("unknown")
 
 	def default_code(self):
 		return """
