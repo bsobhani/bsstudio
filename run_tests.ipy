@@ -1,3 +1,5 @@
 import bsstudio
 %cd tests
-%run -i tests.py
+#%run -i test_3.py
+%run -m pytest test_3.py
+%cd ..

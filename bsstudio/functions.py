@@ -5,6 +5,7 @@ from collections import Iterable
 import time
 import re
 from IPython import get_ipython
+from .lib.pydollarmacro import pydollarmacro
 
 
 class dotdict(dict):
@@ -156,10 +157,13 @@ def openFileAsString(filename, macros=[]):
 		print("Read error")
 		return
 
+	macro_dict = {}
 	for m in macros:
 		left, right = m.split(":")
-		fileContents = fileContents.replace("$("+left+")", right)
-		#fileContents = re.sub("\$\("+left+"=(.*?)\)", right, fileContents)
+		macro_dict[left] = right
+		#fileContents = fileContents.replace("$("+left+")", right)
+		#fileContents = fileContents.replace("$("+left+")", right)
+	fileContents = pydollarmacro.subst_str_all(fileContents, macro_dict)
 	return fileContents
 
 

@@ -71,7 +71,11 @@ $(motor).setpoint.value -= eval(ui().lineEdit.text())</cstring>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit"/>
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="text">
+      <string>$(delta=)</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="CodeButton" name="codebutton_2">

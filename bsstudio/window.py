@@ -70,12 +70,11 @@ def create_main_window(f):
 
 		
 
-def load(f, noexec=False, noApp=False):
+def load(f, noexec=False):
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
-	if not noApp:
-		if not app: # create QApplication if it doesnt exist 
-			app = QtWidgets.QApplication(sys.argv)
-		#app = QtWidgets.QApplication([])
+	if not app: # create QApplication if it doesnt exist 
+		app = QtWidgets.QApplication(sys.argv)
+	#app = QtWidgets.QApplication([])
 
 
 	#mainWindow = MainWindow(f)
@@ -89,3 +88,4 @@ def load(f, noexec=False, noApp=False):
 	#app.exec_()
 	if not noexec:
 		app.exec_()
+	return app

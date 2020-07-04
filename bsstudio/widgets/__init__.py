@@ -6,4 +6,5 @@ from .Base import all_bss_widgets, BaseWidget
 from .embedframe import EmbedFrame, CodeContainer, OpenWindowButton
 from .lineinput import LineInput
 from .databrowser import DataBrowser
+from .arrayimage import ArrayImage
 from .ophydproperties import OphydProperties

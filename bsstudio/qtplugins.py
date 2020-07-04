@@ -16,6 +16,7 @@ from .widgets import CodeContainer
 from .widgets import DataBrowser
 from .widgets import OphydProperties
 from .widgets import OpenWindowButton
+from .widgets import ArrayImage
 from PyQt5.QtDesigner import QPyDesignerTaskMenuExtension 
 
 class GeoLocationMenuEntry(QPyDesignerTaskMenuExtension):
@@ -206,3 +207,4 @@ pCodeContainter = plugin_factory(CodeContainer, is_container=True)
 pDataBrowser = plugin_factory(DataBrowser)
 pOphydProperties = plugin_factory(OphydProperties)
 pOpenWindowButton = plugin_factory(OpenWindowButton)
+pArrayImage = plugin_factory(ArrayImage)

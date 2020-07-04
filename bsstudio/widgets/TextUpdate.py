@@ -22,11 +22,11 @@ class TextUpdateBase(CodeObject):
 		CodeObject.__init__(self, parent)
 		self._source = ""
 		self.source = sig
-		self.timer_update_time = QtCore.QTimer(self) 
-		self.timer_update_time.setInterval(1500)
-		#self.timer_update_time.timeout.connect(self.runCode)
-		self.timer_update_time.timeout.connect(self.timeout)
-		self.timer_update_time.start()
+		self.timer = QtCore.QTimer(self) 
+		self.timer.setInterval(1500)
+		#self.timer.timeout.connect(self.runCode)
+		self.timer.timeout.connect(self.timeout)
+		self.timer.start()
 
 	def timeout(self):
 		self.runCode()
@@ -55,11 +55,11 @@ class TextUpdateBase(CodeObject):
 		self._source = val
 
 	def pause_widget(self):
-		self.timer_update_time.stop()
+		self.timer.stop()
 
 	def resume_widget(self):
 		self._paused = False
-		#self.timer_update_time.start()
+		#self.timer.start()
 
 
 
