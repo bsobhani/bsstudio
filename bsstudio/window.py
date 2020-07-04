@@ -5,6 +5,7 @@ from .worker import Worker
 import typing
 from .widgets import BaseWidget
 #from .widgets import all_bss_widgets
+import threading
 
 def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 	# Global function to find the (open) QMainWindow in application
@@ -69,11 +70,12 @@ def create_main_window(f):
 
 		
 
-def load(f, noexec=False):
+def load(f, noexec=False, noApp=False):
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
-	if not app: # create QApplication if it doesnt exist 
-		app = QtWidgets.QApplication(sys.argv)
-	#app = QtWidgets.QApplication([])
+	if not noApp:
+		if not app: # create QApplication if it doesnt exist 
+			app = QtWidgets.QApplication(sys.argv)
+		#app = QtWidgets.QApplication([])
 
 
 	#mainWindow = MainWindow(f)
@@ -86,5 +88,4 @@ def load(f, noexec=False):
 			w.resume_widget()
 	#app.exec_()
 	if not noexec:
-		#app.exit(app.exec_())
 		app.exec_()

@@ -11,6 +11,7 @@ import textwrap
 from .CodeButton import CodeButton
 from .CodeObject import CodeObject
 from ..worker import Worker, WorkerSignals
+from IPython import get_ipython
 
 
 def parseField(field):

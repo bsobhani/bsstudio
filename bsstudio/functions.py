@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from collections import Iterable
 import time
 import re
+from IPython import get_ipython
 
 
 class dotdict(dict):
@@ -66,9 +67,12 @@ def evalInNs(w, cmd):
 	ip = get_ipython()
 	ns = ip.user_ns.copy()
 	ns['self'] = w
-	if "ui" not in ns.keys():
-		ui = makeUiFunction(w)
-		ns["ui"] = ui
+	#if "ui" not in ns.keys():
+	#	ui = makeUiFunction(w)
+	#	ns["ui"] = ui
+	ui = makeUiFunction(w)
+	ns["ui"] = ui
+	print(cmd)
 	return eval(cmd, ns)
 
 

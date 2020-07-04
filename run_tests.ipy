@@ -1,0 +1,3 @@
+import bsstudio
+%cd tests
+%run -i tests.py

@@ -10,6 +10,7 @@ from itertools import dropwhile
 import textwrap
 from .Base import BaseWidget
 import sys
+from IPython import get_ipython
 
 
 class CodeObject(BaseWidget):
