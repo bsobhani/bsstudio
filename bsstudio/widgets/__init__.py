@@ -8,3 +8,4 @@ from .lineinput import LineInput
 from .databrowser import DataBrowser
 from .arrayimage import ArrayImage
 from .ophydproperties import OphydProperties
+from .booleanled import BooleanLED

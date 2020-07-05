@@ -17,6 +17,7 @@ from .widgets import DataBrowser
 from .widgets import OphydProperties
 from .widgets import OpenWindowButton
 from .widgets import ArrayImage
+from .widgets import BooleanLED
 from PyQt5.QtDesigner import QPyDesignerTaskMenuExtension 
 
 class GeoLocationMenuEntry(QPyDesignerTaskMenuExtension):
@@ -208,3 +209,4 @@ pDataBrowser = plugin_factory(DataBrowser)
 pOphydProperties = plugin_factory(OphydProperties)
 pOpenWindowButton = plugin_factory(OpenWindowButton)
 pArrayImage = plugin_factory(ArrayImage)
+pBooleanLED = plugin_factory(BooleanLED)
