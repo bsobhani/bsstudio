@@ -1,11 +1,17 @@
 from .CodeObject import CodeObject
 from .REButton import makeProperty
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSizePolicy
+from PyQt5 import QtCore
 from PyQt5.Qt import Qt
 from .embedframe import CodeContainer
 from .TextUpdate import TextUpdate
 from .lineinput import LineInput
 from ..functions import widgetValueString
+import logging
+import time
+		
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class OphydProperties(CodeContainer):
 	ophydObject = makeProperty("ophydObject")
@@ -13,6 +19,32 @@ class OphydProperties(CodeContainer):
 	def __init__(self, parent):
 		super().__init__(parent)
 		self._ophydObject = ""
+		#self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
+	def makeRow(self, obj, name, obj_name):
+		logger.debug("here1")
+		sig = getattr(obj,name)
+		hlayout = QHBoxLayout()
+		hlayout.setAlignment(Qt.AlignLeft)
+		w = QLabel(name)
+		logger.debug("here2")
+		#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+		w.setFixedHeight(25)
+		w.setFixedWidth(200)
+		hlayout.addWidget(w)
+		w = TextUpdate(self, sig=obj_name+"."+name+".value")
+		#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+		logger.debug("here3")
+		w.setFixedHeight(25)
+		w.setFixedWidth(200)
+		hlayout.addWidget(w)
+		logger.debug("here")
+		if not hasattr(sig, "write_access") or sig.write_access:
+			w = LineInput(self, sig=obj.name+"."+name+".value")
+			w.setFixedWidth(100)
+			hlayout.addWidget(w)
+		return hlayout
+
 		
 	def createFields(self, obj, obj_name):
 		print("create fields")
@@ -26,6 +58,7 @@ class OphydProperties(CodeContainer):
 		hlayout.addWidget(title)
 		layout.addLayout(hlayout)
 		for name in obj.component_names:
+			"""
 			sig = getattr(obj,name)
 			hlayout = QHBoxLayout()
 			hlayout.setAlignment(Qt.AlignLeft)
@@ -43,7 +76,12 @@ class OphydProperties(CodeContainer):
 				w = LineInput(self, sig=obj.name+"."+name+".value")
 				w.setFixedWidth(100)
 				hlayout.addWidget(w)
-			layout.addLayout(hlayout)
+			"""
+			try:
+				hlayout = self.makeRow(obj, name, obj_name)
+				layout.addLayout(hlayout)
+			except:
+				logger.warn("error making row for " + obj_name + " and " + name)
 		self.setLayout(layout)
 			
 	def resume_widget(self):

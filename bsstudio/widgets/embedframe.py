@@ -214,13 +214,15 @@ class OpenWindowButton(CodeButton):
 	def default_code(self):
 		return """
 			from PyQt5.QtWidgets import QDialog
-			from PyQt5 import uic
+			from PyQt5 import uic, QtCore
 			from PyQt5.QtCore import QDir
 			from bsstudio.functions import openFileAsString
 			from bsstudio.widgets.embedframe import absPath
 			import io
 			ui = self.ui
 			self.subWindow = QDialog(self)
+			self.subWindow.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
 			self.subWindow.isTopLevel = True
 			filename = self.fileName.toLocalFile()
 			if not QDir.isAbsolutePath(filename):
