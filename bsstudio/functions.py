@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox
+from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox
 from bluesky.callbacks import LivePlot, LiveGrid
 import matplotlib.pyplot as plt
 from collections import Iterable
@@ -50,6 +50,8 @@ def makeUiFunction(self):
 def defaultValueField(w):
 	if isinstance(w, QComboBox):
 		return "currentText"
+	if isinstance(w, QCheckBox):
+		return "isChecked"
 	if isinstance(w, QSpinBox):
 		return "value"
 	if isinstance(w, QDoubleSpinBox):
