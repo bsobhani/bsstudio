@@ -54,7 +54,7 @@ class TextUpdateBase(CodeObject):
 				except:
 					logger.warning("unable to interpret" + self.source)
 
-			self.updateText(str(widgetValue(v)))
+				self.updateText(str(widgetValue(v)))
 			"""[1:]
 
 	@Property(str, designable=True)
