@@ -84,3 +84,4 @@ class TextUpdate(QLabel, TextUpdateBase):
 			TextUpdateBase.runCode(self)
 		except:
 			self.setText("unknown")
+			logger.warning("unable to run TextUpdate widget with source=" + self.source)
