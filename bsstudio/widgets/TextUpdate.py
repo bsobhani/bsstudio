@@ -11,6 +11,7 @@ import textwrap
 from .CodeObject import CodeObject
 from ophyd.ophydobj import OphydObject
 
+
 def isOphyd(obj):
 	return issubclass(obj, OphydObject)
 
@@ -40,10 +41,17 @@ class TextUpdateBase(CodeObject):
 
 	def default_code(self):
 		return """
+			import logging
 			from bsstudio.functions import widgetValue
 			ui = self.ui
+			logger = logging.getLogger(__name__)
 			if self.source != "":
-				self.updateText(str(widgetValue(eval(self.source))))
+				try:
+					v = eval(self.source)
+				except:
+					logger.warning("unable to interpret" + self.source)
+
+			self.updateText(str(widgetValue(v)))
 			"""[1:]
 
 	@Property(str, designable=True)
