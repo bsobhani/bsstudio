@@ -81,6 +81,7 @@ class RECustomPlan(REButton):
 					args.append(right)
 				else:
 					kwargs[left] = right
+			RE = widgetValue(eval(self.RunEngine))
 			plots = widgetValue(eval(self.plots)[:])
 			plotFields = widgetValue(eval(self.plotFields)[:])
 			plotKwargsList = eval(self.plotKwargsList)[:]
