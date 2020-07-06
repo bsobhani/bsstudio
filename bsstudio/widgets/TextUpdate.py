@@ -10,6 +10,9 @@ from itertools import dropwhile
 import textwrap
 from .CodeObject import CodeObject
 from ophyd.ophydobj import OphydObject
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def isOphyd(obj):
