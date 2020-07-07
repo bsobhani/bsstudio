@@ -7,6 +7,9 @@ import re
 from IPython import get_ipython
 from .lib.pydollarmacro import pydollarmacro
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class dotdict(dict):
 	__getattr__ = dict.get
@@ -24,7 +27,7 @@ def getTopObject(w):
 		if isMainWindow(obj):
 			while not obj.isLoaded:
 				time.sleep(1)
-				print("sleeping for 1 second")
+				logger.info("sleeping for 1 second")
 			#print(obj.findChildren(QWidget))
 			#return obj
 			break
@@ -59,24 +62,33 @@ def defaultValueField(w):
 
 	return None
 
-def fieldValueAsString(w, field):
+def fieldValueAsString_(w, field):
 	prop = w.property(field)
-	print(prop)
 	if prop == None:
 		return str(getattr(w, field)())
 	return str(w.property(field))
 
+def fieldValueAsString(w, field):
+	try:
+		return fieldValueAsString_(w,field)
+	except:
+		logger.error("unable to get value for field "+field+" as string")
+		return None
+
 def evalInNs(w, cmd):
-	ip = get_ipython()
-	ns = ip.user_ns.copy()
-	ns['self'] = w
-	#if "ui" not in ns.keys():
-	#	ui = makeUiFunction(w)
-	#	ns["ui"] = ui
-	ui = makeUiFunction(w)
-	ns["ui"] = ui
-	print(cmd)
-	return eval(cmd, ns)
+	try:
+		ip = get_ipython()
+		ns = ip.user_ns.copy()
+		ns['self'] = w
+		ui = makeUiFunction(w)
+		ns["ui"] = ui
+		logger.info("evaluating command in namespace: "+cmd)
+		return eval(cmd, ns)
+
+	except:
+		logger.error("unable to evaluate command "+cmd+" in namespace "+str(ns.keys()))
+		return None
+
 
 
 def fieldValue(w, field):
@@ -93,7 +105,7 @@ def comboBoxValue(w):
 def widgetValueString(self, w_string, continuous=True):
 	#ui = makeUiFunction(w)
 	w = evalInNs(self, w_string)
-	print("w in widgetValueString", w)
+	logger.debug("w in widgetValueString", w)
 	if type(w) is list:
 		return [widgetValueString(x, continuous) for x in w]
 	if not isWidget(w):
@@ -115,11 +127,9 @@ def widgetValue(w, continuous=True,*,asString=False):
 		wv = comboBoxValue(w)
 	else:
 		wv = fieldValue(w, prop)
-	print("fieldvalue", wv)
 	wv_string = fieldValueAsString(w, prop)
 	if not isWidget(wv) and asString:
 		return wv_string
-	print("fieldvaluestring", wv_string)
 	if continuous:
 		return widgetValue(wv, True, asString=asString)
 	return wv
@@ -157,7 +167,7 @@ def openFileAsString(filename, macros=[]):
 	try:
 		fileContents = open(filename).read()
 	except:
-		print("Read error")
+		logger.error("Read error")
 		return
 
 	macro_dict = {}

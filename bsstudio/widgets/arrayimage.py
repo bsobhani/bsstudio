@@ -12,8 +12,8 @@ class ArrayImage(TextUpdateBase, MplWidget):
 		print("hi self")
 	def __init__(self, parent):
 		super().__init__(parent)
-		self._updatePeriod = "1500"
-		self.updatePeriod_ = 1500
+		self._updatePeriod = "2100"
+		self.updatePeriod_ = 2100
 		self.busy = False
 		#self.worker = Worker(self.canvas.ax.imshow)
 		#self.worker = Worker(TextUpdateBase.runCode)
@@ -35,8 +35,9 @@ class ArrayImage(TextUpdateBase, MplWidget):
 		if self.source != "":
 			array = eval(self.source)
 		#self.array = widgetValue(array)
-		#self.canvas.ax.imshow(self.array)
-		#self.canvas.draw()
+		array = widgetValue(array)
+		self.canvas.ax.imshow(array)
+		self.canvas.draw()
 		self.setUpdatePeriod(eval(self.updatePeriod))
 		"""[1:]
 

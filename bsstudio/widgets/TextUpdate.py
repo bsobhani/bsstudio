@@ -13,6 +13,7 @@ from ophyd.ophydobj import OphydObject
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def isOphyd(obj):
@@ -36,25 +37,32 @@ class TextUpdateBase(CodeObject):
 		self.runCode()
 
 	def updateText(self, val):
-		try:
-			self.setText(val)
-		except:
+		if val == None:
 			self.setText("unknown")
+			logger.info("setting text to unknown")
+		else:
+			self.setText(val)
 	
 
 	def default_code(self):
 		return """
 			import logging
-			from bsstudio.functions import widgetValue
+			from bsstudio.functions import widgetValue, fieldValue
+			#logger = logging.getLogger(__name__)
 			ui = self.ui
-			logger = logging.getLogger(__name__)
-			if self.source != "":
-				try:
-					v = eval(self.source)
-				except:
-					logger.warning("unable to interpret" + self.source)
-
-				self.updateText(str(widgetValue(v)))
+			v = widgetValue(fieldValue(self, "source"))
+			#if self.source != "":
+			#	try:
+			#		v = eval(self.source)
+			#		print("able to interpret" + self.source)
+			#		logger.info("info:able to interpret" + self.source)
+			#	except:
+			#		logger.warning("unable to interpret" + self.source)
+			#		print("unable to interpret" + self.source)
+			#
+			if v is not None:
+				v = str(v)
+			self.updateText(v)
 			"""[1:]
 
 	@Property(str, designable=True)
@@ -82,9 +90,9 @@ class TextUpdate(QLabel, TextUpdateBase):
 		TextUpdateBase.__init__(self, parent, sig=sig)
 
 
-	def runCode(self):
-		try:
-			TextUpdateBase.runCode(self)
-		except:
-			self.setText("unknown")
-			logger.warning("unable to run TextUpdate widget with source=" + self.source)
+	#def runCode(self):
+	#	try:
+	#		TextUpdateBase.runCode(self)
+	#	except:
+	#		self.setText("unknown")
+	#		logger.warning("unable to run TextUpdate widget with source=" + self.source)
