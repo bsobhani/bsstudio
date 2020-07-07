@@ -108,12 +108,13 @@ def widgetValue(w, continuous=True,*,asString=False):
 		return {k : widgetValue(w[k], continuous) for k in w.keys()}
 	if not isWidget(w):
 		return w
-	if isinstance(w, QComboBox):
-		wv = comboBoxValue(w)
 	prop = w.property("valueField")
 	if prop == None:
 		prop = defaultValueField(w)
-	wv = fieldValue(w, prop)
+	if isinstance(w, QComboBox):
+		wv = comboBoxValue(w)
+	else:
+		wv = fieldValue(w, prop)
 	print("fieldvalue", wv)
 	wv_string = fieldValueAsString(w, prop)
 	if not isWidget(wv) and asString:
