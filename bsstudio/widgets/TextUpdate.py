@@ -32,9 +32,22 @@ class TextUpdateBase(CodeObject):
 		#self.timer.timeout.connect(self.runCode)
 		self.timer.timeout.connect(self.timeout)
 		self.timer.start()
+		self._useThreading = True
+		self.threadpool.setMaxThreadCount(1)
+
+	#def timeout(self):
+	#	self.runCode()
 
 	def timeout(self):
-		self.runCode()
+		#if self.worker is not None or self.worker.
+		if self.threadpool.waitForDone(0):
+			#TextUpdateBase.timeout(self)
+			self.runCode()
+			#self.timer.setInterval(self.updatePeriod_)
+		else:
+			logger.info("Thread still running for TextUpdateBase")
+			#self.threadpool.clear()
+		
 
 	def updateText(self, val):
 		if val == None:
@@ -46,20 +59,9 @@ class TextUpdateBase(CodeObject):
 
 	def default_code(self):
 		return """
-			import logging
 			from bsstudio.functions import widgetValue, fieldValue
-			#logger = logging.getLogger(__name__)
 			ui = self.ui
 			v = widgetValue(fieldValue(self, "source"))
-			#if self.source != "":
-			#	try:
-			#		v = eval(self.source)
-			#		print("able to interpret" + self.source)
-			#		logger.info("info:able to interpret" + self.source)
-			#	except:
-			#		logger.warning("unable to interpret" + self.source)
-			#		print("unable to interpret" + self.source)
-			#
 			if v is not None:
 				v = str(v)
 			self.updateText(v)

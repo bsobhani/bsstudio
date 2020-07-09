@@ -11,12 +11,17 @@ import textwrap
 from .CodeObject import CodeObject
 from functools import partial
 
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 class CodeButton(QPushButton, CodeObject):
 	def __init__(self, parent=None):
 		self.parent = parent
 		QPushButton.__init__(self, parent)
 		CodeObject.__init__(self, parent)
 		self.clicked.connect(self.runCode)
+		self._useThreading = True
 
 	def default_code(self):
 
@@ -25,4 +30,10 @@ class CodeButton(QPushButton, CodeObject):
 		print(self.objectName()+" pressed...")
 		"""[1:]
 		return code_string
+
+	def runCode(self):
+		if self.threadpool.waitForDone(0):
+			CodeObject.runCode(self)
+		else:
+			logger.info("Thread still running for CodeButton")
 	

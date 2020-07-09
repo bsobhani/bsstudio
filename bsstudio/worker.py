@@ -15,5 +15,6 @@ class Worker(QtCore.QRunnable):
 	@QtCore.pyqtSlot()
 	def run(self):
 		self.fn(*self.args, **self.kwargs)
+		#self.finished.emit()
 
 

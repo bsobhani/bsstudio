@@ -11,6 +11,13 @@ import textwrap
 from .Base import BaseWidget
 import sys
 from IPython import get_ipython
+from PyQt5 import QtCore
+from ..worker import Worker, WorkerSignals
+from functools import partial
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class CodeObject(BaseWidget):
@@ -21,8 +28,11 @@ class CodeObject(BaseWidget):
 		code = textwrap.dedent(self.default_code())
 		self._code = bytes(code, "utf-8")
 		self._paused = True
+		self.threadpool = QtCore.QThreadPool(self)
+		self._useThreading = False
 		self._copyNameSpace = copyNameSpace
 		self.ns_extras = {}
+		#self.worker = None
 
 	def addToNameSpace(self, key, val):
 		self.ns_extras[key] = val
@@ -67,4 +77,13 @@ class CodeObject(BaseWidget):
 
 
 	def runCode(self):
-		self.runInNameSpace(self._code)
+		if not self._useThreading:
+			self.runInNameSpace(self._code)
+		else:
+			logger.info("Active thread count: "+str(self.threadpool.activeThreadCount()))
+			logger.info("Max thread count: "+str(self.threadpool.maxThreadCount()))
+			logger.info("No other threads running: "+str(self.threadpool.waitForDone(0)))
+			#self.worker = Worker(partial(self.runInNameSpace, self._code))
+			#self.threadpool.start(self.worker)
+			worker = Worker(partial(self.runInNameSpace, self._code))
+			self.threadpool.start(worker)

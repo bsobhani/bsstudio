@@ -100,7 +100,6 @@ class EmbedFrame(QFrame, CodeObject):
 		self.resizeEvent = resizeEvent
 	
 	def updateUi(self):
-		print("update ui")
 		from PyQt5.QtWidgets import QWidget
 		from PyQt5.QtWidgets import QVBoxLayout
 		ui = self.ui
@@ -210,6 +209,7 @@ class OpenWindowButton(CodeButton):
 		self._fileName = QUrl()
 		self._macros = []
 		self._useRelativePath = True
+		self._useThreading = False
 	
 	def default_code(self):
 		return """
@@ -245,14 +245,6 @@ class OpenWindowButton(CodeButton):
 
 	@fileName.setter
 	def fileName(self, val):
-		"""
-		path = convertPath(self, val, toRelative=self._useRelativePath)
-		if path is None:
-			self._fileName=val
-		else:
-			self._fileName=path
-		return
-		"""
 		path = convertPath(self, val, toRelative=self._useRelativePath)
 		if path is not None:
 			self._fileName=path
