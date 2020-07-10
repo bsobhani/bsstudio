@@ -32,7 +32,6 @@ def convertPath(w, fileUrl,*,toRelative):
 	val = fileUrl
 	valPath = val.toLocalFile()
 	self = w
-	print(self.windowFileName(), fileUrl)
 	if self.windowFileName()=="":
 		alert = QMessageBox(self)
 		alert.setText("Current file has no name. Please save the current file first and try again.")
@@ -74,7 +73,8 @@ class CodeContainer(QFrame, CodeObject):
 			"""[1:]
 
 	def resume_widget(self):
-		self._paused = False
+		#self._paused = False
+		CodeObject.resume_widget(self)
 		self.runCode()
 		
 
@@ -152,9 +152,9 @@ class EmbedFrame(QFrame, CodeObject):
 			"""[1:]
 
 	def resume_widget(self):
-		self._paused = False
+		#self._paused = False
+		CodeObject.resume_widget(self)
 		self.runCode()
-		#self.resume_children()
 		
 
 	#fileName = makeProperty("fileName", QUrl, notify=fileChanged)

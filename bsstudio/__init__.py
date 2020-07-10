@@ -4,5 +4,4 @@ from .window import load
 from .test import abc
 import logging
 #logging.basicConfig(level=logging.WARN, format='%(message)s')
-logging.basicConfig(level=logging.WARN)
-
+logging.basicConfig(level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')

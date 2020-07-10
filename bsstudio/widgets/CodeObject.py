@@ -15,6 +15,7 @@ from PyQt5 import QtCore
 from ..worker import Worker, WorkerSignals
 from functools import partial
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -53,13 +54,10 @@ class CodeObject(BaseWidget):
 
 	def resume_widget(self):
 		self._paused = False
+		self.setup_namespace()
 
 		
-
-	def runInNameSpace(self, codeString):
-		if self._paused:
-			return
-		#ns = vars(sys.modules[self.__class__.__module__])
+	def setup_namespace(self):
 		ip = get_ipython()
 		if self._copyNameSpace:
 			ns = ip.user_ns.copy()
@@ -68,9 +66,18 @@ class CodeObject(BaseWidget):
 			
 		ns['self'] = self
 		ns.update(self.ns_extras)
+		self.ns = ns
+
+	def runInNameSpace(self, codeString):
+		if self._paused:
+			return
+		#ns = vars(sys.modules[self.__class__.__module__])
+		
 		try:
 			#exec(self._code, ns)
-			exec(codeString, ns)
+			t0 = time.time()
+			exec(codeString, self.ns)
+			logger.info("exec duration: "+str(time.time()-t0))
 		except BaseException as e:
 			additional_info = " Check code in "+self.objectName()+" widget"
 			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
