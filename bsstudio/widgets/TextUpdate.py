@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPush
 #from qtpy.QtDesigner import QExtensionFactory
 from PyQt5.QtDesigner import QExtensionFactory
 from PyQt5.QtCore import pyqtProperty as Property
+from PyQt5.QtCore import QThread
 from ophyd.sim import det
 import inspect
 from itertools import dropwhile
@@ -13,12 +14,22 @@ from ophyd.ophydobj import OphydObject
 import logging
 from ..worker import Worker
 import time
+import threading
+import sip
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+main_thread = threading.current_thread()
+
 def isOphyd(obj):
 	return issubclass(obj, OphydObject)
+
+class WorkerThread(QThread):
+	def setFunc(self, func):
+		self.func = func
+	def run(self):
+		self.func()	
 
 class TextUpdateBase(CodeObject):
 	def __init__(self, parent=None,*,sig=""):
@@ -31,19 +42,22 @@ class TextUpdateBase(CodeObject):
 		self.source = sig
 		self._useThreading = False
 		self.threadpool.setMaxThreadCount(1)
-		self.worker = Worker(self.start_thread)
+		#self.worker = Worker(self.start_thread)
+		self.worker = WorkerThread(self)
+		self.worker.setFunc(self.start_thread)
 		self.start_time = time.time()
 
 	def timeout(self):
 		self.runCode()
 
 	def start_thread(self):
-		while True:
-			t0 = time.time()
-			self.timeout()
-			logger.info("runCode duration: "+str(time.time()-t0))
-			logger.info("update period: "+str(self.updatePeriod_))
-			time.sleep(self.updatePeriod_/1000)
+		t0 = time.time()
+		while not sip.isdeleted(self):
+			if time.time()-t0>self.updatePeriod_/1000 and main_thread.isAlive():
+				self.timeout()
+				logger.info("runCode duration: "+str(time.time()-t0))
+				logger.info("update period: "+str(self.updatePeriod_))
+				#time.sleep(self.updatePeriod_/1000)
 
 	def updateText(self, val):
 		if val == None:
@@ -76,15 +90,20 @@ class TextUpdateBase(CodeObject):
 
 	def resume_widget(self):
 		CodeObject.resume_widget(self)
-		self.threadpool.clear()
-		self.threadpool.start(self.worker)
+		#self.threadpool.clear()
+		#self.threadpool.start(self.worker)
+		self.worker.start()
+
 
 
 
 class TextUpdate(QLabel, TextUpdateBase):
 	def __init__(self, parent=None,*,sig=""):
-		#self.parent = parent
+		self.parent = parent
 		#super().__init__(parent)
 		QLabel.__init__(self, parent)
 		TextUpdateBase.__init__(self, parent, sig=sig)
+
+	def atq(self):
+		print("about to quit")
 
