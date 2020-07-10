@@ -58,6 +58,7 @@ class TextUpdateBase(CodeObject):
 				logger.info("runCode duration: "+str(time.time()-t0))
 				logger.info("update period: "+str(self.updatePeriod_))
 				#time.sleep(self.updatePeriod_/1000)
+				t0 = time.time()
 
 	def updateText(self, val):
 		if val == None:
