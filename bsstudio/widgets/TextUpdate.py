@@ -34,10 +34,13 @@ class TextUpdateBase(CodeObject):
 		self.worker = Worker(self.start_thread)
 		self.start_time = time.time()
 
+	def timeout(self):
+		self.runCode()
+
 	def start_thread(self):
 		while True:
 			t0 = time.time()
-			self.runCode()
+			self.timeout()
 			logger.info("runCode duration: "+str(time.time()-t0))
 			logger.info("update period: "+str(self.updatePeriod_))
 			time.sleep(self.updatePeriod_/1000)
