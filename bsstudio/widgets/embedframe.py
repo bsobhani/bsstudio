@@ -8,6 +8,10 @@ from .Base import BaseWidget
 from bsstudio.functions import openFileAsString, getTopObject
 import os
 
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 def relPath(selfPath, filePath):
 	#cp = os.path.commonpath([selfPath, filePath])
@@ -78,10 +82,26 @@ class CodeContainer(QFrame, CodeObject):
 		self.runCode()
 		
 
+def deleteWidgetAndChildren(w):
+	w.setParent(None)
+	for c in w.children():
+		c.deleteLater()
+	w.deleteLater()
+
 
 class EmbedFrame(QFrame, CodeObject):
 
 	fileChanged = pyqtSignal()
+
+	def deleteSubWindow(self):
+		if hasattr(self,"subWindow"):
+			#self.subWindow.setParent(None)
+			#for c in self.subWindow.children():
+			#	c.deleteLater()
+			#self.subWindow.deleteLater()
+			deleteWidgetAndChildren(self.subWindow)
+		else:
+			logger.info("no existing subwindow")
 
 
 
@@ -106,11 +126,12 @@ class EmbedFrame(QFrame, CodeObject):
 
 		from PyQt5 import uic
 		import io
-		if hasattr(self,"subWindow"):
-			self.subWindow.setParent(None)
-			for c in self.subWindow.children():
-				c.deleteLater()
-			self.subWindow.deleteLater()
+		#if hasattr(self,"subWindow"):
+		#	self.subWindow.setParent(None)
+		#	for c in self.subWindow.children():
+		#		c.deleteLater()
+		#	self.subWindow.deleteLater()
+		self.deleteSubWindow()
 
 		self.subWindow = QWidget(self)
 		
@@ -202,7 +223,7 @@ class EmbedFrame(QFrame, CodeObject):
 	#useRelativePath = makeProperty("useRelativePath", bool)
 
 
-class OpenWindowButton(CodeButton):
+class OpenWindowButtonOld(CodeButton):
 
 	def __init__(self, parent=None):
 		super().__init__(parent)
@@ -232,6 +253,91 @@ class OpenWindowButton(CodeButton):
 			uic.loadUi(fileObject, self.subWindow)
 			#self.resize(self.subWindow.size())
 			self.subWindow.show()
+			
+			self.resume_children()
+			"""[1:]
+
+	def resume_widget(self):
+		self._paused = False
+	
+
+	@Property("QUrl")
+	def fileName(self):
+		return self._fileName
+
+	@fileName.setter
+	def fileName(self, val):
+		path = convertPath(self, val, toRelative=self._useRelativePath)
+		if path is not None:
+			self._fileName=path
+
+	@Property(bool)
+	def useRelativePath(self):
+		return self._useRelativePath
+
+	@useRelativePath.setter
+	def useRelativePath(self, val):
+		self._useRelativePath = val
+		self.fileName = self._fileName
+
+		
+
+	#fileName = makeProperty("fileName", QUrl)
+	macros = makeProperty("macros", "QStringList")
+
+class OpenWindowButton(CodeButton):
+
+
+	def deleteSubWindow(self):
+		if hasattr(self,"subWindow"):
+			deleteWidgetAndChildren(self.subWindow)
+		else:
+			logger.info("no existing subwindow")
+
+
+
+
+	def __init__(self, parent=None):
+		super().__init__(parent)
+		self._fileName = QUrl()
+		self._macros = []
+		self._useRelativePath = True
+		self._useThreading = False
+	
+	def default_code(self):
+		return """
+			from PyQt5.QtWidgets import QDialog, QFrame, QWidget, QApplication
+			from PyQt5 import uic, QtCore
+			from PyQt5.QtCore import QDir
+			from PyQt5.Qt import Qt
+			from bsstudio.functions import openFileAsString
+			from bsstudio.widgets.embedframe import absPath, EmbedFrame
+			import time
+			import io
+			ui = self.ui
+			#if hasattr(self, "subWindow"):
+			#	print("already has subwindow")
+			#	self.subWindow.close()
+			#self.deleteSubWindow()
+			#self.subWindow = QDialog(self)
+			self.subWindow = EmbedFrame(self)
+			self.subWindow.setWindowFlags(Qt.Window)
+			#self.subWindow = QDialog(self)
+			self.subWindow.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
+			self.subWindow.isTopLevel = True
+			filename = self.fileName.toLocalFile()
+			if not QDir.isAbsolutePath(filename):
+				filename = absPath(self.windowFileName(), filename)
+			self.subWindow.uiFilePath = filename
+			fileContents = openFileAsString(filename, self.macros)
+			fileObject = io.StringIO(fileContents)
+			uic.loadUi(fileObject, self.subWindow)
+			#self.resize(self.subWindow.size())
+			self.subWindow.show()
+			self.subWindow.update()
+			self.subWindow.repaint()
+			QApplication.instance().processEvents()
 			self.resume_children()
 			"""[1:]
 

@@ -50,14 +50,17 @@ class CodeObject(BaseWidget):
 		return ""
 
 	def pause_widget(self):
+		logger.info("pausing widget")
 		self._paused = True
 
 	def resume_widget(self):
+		logger.info("unpausing widget")
 		self._paused = False
-		self.setup_namespace()
+		#self.setup_namespace()
 
 		
 	def setup_namespace(self):
+		t0 = time.time()
 		ip = get_ipython()
 		if self._copyNameSpace:
 			ns = ip.user_ns.copy()
@@ -67,17 +70,21 @@ class CodeObject(BaseWidget):
 		ns['self'] = self
 		ns.update(self.ns_extras)
 		self.ns = ns
+		logger.info("setup_namespace duration for "+self.objectName()+": "+str(time.time()-t0))
 
 	def runInNameSpace(self, codeString):
 		if self._paused:
+			logger.info("widget paused")
 			return
 		#ns = vars(sys.modules[self.__class__.__module__])
+		self.setup_namespace()
+		logger.info("runInNameSpace for "+self.objectName())
 		
 		try:
 			#exec(self._code, ns)
 			t0 = time.time()
 			exec(codeString, self.ns)
-			logger.info("exec duration: "+str(time.time()-t0))
+			logger.info("exec duration for "+self.objectName()+": "+str(time.time()-t0))
 		except BaseException as e:
 			additional_info = " Check code in "+self.objectName()+" widget"
 			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])

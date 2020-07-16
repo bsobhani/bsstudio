@@ -3,6 +3,10 @@ from .TextUpdate import TextUpdateBase
 from .REButton import makeProperty
 from PyQt5.QtWidgets import QLineEdit
 import textwrap
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class LineInput(QLineEdit, TextUpdateBase):
 	def __init__(self, parent=None,*, sig=""):
@@ -23,6 +27,8 @@ class LineInput(QLineEdit, TextUpdateBase):
 			#	self.runInNameSpace(self.textUpdateCode)
 			#except:
 			#	self.setText("unknown")
+			logger.info(self.objectName()+":timeout")
+			logger.info(self.objectName()+":code:"+str(self.textUpdateCode))
 			self.runInNameSpace(self.textUpdateCode)
 
 	def default_code(self):

@@ -11,6 +11,10 @@ import inspect
 from itertools import dropwhile
 import textwrap
 import time
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 all_bss_widgets = []
 
@@ -99,5 +103,13 @@ class BaseWidget:
 	def id(self, val):
 		self._id = val
 		self.signal.emit()
+
+	def closeEvent(self, evt):
+		logger.info("close Event")
+		self.hide()
+		#self.worker.cancel()
+		for child in self.findChildren(QWidget):
+			child.close()
+		#super().closeEvent(self)
 
 
