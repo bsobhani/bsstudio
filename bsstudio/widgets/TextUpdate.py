@@ -54,7 +54,11 @@ class TextUpdateBase(CodeObject):
 		t0 = time.time()
 		self.worker = WorkerThread(self)
 		self.worker.setFunc(self.start_thread)
+		self.timer = QtCore.QTimer(self)
+		self.timer.setInterval(self.updatePeriod_)
+		self.timer.timeout.connect(self.timeout)
 		logger.info(str(time.time()-t0) +" seconds to create thread")
+		self.threadMode = "qtimer"
 		self.start_time = time.time()
 
 	def timeout(self):
@@ -135,7 +139,10 @@ class TextUpdateBase(CodeObject):
 		#self.threadpool.clear()
 		#self.threadpool.start(self.worker)
 		t0 = time.time()
-		self.worker.start()
+		if self.threadMode == "qtimer":
+			self.timer.start()
+		elif self.threadMode == "qthread":
+			self.worker.start()
 		logger.info(str(time.time()-t0) +" seconds to start thread")
 
 

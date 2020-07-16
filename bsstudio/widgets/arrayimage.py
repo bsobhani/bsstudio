@@ -13,8 +13,8 @@ from ..worker import Worker, WorkerSignals
 class ArrayImage(TextUpdateBase, MplWidget):
 	def __init__(self, parent):
 		super().__init__(parent)
-		self._updatePeriod = "500"
-		self.updatePeriod_ = 500
+		self._updatePeriod = "1500"
+		self.updatePeriod_ = eval(self._updatePeriod)
 		self.threadpool.setMaxThreadCount(1)
 	
 	def setUpdatePeriod(self, p):
