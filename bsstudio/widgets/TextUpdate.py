@@ -17,6 +17,7 @@ from ..worker import Worker
 import time
 import threading
 import sip
+from .REButton import makeProperty
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -46,6 +47,7 @@ class TextUpdateBase(CodeObject):
 		#QLabel.__init__(self, parent)
 		CodeObject.__init__(self, parent)
 		self.updatePeriod_ = 1500
+		self._updatePeriod = "1500"
 		self._source = ""
 		self.source = sig
 		self._useThreading = False
@@ -62,7 +64,9 @@ class TextUpdateBase(CodeObject):
 		self.start_time = time.time()
 
 	def timeout(self):
+		t0 = time.time()
 		self.runCode()
+		logger.info("Timeout function duration: "+str(time.time()-t0))
 
 	def resumeWorkerThread(self):
 		WorkerThread.cancelled = False
@@ -139,12 +143,15 @@ class TextUpdateBase(CodeObject):
 		#self.threadpool.clear()
 		#self.threadpool.start(self.worker)
 		t0 = time.time()
+		self.updatePeriod_ = eval(self.updatePeriod)
 		if self.threadMode == "qtimer":
+			self.timer.setInterval(self.updatePeriod_)
 			self.timer.start()
 		elif self.threadMode == "qthread":
 			self.worker.start()
 		logger.info(str(time.time()-t0) +" seconds to start thread")
 
+	updatePeriod = makeProperty("updatePeriod")
 
 
 class TextUpdate(QLabel, TextUpdateBase):

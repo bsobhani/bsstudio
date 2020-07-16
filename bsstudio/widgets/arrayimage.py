@@ -13,9 +13,10 @@ from ..worker import Worker, WorkerSignals
 class ArrayImage(TextUpdateBase, MplWidget):
 	def __init__(self, parent):
 		super().__init__(parent)
-		self._updatePeriod = "1500"
+		self._updatePeriod = "10000"
 		self.updatePeriod_ = eval(self._updatePeriod)
-		self.threadpool.setMaxThreadCount(1)
+		#self.threadpool.setMaxThreadCount(1)
+		self.threadType = "qthread"
 	
 	def setUpdatePeriod(self, p):
 		self.updatePeriod_ = p
@@ -54,4 +55,3 @@ class ArrayImage(TextUpdateBase, MplWidget):
 	def resume_widget(self):
 		TextUpdateBase.resume_widget(self)
 
-	updatePeriod = makeProperty("updatePeriod")
