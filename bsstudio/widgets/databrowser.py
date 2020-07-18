@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtWidgets import QListWidget, QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout, QLabel, QPushButton
 from bsstudio.functions import widgetValue, plotHeader
 from collections.abc import Iterable
+import time
 
 
 class DataBrowser(CodeContainer):
@@ -31,14 +32,8 @@ class DataBrowser(CodeContainer):
 		layout.addWidget(self.listWidget)
 		self.setLayout(layout)
 
-		#self.startDateTime.dateTimeChanged.connect(self.runCode)
-		#self.endDateTime.dateTimeChanged.connect(self.runCode)
-		#self.listWidget.currentTextChanged.connect(self.runCode)
-		#self.startDateTime.dateTimeChanged.connect(self.__updateTable)
-		#self.endDateTime.dateTimeChanged.connect(self.__updateTable)
 		self.loadScansButton.clicked.connect(self.__updateTable)
-		#self.listWidget.currentTextChanged.connect(self.__replot)
-		self.listWidget.currentItemChanged.connect(self.__replot)
+		self.listWidget.itemSelectionChanged.connect(self.__replot)
 
 	def __updateTable(self):
 		self.runCode()
@@ -80,6 +75,7 @@ class DataBrowser(CodeContainer):
 				return i
 		return None
 
+	"""
 	def currentUid(self):
 		row = self.listWidget.currentRow()
 		uid_col = self.findHorizontalHeaderIndex("uid")
@@ -87,11 +83,25 @@ class DataBrowser(CodeContainer):
 		if item is None:
 			return None
 		return item.text()
+	"""
+	def currentUid(self):
+		uids = self.currentUids()
+		if len(uids)==0:
+			return None
+		return uids[0]
+
+	def currentUids(self):
+		rows = self.listWidget.selectedItems()
+		uid_col = self.findHorizontalHeaderIndex("uid")
+		uids = [item.text() for item in rows if item.column()==uid_col]
+		return uids
+		
 
 	def startData(self,key):
 		return self.dbObj[self.currentUid()].start[key]
 		
 
+	"""
 	def replot(self, plots, db):
 		from copy import copy
 		#item = self.listWidget.currentItem()
@@ -108,7 +118,25 @@ class DataBrowser(CodeContainer):
 		for p in plots:
 			plotHeader(p, db[uid])
 			p.ax.figure.tight_layout()
+	"""
 
+	def replotUid(self, plots, db, uid):
+		if uid is None:
+			return
+		if plots is None:
+			return
+		for p in plots:
+			if not hasattr(p, "ax"):
+				p._LivePlot__setup()
+		
+		for p in plots:
+			plotHeader(p, db[uid])
+			p.ax.figure.tight_layout()
+		
+
+	def replot(self, plots, db):
+		for uid in self.currentUids():
+			self.replotUid(plots, db, uid)
 
 	def default_code(self):
 		return """
@@ -131,12 +159,16 @@ class DataBrowser(CodeContainer):
 				plotArgsList = None
 			plotKwargsList = eval(self.plotKwargsList)
 			dbKwargs = widgetValue(eval(self.dbKwargs))
-			plots = makeLivePlots(plots, plotArgsList, plotKwargsList)
+			livePlots = makeLivePlots(plots, plotArgsList, plotKwargsList)
 			#self.replot(plots, db)
 			#self.updateTable(db, dbKwargs)
 			#self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
-			self._replot = partial(self.replot, plots, db)
+			self._replot = partial(self.replot, livePlots, db)
 			self._updateTable = partial(self.updateTable, db, dbKwargs)
+			#for plot in plots:
+			#	plot.canvas.update()
+			#	plot.update()
+			#	plot.canvas.draw()
 			
 			
 			"""[1:]
