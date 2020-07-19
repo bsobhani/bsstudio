@@ -2,18 +2,26 @@ from .Base import BaseWidget
 from . import CodeContainer
 from .REButton import makeProperty
 from PyQt5.QtCore import QDateTime
+from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDateTimeEdit
+from PyQt5.QtWidgets import QMenu, QAction
 from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtWidgets import QListWidget, QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout, QLabel, QPushButton
 from bsstudio.functions import widgetValue, plotHeader
 from collections.abc import Iterable
 import time
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class DataBrowser(CodeContainer):
 	def __init__(self, parent):
 		super().__init__(parent)
 		self._db = ""
+		#self._tableColumns = '["time"]'
+		self._tableColumns = ''
 		self.dbObj = None
 		self._dbKwargs = "{}"
 		self._plots = "[]"
@@ -34,6 +42,22 @@ class DataBrowser(CodeContainer):
 
 		self.loadScansButton.clicked.connect(self.__updateTable)
 		self.listWidget.itemSelectionChanged.connect(self.__replot)
+
+		self.setContextMenuPolicy(Qt.CustomContextMenu)
+		self.customContextMenuRequested.connect(self.showMenu)
+
+	def showMenu(self,event):
+		menu = QMenu()
+		#clear_action = menu.addAction("Clear Selection", self)
+		action1 = QAction("Info", self)
+		#clear_action = menu.addAction("Clear Selection", self)
+		clear_action = menu.addAction(action1)
+		#action = menu.exec_(self.mapToGlobal(event.pos()))
+		action = menu.exec_(self.mapToGlobal(event))
+		print(action.text())
+		if action.text() == "Info":
+			print("Information")
+			print(self.dbObj[self.currentUid()].start)
 
 	def __updateTable(self):
 		self.runCode()
@@ -57,6 +81,13 @@ class DataBrowser(CodeContainer):
 			cols = [k for k,v in r.start.items() if not isinstance(v,Iterable) or type(v)==str]
 			col_set.update(cols)	
 		cols = list(col_set)
+ 
+		"""
+		if self.tableColumns=="":
+			cols = list(col_set)
+		else:
+			cols = eval(self.tableColumns)
+		"""
 		self.listWidget.setColumnCount(len(cols))
 		self.listWidget.setHorizontalHeaderLabels(cols)
 		for i in range(len(results)):
@@ -69,9 +100,20 @@ class DataBrowser(CodeContainer):
 				item = QTableWidgetItem(str(r.start[cols[j]]))
 				self.listWidget.setItem(i,j,item)
 
+		if self.tableColumns!="":
+			#for colName in eval(self.tableColumns):
+			#	self.listWidget.hideColumn(self.findHorizontalHeaderIndex(colName))
+			tableColumns = eval(self.tableColumns)
+			for i in range(self.listWidget.columnCount()):
+				if self.listWidget.horizontalHeaderItem(i).text() not in tableColumns:
+					self.listWidget.hideColumn(i)
+					
+
 	def findHorizontalHeaderIndex(self, key):
+		logger.info("horizonal header count: "+str(self.listWidget.columnCount()))
 		for i in range(self.listWidget.columnCount()):
 			if self.listWidget.horizontalHeaderItem(i).text()==key:
+				logger.info(key + " found")
 				return i
 		return None
 
@@ -91,9 +133,11 @@ class DataBrowser(CodeContainer):
 		return uids[0]
 
 	def currentUids(self):
-		rows = self.listWidget.selectedItems()
+		#rows = self.listWidget.selectedItems()
 		uid_col = self.findHorizontalHeaderIndex("uid")
-		uids = [item.text() for item in rows if item.column()==uid_col]
+		#uids = [item.text() for item in rows if item.column()==uid_col]
+		rows = [item.row() for item in self.listWidget.selectedItems()]
+		uids = [self.listWidget.item(row, uid_col).text() for row in rows]
 		return uids
 		
 
@@ -121,6 +165,7 @@ class DataBrowser(CodeContainer):
 	"""
 
 	def replotUid(self, plots, db, uid):
+		logger.info("replot uid: "+uid)
 		if uid is None:
 			return
 		if plots is None:
@@ -176,5 +221,6 @@ class DataBrowser(CodeContainer):
 	db = makeProperty("db")
 	dbKwargs = makeProperty("dbKwargs")
 	plots = makeProperty("plots")
+	tableColumns = makeProperty("tableColumns")
 	plotArgsList = makeProperty("plotArgsList")
 	plotKwargsList = makeProperty("plotKwargsList")
