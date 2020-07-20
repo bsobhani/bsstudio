@@ -20,8 +20,8 @@ import sip
 from .REButton import makeProperty
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-#logger.setLevel(logging.WARN)
+#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 
 main_thread = threading.current_thread()
 
