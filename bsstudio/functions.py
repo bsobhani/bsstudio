@@ -43,7 +43,7 @@ def makeUiFunction(self):
 		d = {c.objectName(): c for c in children}
 		d["parent"] = obj.parent
 		def parentUi():
-			return obj.parent().ui()
+			return obj.parent.ui()
 		d["parentUi"] = parentUi
 		
 
