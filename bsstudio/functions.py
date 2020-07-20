@@ -142,7 +142,7 @@ def isWidget(obj):
 	
 def makeLivePlots(plots, plotFields, plotKwargsList):
 	logger.info("plotFields"+str(plotFields))
-	if plotFields is None or plotFields == []:
+	if plotFields is None or plotFields == [[]]:
 		return None
 	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
 	livePlots = []
