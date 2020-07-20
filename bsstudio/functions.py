@@ -9,6 +9,7 @@ from .lib.pydollarmacro import pydollarmacro
 
 import logging
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class dotdict(dict):
