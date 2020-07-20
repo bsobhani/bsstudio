@@ -321,7 +321,7 @@ class OpenWindowButton(CodeButton):
 			#self.deleteSubWindow()
 			self.subWindow = QDialog(self)
 			#self.subWindow = EmbedFrame(self)
-			self.subWindow.setWindowFlags(Qt.Window)
+			#self.subWindow.setWindowFlags(Qt.Window)
 			#self.subWindow = QDialog(self)
 			self.subWindow.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
@@ -335,8 +335,8 @@ class OpenWindowButton(CodeButton):
 			uic.loadUi(fileObject, self.subWindow)
 			#self.resize(self.subWindow.size())
 			self.subWindow.show()
-			self.subWindow.update()
-			self.subWindow.repaint()
+			#self.subWindow.update()
+			#self.subWindow.repaint()
 			#QApplication.instance().processEvents()
 			self.resume_children()
 			"""[1:]
