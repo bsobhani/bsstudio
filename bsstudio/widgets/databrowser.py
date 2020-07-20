@@ -6,6 +6,9 @@ from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDateTimeEdit
 from PyQt5.QtWidgets import QMenu, QAction
 from PyQt5.QtWidgets import QAbstractItemView
+from PyQt5.QtWidgets import QScrollArea
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QWidget, QDialog
 from PyQt5.QtWidgets import QListWidget, QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout, QLabel, QPushButton
 from bsstudio.functions import widgetValue, plotHeader
 from collections.abc import Iterable
@@ -14,6 +17,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+class ScrollMessageBox(QDialog):
+	def __init__(self, *args, **kwargs):
+		QMessageBox.__init__(self, *args, **kwargs)
+		#scroll = QScrollArea(self)
+		#scroll.setWidgetResizable(True)
+		layout = QVBoxLayout()
+		self.content = QLabel(self)
+		self.content.setWordWrap(True)
+		layout.addWidget(self.content)
+		self.setLayout(layout)
+		#scroll.setWidget(self.content)
+		#self.setStyleSheet("QScrollArea{min-width:300 px; min-height: 400px}")
 
 
 class DataBrowser(CodeContainer):
@@ -56,8 +72,11 @@ class DataBrowser(CodeContainer):
 		action = menu.exec_(self.mapToGlobal(event))
 		print(action.text())
 		if action.text() == "Info":
-			print("Information")
-			print(self.dbObj[self.currentUid()].start)
+			messageBox = ScrollMessageBox(self)
+			messageBox.content.setText(str(self.dbObj[self.currentUid()].start))
+			messageBox.show()
+			#print("Information")
+			#print(self.dbObj[self.currentUid()].start)
 
 	def __updateTable(self):
 		self.runCode()
@@ -137,6 +156,7 @@ class DataBrowser(CodeContainer):
 		uid_col = self.findHorizontalHeaderIndex("uid")
 		#uids = [item.text() for item in rows if item.column()==uid_col]
 		rows = [item.row() for item in self.listWidget.selectedItems()]
+		rows = list(set(rows))
 		uids = [self.listWidget.item(row, uid_col).text() for row in rows]
 		return uids
 		

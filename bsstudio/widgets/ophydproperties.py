@@ -59,25 +59,6 @@ class OphydProperties(CodeContainer):
 		hlayout.addWidget(title)
 		layout.addLayout(hlayout)
 		for name in obj.component_names:
-			"""
-			sig = getattr(obj,name)
-			hlayout = QHBoxLayout()
-			hlayout.setAlignment(Qt.AlignLeft)
-			w = QLabel(name)
-			#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-			w.setFixedHeight(25)
-			w.setFixedWidth(200)
-			hlayout.addWidget(w)
-			w = TextUpdate(self, sig=obj_name+"."+name+".value")
-			#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-			w.setFixedHeight(25)
-			w.setFixedWidth(200)
-			hlayout.addWidget(w)
-			if not hasattr(sig, "write_access") or sig.write_access:
-				w = LineInput(self, sig=obj.name+"."+name+".value")
-				w.setFixedWidth(100)
-				hlayout.addWidget(w)
-			"""
 			try:
 				hlayout = self.makeRow(obj, name, obj_name)
 				layout.addLayout(hlayout)
