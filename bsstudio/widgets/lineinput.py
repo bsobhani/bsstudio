@@ -6,7 +6,8 @@ import textwrap
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 
 class LineInput(QLineEdit, TextUpdateBase):
 	def __init__(self, parent=None,*, sig=""):
