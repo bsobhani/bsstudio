@@ -162,6 +162,8 @@ class DataBrowser(CodeContainer):
 		
 
 	def startData(self,key):
+		if self.currentUid() is None:
+			return []
 		return self.dbObj[self.currentUid()].start[key]
 		
 
