@@ -33,7 +33,7 @@ class OphydProperties(CodeContainer):
 		w.setFixedWidth(200)
 		hlayout.addWidget(w)
 		#w = TextUpdate(self, sig=obj_name+"."+name+".value")
-		w = TextUpdate(self, sig=obj_name+"."+name+".get()")
+		w = TextUpdate(self, sig=obj_name+"."+name+".get(timeout=.5)")
 		#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 		logger.debug("here3")
 		w.setFixedHeight(25)
