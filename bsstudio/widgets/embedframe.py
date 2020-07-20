@@ -337,7 +337,7 @@ class OpenWindowButton(CodeButton):
 			self.subWindow.show()
 			self.subWindow.update()
 			self.subWindow.repaint()
-			QApplication.instance().processEvents()
+			#QApplication.instance().processEvents()
 			self.resume_children()
 			"""[1:]
 
