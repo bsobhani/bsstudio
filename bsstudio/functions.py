@@ -140,6 +140,7 @@ def isWidget(obj):
 	return issubclass(obj.__class__, QWidget)
 	
 def makeLivePlots(plots, plotFields, plotKwargsList):
+	logger.info("plotFields"+str(plotFields))
 	if plotFields is None or plotFields == []:
 		return None
 	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
