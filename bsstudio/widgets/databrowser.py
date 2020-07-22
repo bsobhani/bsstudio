@@ -35,7 +35,7 @@ class DataTableWidgetItem(QTableWidgetItem):
 	def __lt__(self, other):
 		try:
 			return float(self.text()) < float(other.text())
-		finally:
+		except:
 			return self.text() < other.text() 	
 
 class DataBrowser(CodeContainer):
