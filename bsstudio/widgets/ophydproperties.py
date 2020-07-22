@@ -35,7 +35,7 @@ class OphydProperties(CodeContainer):
 		#w = TextUpdate(self, sig=obj_name+"."+name+".value")
 		if hasattr(sig, "value"):
 			logger.info("hasattr value:"+obj.name)
-			w = TextUpdate(self, sig=obj_name+"."+name+".get(timeout=.05)")
+			w = TextUpdate(self, sig=obj_name+"."+name+".get(timeout=.5)")
 		else:
 			logger.info("does not hasattr value:"+obj.name)
 			w = TextUpdate(self, sig="str('unknown')")
