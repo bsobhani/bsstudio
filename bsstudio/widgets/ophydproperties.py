@@ -32,8 +32,13 @@ class OphydProperties(CodeContainer):
 		w.setFixedHeight(25)
 		w.setFixedWidth(200)
 		hlayout.addWidget(w)
-		w = TextUpdate(self, sig=obj_name+"."+name+".value")
-		#w = TextUpdate(self, sig=obj_name+"."+name+".get(timeout=.05)")
+		#w = TextUpdate(self, sig=obj_name+"."+name+".value")
+		if hasattr(sig, "value"):
+			logger.info("hasattr value:"+obj.name)
+			w = TextUpdate(self, sig=obj_name+"."+name+".get(timeout=.05)")
+		else:
+			logger.info("does not hasattr value:"+obj.name)
+			w = TextUpdate(self, sig="str('unknown')")
 		#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 		logger.debug("here3")
 		w.setFixedHeight(25)
