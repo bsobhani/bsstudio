@@ -21,7 +21,8 @@ class CodeButton(QPushButton, CodeObject):
 		QPushButton.__init__(self, parent)
 		CodeObject.__init__(self, parent)
 		self.clicked.connect(self.runCode)
-		self._useThreading = True
+		#self._useThreading = True
+		self.threadType = "qthread"
 
 	def default_code(self):
 
