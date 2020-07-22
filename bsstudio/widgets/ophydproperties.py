@@ -32,8 +32,8 @@ class OphydProperties(CodeContainer):
 		w.setFixedHeight(25)
 		w.setFixedWidth(200)
 		hlayout.addWidget(w)
-		w = TextUpdate(self, sig=obj_name+"."+name+".value")
-		#w = TextUpdate(self, sig=obj_name+"."+name+".get(timeout=.5)")
+		#w = TextUpdate(self, sig=obj_name+"."+name+".value")
+		w = TextUpdate(self, sig=obj_name+"."+name+".get(timeout=.5)")
 		#w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 		logger.debug("here3")
 		w.setFixedHeight(25)
@@ -41,7 +41,8 @@ class OphydProperties(CodeContainer):
 		hlayout.addWidget(w)
 		logger.debug("here")
 		if not hasattr(sig, "write_access") or sig.write_access:
-			w = LineInput(self, sig=obj_name+"."+name+".value")
+			#w = LineInput(self, sig=obj_name+"."+name+".value")
+			w = LineInput(self, sig=obj_name+"."+name+".put(eval(self.text())) #")
 			w.setFixedWidth(100)
 			hlayout.addWidget(w)
 		return hlayout

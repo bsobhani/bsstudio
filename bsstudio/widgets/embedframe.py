@@ -51,7 +51,7 @@ def convertPath(w, fileUrl,*,toRelative):
 	if self.windowFileName() is None or toRelative!=os.path.isabs(valPath):
 		#self._fileName=val
 		#return None
-		print("self.windowFileName is None")
+		logger.info("self.windowFileName is None")
 		#return None
 		return val
 	if toRelative:

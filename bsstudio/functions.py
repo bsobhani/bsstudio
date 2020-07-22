@@ -9,7 +9,7 @@ from .lib.pydollarmacro import pydollarmacro
 
 import logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 
 
 class dotdict(dict):
@@ -73,7 +73,7 @@ def fieldValueAsString(w, field):
 	try:
 		return fieldValueAsString_(w,field)
 	except:
-		logger.error("unable to get value for field "+field+" as string")
+		logger.warn("unable to get value for field "+field+" as string")
 		return None
 
 def evalInNs(w, cmd):
@@ -87,7 +87,7 @@ def evalInNs(w, cmd):
 		return eval(cmd, ns)
 
 	except:
-		logger.error("unable to evaluate command "+str(cmd)+" in namespace "+str(ns.keys()))
+		logger.warn("unable to evaluate command "+str(cmd)+" in namespace "+str(ns.keys()))
 		return None
 
 

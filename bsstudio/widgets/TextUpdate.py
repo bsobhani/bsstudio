@@ -101,11 +101,6 @@ class TextUpdateBase(CodeObject):
 
 	def default_code(self):
 		return """
-			print("inside textupdate code for "+self.objectName())
-			#try:
-			#	WorkerThread = self.worker.__class__
-			#	WorkerThread.lock.lockForRead()
-			print("running runCode in TextUpdate")
 			from bsstudio.functions import widgetValue, fieldValue
 			ui = self.ui
 			try:
@@ -115,8 +110,6 @@ class TextUpdateBase(CodeObject):
 			if v is not None:
 				v = str(v)
 			self.updateText(v)
-			#finally:
-			#	WorkerThread.lock.unlock()
 			"""[1:]
 
 	@Property(str, designable=True)

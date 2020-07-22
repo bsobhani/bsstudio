@@ -14,17 +14,12 @@ import time
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 
 all_bss_widgets = []
 
 global_id = 1
-"""
-class dotdict(dict):
-	__getattr__ = dict.get
-	__setattr__ = dict.__setitem__
-	__delattr__ = dict.__delitem__
-"""
 class BaseWidget:
 	signal = pyqtSignal()
 
@@ -60,30 +55,9 @@ class BaseWidget:
 			try:
 				fileName = self.core.formWindowManager().activeFormWindow().fileName()
 			except:
-				print("Error getting window filename in designer")
+				logger.info("Error getting window filename in designer")
 		return fileName
 
-	"""
-	def ui(self):
-		from ..window import isMainWindow
-		obj = self.parentWidget()
-		while True:
-			if hasattr(obj, "isTopLevel"):
-				if obj.isTopLevel==True:
-					#return obj
-					break
-			if isMainWindow(obj):
-				#print(obj.findChildren(QWidget))
-				#return obj
-				break
-			obj = obj.parentWidget()
-		#return None
-		children = obj.findChildren(QWidget)
-		d = {c.objectName(): c for c in children}
-
-		d = dotdict(d)
-		return d
-	"""
 
 	def ui(self):
 		from ..functions import makeUiFunction

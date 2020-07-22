@@ -7,7 +7,8 @@ import time
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 
 from ..worker import Worker, WorkerSignals
 class ArrayImage(TextUpdateBase, MplWidget):
@@ -25,7 +26,6 @@ class ArrayImage(TextUpdateBase, MplWidget):
 		return """
 		import logging
 		logger = logging.getLogger(__name__)
-		logger.setLevel(logging.DEBUG)
 		import time
 		t0 = time.time()
 		from PyQt5 import QtCore
