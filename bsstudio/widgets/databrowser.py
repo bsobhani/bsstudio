@@ -31,6 +31,12 @@ class ScrollMessageBox(QDialog):
 		#scroll.setWidget(self.content)
 		#self.setStyleSheet("QScrollArea{min-width:300 px; min-height: 400px}")
 
+class DataTableWidgetItem(QTableWidgetItem):
+	def __lt__(self, other):
+		try:
+			return float(self.text()) < float(other.text())
+		finally:
+			return self.text() < other.text() 	
 
 class DataBrowser(CodeContainer):
 	def __init__(self, parent):
@@ -116,7 +122,8 @@ class DataBrowser(CodeContainer):
 				#item = QTableWidgetItem(r.start['uid'])
 				print(cols[j])
 				print(r.start[cols[j]])
-				item = QTableWidgetItem(str(r.start[cols[j]]))
+				#item = QTableWidgetItem(str(r.start[cols[j]]))
+				item = DataTableWidgetItem(str(r.start[cols[j]]))
 				self.listWidget.setItem(i,j,item)
 
 		if self.tableColumns!="":
