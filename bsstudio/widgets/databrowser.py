@@ -87,6 +87,7 @@ class DataBrowser(CodeContainer):
 	def __updateTable(self):
 		self.runCode()
 		self._updateTable()
+		#self.updateTable(self.dbObj, {})
 
 
 	def __replot(self):
@@ -106,22 +107,21 @@ class DataBrowser(CodeContainer):
 			cols = [k for k,v in r.start.items() if not isinstance(v,Iterable) or type(v)==str]
 			col_set.update(cols)	
 		cols = list(col_set)
+
  
-		"""
-		if self.tableColumns=="":
-			cols = list(col_set)
-		else:
-			cols = eval(self.tableColumns)
-		"""
+
 		self.listWidget.setColumnCount(len(cols))
 		self.listWidget.setHorizontalHeaderLabels(cols)
 		for i in range(len(results)):
 			r = results[i]
+			logger.info("len results: "+str(len(results)) +", i:"+str(i))
 			#self.listWidget.addItem(r.start['uid'])
 			for j in range(len(cols)):
 				#item = QTableWidgetItem(r.start['uid'])
-				print(cols[j])
-				print(r.start[cols[j]])
+				logger.info(str(i)+" "+ str(j) + " "+str(cols[j]))
+				logger.info(r.start[cols[j]])
+				#print(str(i)+" "+ str(j) + " "+str(cols[j]))
+				#print(r.start[cols[j]])
 				#item = QTableWidgetItem(str(r.start[cols[j]]))
 				item = DataTableWidgetItem(str(r.start[cols[j]]))
 				self.listWidget.setItem(i,j,item)
@@ -143,15 +143,7 @@ class DataBrowser(CodeContainer):
 				return i
 		return None
 
-	"""
-	def currentUid(self):
-		row = self.listWidget.currentRow()
-		uid_col = self.findHorizontalHeaderIndex("uid")
-		item = self.listWidget.item(row,uid_col)
-		if item is None:
-			return None
-		return item.text()
-	"""
+
 	def currentUid(self):
 		uids = self.currentUids()
 		if len(uids)==0:
@@ -174,25 +166,6 @@ class DataBrowser(CodeContainer):
 		return self.dbObj[self.currentUid()].start[key]
 		
 
-	"""
-	def replot(self, plots, db):
-		from copy import copy
-		#item = self.listWidget.currentItem()
-		uid = self.currentUid()
-		if uid is None:
-			return
-		if plots is None:
-			return
-		for p in plots:
-			if not hasattr(p, "ax"):
-				p._LivePlot__setup()
-				
-		
-		for p in plots:
-			plotHeader(p, db[uid])
-			p.ax.figure.tight_layout()
-	"""
-
 	def replotUid(self, plots, db, uid):
 		logger.info("replot uid: "+uid)
 		if uid is None:
@@ -214,37 +187,38 @@ class DataBrowser(CodeContainer):
 
 	def default_code(self):
 		return """
-			ui = self.ui
-			from functools import partial
-			from bsstudio.functions import widgetValue
-			from bsstudio.functions import makeLivePlots 
-			db = widgetValue(eval(self.db))
-			self.dbObj = db
-			#self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
-			#self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
-			plots = eval(self.plots)
-			for plot in plots:
-				plot.canvas.ax.clear()
-			try:
-				plotArgsList = widgetValue(eval(self.plotArgsList))
-			except TypeError:
-				print(self.plotArgsList)
-				print("databrowser plotargslist exception")
-				plotArgsList = None
-			plotKwargsList = eval(self.plotKwargsList)
-			dbKwargs = widgetValue(eval(self.dbKwargs))
-			livePlots = makeLivePlots(plots, plotArgsList, plotKwargsList)
-			#self.replot(plots, db)
-			#self.updateTable(db, dbKwargs)
-			#self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
-			self._replot = partial(self.replot, livePlots, db)
-			self._updateTable = partial(self.updateTable, db, dbKwargs)
-			#for plot in plots:
-			#	plot.canvas.update()
-			#	plot.update()
-			#	plot.canvas.draw()
-			
-			
+			if 1==1:
+				ui = self.ui
+				from functools import partial
+				from bsstudio.functions import widgetValue
+				from bsstudio.functions import makeLivePlots 
+				db = widgetValue(eval(self.db))
+				self.dbObj = db
+				#self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
+				#self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
+				plots = eval(self.plots)
+				for plot in plots:
+					plot.canvas.ax.clear()
+				try:
+					plotArgsList = widgetValue(eval(self.plotArgsList))
+				except TypeError:
+					print(self.plotArgsList)
+					print("databrowser plotargslist exception")
+					plotArgsList = None
+				plotKwargsList = eval(self.plotKwargsList)
+				dbKwargs = widgetValue(eval(self.dbKwargs))
+				livePlots = makeLivePlots(plots, plotArgsList, plotKwargsList)
+				#self.replot(plots, db)
+				#self.updateTable(db, dbKwargs)
+				#self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
+				self._replot = partial(self.replot, livePlots, db)
+				self._updateTable = partial(self.updateTable, db, dbKwargs)
+				#for plot in plots:
+				#	plot.canvas.update()
+				#	plot.update()
+				#	plot.canvas.draw()
+				
+				
 			"""[1:]
 
 	db = makeProperty("db")

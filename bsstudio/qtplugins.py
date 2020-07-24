@@ -20,7 +20,7 @@ from .widgets import ArrayImage
 from .widgets import BooleanLED
 from PyQt5.QtDesigner import QPyDesignerTaskMenuExtension 
 
-class GeoLocationMenuEntry(QPyDesignerTaskMenuExtension):
+class EditCodeMenuEntry(QPyDesignerTaskMenuExtension):
 
   def __init__(self, widget, parent):
 
@@ -28,9 +28,9 @@ class GeoLocationMenuEntry(QPyDesignerTaskMenuExtension):
 
       self.widget = widget
       self.editStateAction = QAction(
-          self.tr("Update Location..."), self)
-      self.connect(self.editStateAction,
-          SIGNAL("triggered()"), self.updateLocation)
+          self.tr("Edit code..."), self)
+      #self.connect(self.editStateAction,
+      #    SIGNAL("triggered()"), self.updateLocation)
 
   def preferredEditAction(self):
       return self.editStateAction
@@ -52,12 +52,12 @@ class GeoLocationTaskMenuFactory(QExtensionFactory):
   def createExtension(self, obj, iid, parent):
       print("create extensions...")
 
-      if iid != "com.trolltech.Qt.Designer.TaskMenu":
+      if iid != "org.qt-project.Qt.Designer.TaskMenu":
           return None
 
       if isinstance(obj, CodeButton):
           print("wrhwrt")
-          return GeoLocationMenuEntry(obj, parent)
+          return EditCodeMenuEntry(obj, parent)
 
       return None
 
@@ -87,10 +87,6 @@ def plugin_factory(cls, is_container=False):
 			return "test"
 
 		def includeFile(self):
-			#return ""
-			#return "QQ_Widgets.geolocationwidget"
-			#return None
-			#return "QQ_Widgets"
 			return self.cls.__module__
 
 		def whatsThis(self):
@@ -100,30 +96,6 @@ def plugin_factory(cls, is_container=False):
 			w = self.cls(parent)
 			w.core = self.core
 			w.pause_widget()
-			#w.initialize()
-			"""
-			#w.id = 5
-			#w.setProperty("id", 50)
-			#self.core.setPropertyEditor(QDesignerPropertyEditorInterface() )
-			@pyqtSlot(result=QVariant)
-			def print_test():
-				print("asdf1234")
-				return QVariant(5)
-			if self.core.propertyEditor():
-				#self.core.propertyEditor().setObject(self.core.propertyEditor().object())
-				#self.core.propertyEditor().setObject(QWidget(parent))
-				self.core.propertyEditor().setPropertyValue("id", QVariant(66), True)
-				w._id=66
-				print(w._id)
-				#self.core.propertyEditor().setProperty("iasdf1d", 66)
-				print(self.domXml())
-				print(self.core.propertyEditor().object())
-				print(self.core.propertyEditor().currentPropertyName())
-				#self.core.propertyEditor().setPropertyValue("id", 66, 1)
-			#w.style().unpolish(w)
-			#w.style().polish(w)
-			#w.update()
-			"""
 			return w
 
 		def init_core(self):
@@ -133,20 +105,15 @@ def plugin_factory(cls, is_container=False):
 			core = self.core
 			children = core.formWindowManager().children()
 			a = QAction("zzz",core.formWindowManager())
+			"""
 			for c in children:
 				if hasattr(c, "iconText"):
 					def hi():
 						print("aaaaa")
-						#print(c.actionGroup().parent())
-						#a.setActionGroup(c.actionGroup())
 						print(core.actionEditor())
 						return "Hello"
-					#c.setToolTip("asdfb")
-					#c.triggered.connect(hi)
+			"""
 
-			a.setToolTip("nnnnn")
-			a.setIconText("abcd")
-			a.setText("zzz")
 			def preview():
 				import os
 				print("preview")
@@ -157,36 +124,28 @@ def plugin_factory(cls, is_container=False):
 				path_import = "import sys\nsys.path.insert(0, '"+path+"')"
 
 				#cmd = 'ipython --profile=collection --matplotlib=qt5 -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
-				cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
-				#os.spawnl(os.P_NOWAIT, cmd)
+				cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", False)"'
 				os.system(cmd + " &")
 
 				p = core.findChildren(QWidget)
-				print(p)
-				#core.actionEditor().addAction(a)
-				#print(core.actionEditor().actions())
 	
 				
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
 			p.triggered.disconnect()
 			p.triggered.connect(preview)
 			
-			#print(core.formWindowManager().children())
 			core_initialized = True
 
 		def initialize(self, core):
 			if self.initialized:
 				return
-			#get_ipython()
 			self.core = core
 			self.init_core()
 
 			self.manager = core.extensionManager()
 			if self.manager:
 				factory = GeoLocationTaskMenuFactory(parent=self.manager)
-				#factory = QExtensionFactory(parent=self.manager)
-				#print(self.manager.registerExtensions, factory)
-				self.manager.registerExtensions(factory,'com.trolltech.Qt.Designer.TaskMenu')	
+				#self.manager.registerExtensions(factory,'org.qt-project.Qt.Designer.TaskMenu')	
 			self.initialized = True
 
 

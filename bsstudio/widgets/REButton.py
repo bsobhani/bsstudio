@@ -58,7 +58,6 @@ class REButton(CodeButton):
 
 class RECustomPlan(REButton):
 	def __init__(self, parent):
-		print("here custom plan")
 		super().__init__(parent)
 		self._arguments = []
 		self._plan = ""
