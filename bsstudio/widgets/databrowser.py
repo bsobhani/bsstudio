@@ -119,11 +119,14 @@ class DataBrowser(CodeContainer):
 			for j in range(len(cols)):
 				#item = QTableWidgetItem(r.start['uid'])
 				logger.info(str(i)+" "+ str(j) + " "+str(cols[j]))
-				logger.info(r.start[cols[j]])
+				try:
+					field = r.start[cols[j]]
+				except KeyError:
+					field = None
 				#print(str(i)+" "+ str(j) + " "+str(cols[j]))
 				#print(r.start[cols[j]])
 				#item = QTableWidgetItem(str(r.start[cols[j]]))
-				item = DataTableWidgetItem(str(r.start[cols[j]]))
+				item = DataTableWidgetItem(str(field))
 				self.listWidget.setItem(i,j,item)
 
 		if self.tableColumns!="":
@@ -132,7 +135,10 @@ class DataBrowser(CodeContainer):
 			tableColumns = eval(self.tableColumns)
 			for i in range(self.listWidget.columnCount()):
 				if self.listWidget.horizontalHeaderItem(i).text() not in tableColumns:
+					logger.info("hiding column "+self.listWidget.horizontalHeaderItem(i).text())
 					self.listWidget.hideColumn(i)
+				else:
+					self.listWidget.showColumn(i)
 					
 
 	def findHorizontalHeaderIndex(self, key):

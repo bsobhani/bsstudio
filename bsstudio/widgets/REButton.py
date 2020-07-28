@@ -85,6 +85,8 @@ class RECustomPlan(REButton):
 			plotFields = widgetValue(eval(self.plotFields)[:])
 			plotKwargsList = eval(self.plotKwargsList)[:]
 			livePlots = makeLivePlots(plots, plotFields, plotKwargsList)
+			if livePlots is None:
+				livePlots = []
 			ts = [RE.subscribe(lp) for lp in livePlots]
 	
 			plan = widgetValue(eval(self.plan))
@@ -137,6 +139,8 @@ class Scan1DButton(REButton):
 		plotFields = eval(self.plotFields)[:]
 		plotKwargsList = eval(self.plotKwargsList)[:]
 		livePlots = makeLivePlots(plots, plotFields, plotKwargsList)
+		if livePlots is None:
+			livePlots = []
 		ts = [RE.subscribe(lp) for lp in livePlots]
 	
 		plan = scan(ophyd_detector_list, motor, startPosition, endPosition, numSteps)
