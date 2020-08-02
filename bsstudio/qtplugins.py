@@ -19,6 +19,20 @@ from .widgets import OpenWindowButton
 from .widgets import ArrayImage
 from .widgets import BooleanLED
 from PyQt5.QtDesigner import QPyDesignerTaskMenuExtension 
+from PyQt5.Qt import Qt
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import QObject
+from PyQt5.QtWidgets import QTreeView, QFileSystemModel
+import time
+
+from . import git
+
+#splash = QLabel("test")
+#splash.setWindowFlags(Qt.SplashScreen)
+#splash.show()
+#splash.update()
+#splash.repaint()
+#time.sleep(60)
 
 class EditCodeMenuEntry(QPyDesignerTaskMenuExtension):
 
@@ -42,7 +56,7 @@ class EditCodeMenuEntry(QPyDesignerTaskMenuExtension):
       dialog = GeoLocationDialog(self.widget)
       dialog.exec_()
 
-class GeoLocationTaskMenuFactory(QExtensionFactory):
+class EditCodeTaskMenuFactory(QExtensionFactory):
 
   def __init__(self, parent = None):
 
@@ -60,6 +74,16 @@ class GeoLocationTaskMenuFactory(QExtensionFactory):
           return EditCodeMenuEntry(obj, parent)
 
       return None
+
+def debug_prompt(vars):
+	while(True):
+		cmd = input()
+		if cmd == "q":
+			break
+		try:
+			exec(cmd,vars)
+		except:
+			print("unable to run command")
 
 core_initialized = False
 def plugin_factory(cls, is_container=False):
@@ -105,14 +129,17 @@ def plugin_factory(cls, is_container=False):
 			core = self.core
 			children = core.formWindowManager().children()
 			a = QAction("zzz",core.formWindowManager())
-			"""
-			for c in children:
-				if hasattr(c, "iconText"):
-					def hi():
-						print("aaaaa")
-						print(core.actionEditor())
-						return "Hello"
-			"""
+
+			print("lllllllllgasdf")
+			print(core)
+			print(dir(core.formWindowManager()))
+			app = QApplication.instance()
+			app.setApplicationDisplayName("BS Studio")
+			from PyQt5.QtWidgets import QLabel
+			#self.asdf = QDockWidget()
+			#self.asdf.show()
+			#debug_prompt(locals())
+			
 
 			def preview():
 				import os
@@ -125,9 +152,22 @@ def plugin_factory(cls, is_container=False):
 
 				#cmd = 'ipython --profile=collection --matplotlib=qt5 -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
 				cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", False)"'
-				os.system(cmd + " &")
+				#print(core.formWindowManager().children())
+				#os.system(cmd + " &")
+				#for c in core.children():
+				#	print(c.dumpObjectInfo())
 
-				p = core.findChildren(QWidget)
+				#p = core.formWindowManager().findChildren(QObject)
+				#self.asdf = QLabel("asdf")
+				self.asdf = QTreeView()
+				self.asdf.model = QFileSystemModel()
+				self.asdf.model.setRootPath('')
+				self.asdf.setModel(self.asdf.model)
+				self.view = git.run()
+				core.actionEditor().layout().addWidget(self.view)
+				#core.actionEditor().layout().addWidget(self.asdf)
+				#self.asdf.show()
+				#debug_prompt(locals())
 	
 				
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
@@ -144,7 +184,7 @@ def plugin_factory(cls, is_container=False):
 
 			self.manager = core.extensionManager()
 			if self.manager:
-				factory = GeoLocationTaskMenuFactory(parent=self.manager)
+				factory = EditCodeTaskMenuFactory(parent=self.manager)
 				#self.manager.registerExtensions(factory,'org.qt-project.Qt.Designer.TaskMenu')	
 			self.initialized = True
 
