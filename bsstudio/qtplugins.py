@@ -25,7 +25,6 @@ from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QTreeView, QFileSystemModel
 import time
 
-from . import git
 
 #splash = QLabel("test")
 #splash.setWindowFlags(Qt.SplashScreen)
@@ -163,11 +162,25 @@ def plugin_factory(cls, is_container=False):
 				self.asdf.model = QFileSystemModel()
 				self.asdf.model.setRootPath('')
 				self.asdf.setModel(self.asdf.model)
+				from . import git
+				from PyQt5.QtWidgets import QTabWidget
 				self.view = git.run()
-				core.actionEditor().layout().addWidget(self.view)
+				self.tabs = QTabWidget()
+				self.tabs.addTab(self.view, "Files")
+				self.commit_view = git.make_commit()
+				self.tabs.addTab(self.commit_view, "Commit")
+				#self.status_view = git.make_status()
+				#core.actionEditor().layout().addWidget(self.view)
+				core.actionEditor().layout().addWidget(self.tabs)
+				#core.actionEditor().layout().addWidget(self.commit_view)
+				#core.actionEditor().layout().addWidget(self.status_view)
 				#core.actionEditor().layout().addWidget(self.asdf)
 				#self.asdf.show()
 				#debug_prompt(locals())
+				#self.view.show()
+				#self.view.hide()
+				#self.view.show()
+				#self.view.repaint()
 	
 				
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
