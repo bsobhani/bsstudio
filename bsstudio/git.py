@@ -6,9 +6,9 @@ from cola.widgets.commitmsg import CommitMessageEditor
 from cola.widgets.status import StatusWidget
 from PyQt5.QtWidgets import QApplication
 
-cola.app.initialize()
-args = cola.main.parse_args(["cola"])
-context = cola.app.application_init(args)
+#cola.app.initialize()
+#args = cola.main.parse_args(["cola"])
+#context = cola.app.application_init(args)
 
 def cmd_browse(args):
 	from cola.widgets.browse import worktree_browser  # pylint: disable=all
@@ -18,10 +18,12 @@ def cmd_browse(args):
 	#return cola.app.application_run(context, view)
 	cola.app.initialize_view(context, view)
 	cola.app.default_start(context, view)
-	#return context.app.start()
+	context.app.start()
 	return view
 
 def run():
+	#app = QApplication.instance()
+	args = cola.main.parse_args(["cola"])
 
 	#view = worktree_browser(context,show=False)
 	#view.show()
@@ -31,6 +33,8 @@ def run():
 	return cmd_browse(args)
 
 def make_commit():
+	args = cola.main.parse_args(["cola"])
+	context = cola.app.application_init(args)
 	commit_editor = CommitMessageEditor(context, None)
 	cola.app.initialize_view(context, commit_editor)
 	cola.app.default_start(context, commit_editor)
@@ -50,10 +54,10 @@ def make_status():
 
 if __name__=="__main__":
 	app1 = QApplication([])
-	commit_editor = make_commit()
+	#commit_editor = make_commit()
 	#status_editor = make_status()
 	#print(context.model)
 	view = run()
-	view.show()
+	#view.show()
 	app1.exec_()
 	print("here")
