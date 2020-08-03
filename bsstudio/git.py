@@ -32,7 +32,9 @@ def run():
 
 def make_commit():
 	commit_editor = CommitMessageEditor(context, None)
-	commit_editor.show()
+	cola.app.initialize_view(context, commit_editor)
+	cola.app.default_start(context, commit_editor)
+	#commit_editor.show()
 	return commit_editor
 
 def make_status():
@@ -48,7 +50,7 @@ def make_status():
 
 if __name__=="__main__":
 	app1 = QApplication([])
-	#commit_editor = make_commit()
+	commit_editor = make_commit()
 	#status_editor = make_status()
 	#print(context.model)
 	view = run()
