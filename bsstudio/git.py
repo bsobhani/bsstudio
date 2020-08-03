@@ -39,6 +39,7 @@ def make_commit():
 	cola.app.initialize_view(context, commit_editor)
 	cola.app.default_start(context, commit_editor)
 	#commit_editor.show()
+	context.app.start()
 	return commit_editor
 
 def make_status():
