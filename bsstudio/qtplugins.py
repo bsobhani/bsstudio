@@ -33,6 +33,12 @@ import time
 #splash.repaint()
 #time.sleep(60)
 
+def clearLayout(layout):
+	while layout.count():
+		child = layout.takeAt(0)
+		if child.widget():
+			child.widget().deleteLater()
+
 class EditCodeMenuEntry(QPyDesignerTaskMenuExtension):
 
   def __init__(self, widget, parent):
@@ -171,6 +177,7 @@ def plugin_factory(cls, is_container=False):
 				self.tabs.addTab(self.commit_view, "Commit")
 				#self.status_view = git.make_status()
 				#core.actionEditor().layout().addWidget(self.view)
+				clearLayout(core.actionEditor().layout())
 				core.actionEditor().layout().addWidget(self.tabs)
 				#core.actionEditor().layout().addWidget(self.commit_view)
 				#core.actionEditor().layout().addWidget(self.status_view)
