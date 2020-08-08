@@ -91,7 +91,13 @@ class CodeObject(BaseWidget):
 			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
 
 
+	def runPaused(self):
+		pass
+
 	def runCode(self):
+		if self._paused:
+			self.runPaused()
+			return
 		if not self._useThreading:
 			self.runInNameSpace(self._code)
 		else:

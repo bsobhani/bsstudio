@@ -119,6 +119,9 @@ class EmbedFrame(QFrame, CodeObject):
 			#self.updateUi()
 			self.runCode()
 		self.resizeEvent = resizeEvent
+
+	def runPaused(self):
+		self.updateUi()
 	
 	def updateUi(self):
 		from PyQt5.QtWidgets import QWidget
