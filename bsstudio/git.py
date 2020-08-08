@@ -4,6 +4,7 @@ import cola.main
 from cola.widgets.browse import worktree_browser
 from cola.widgets.commitmsg import CommitMessageEditor
 from cola.widgets.status import StatusWidget
+from cola.widgets.branch import BranchesWidget
 from PyQt5.QtWidgets import QApplication
 
 #cola.app.initialize()
@@ -42,6 +43,18 @@ def make_commit():
 	context.app.start()
 	return commit_editor
 
+def make_branches():
+	args = cola.main.parse_args(["cola"])
+	context = cola.app.application_init(args)
+	commit_editor = BranchesWidget(context, None)
+	cola.app.initialize_view(context, commit_editor)
+	cola.app.default_start(context, commit_editor)
+	#commit_editor.show()
+	context.app.start()
+	return commit_editor
+
+
+
 def make_status():
 	class TB:
 		def add_corner_widget(self, val):
@@ -56,6 +69,7 @@ def make_status():
 if __name__=="__main__":
 	app1 = QApplication([])
 	#commit_editor = make_commit()
+	branches_editor = make_branches()
 	#status_editor = make_status()
 	#print(context.model)
 	view = run()

@@ -90,6 +90,7 @@ def debug_prompt(vars):
 		except:
 			print("unable to run command")
 
+
 core_initialized = False
 def plugin_factory(cls, is_container=False):
 	print(cls)
@@ -127,6 +128,7 @@ def plugin_factory(cls, is_container=False):
 			w.pause_widget()
 			return w
 
+		
 		def init_core(self):
 			global core_initialized
 			if core_initialized:
@@ -144,6 +146,37 @@ def plugin_factory(cls, is_container=False):
 			#self.asdf = QDockWidget()
 			#self.asdf.show()
 			#debug_prompt(locals())
+
+			def make_git():
+				#self.asdf = QLabel("asdf")
+				self.asdf = QTreeView()
+				self.asdf.model = QFileSystemModel()
+				self.asdf.model.setRootPath('')
+				self.asdf.setModel(self.asdf.model)
+				from . import git
+				from PyQt5.QtWidgets import QTabWidget
+				self.view = git.run()
+				self.tabs = QTabWidget()
+				self.tabs.addTab(self.view, "Files")
+				self.commit_view = git.make_commit()
+				self.tabs.addTab(self.commit_view, "Commit")
+				self.branches_view = git.make_branches()
+				self.tabs.addTab(self.branches_view, "Branches")
+				#self.status_view = git.make_status()
+				#core.actionEditor().layout().addWidget(self.view)
+				clearLayout(core.actionEditor().layout())
+				core.actionEditor().layout().addWidget(self.tabs)
+				#core.actionEditor().layout().addWidget(self.commit_view)
+				#core.actionEditor().layout().addWidget(self.status_view)
+				#core.actionEditor().layout().addWidget(self.asdf)
+				#self.asdf.show()
+				#debug_prompt(locals())
+				#self.view.show()
+				#self.view.hide()
+				#self.view.show()
+				#self.view.repaint()
+
+
 			
 
 			def preview():
@@ -158,36 +191,13 @@ def plugin_factory(cls, is_container=False):
 				#cmd = 'ipython --profile=collection --matplotlib=qt5 -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\")"'
 				cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", False)"'
 				#print(core.formWindowManager().children())
-				#os.system(cmd + " &")
+				os.system(cmd + " &")
 				#for c in core.children():
 				#	print(c.dumpObjectInfo())
 
 				#p = core.formWindowManager().findChildren(QObject)
-				#self.asdf = QLabel("asdf")
-				self.asdf = QTreeView()
-				self.asdf.model = QFileSystemModel()
-				self.asdf.model.setRootPath('')
-				self.asdf.setModel(self.asdf.model)
-				from . import git
-				from PyQt5.QtWidgets import QTabWidget
-				self.view = git.run()
-				self.tabs = QTabWidget()
-				self.tabs.addTab(self.view, "Files")
-				self.commit_view = git.make_commit()
-				self.tabs.addTab(self.commit_view, "Commit")
-				#self.status_view = git.make_status()
-				#core.actionEditor().layout().addWidget(self.view)
-				clearLayout(core.actionEditor().layout())
-				core.actionEditor().layout().addWidget(self.tabs)
-				#core.actionEditor().layout().addWidget(self.commit_view)
-				#core.actionEditor().layout().addWidget(self.status_view)
-				#core.actionEditor().layout().addWidget(self.asdf)
-				#self.asdf.show()
-				#debug_prompt(locals())
-				#self.view.show()
-				#self.view.hide()
-				#self.view.show()
-				#self.view.repaint()
+				#make_git()
+
 	
 				
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")

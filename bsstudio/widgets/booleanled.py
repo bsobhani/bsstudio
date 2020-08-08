@@ -18,6 +18,7 @@ class BooleanLED(QFrame, TextUpdateBase):
 		self.onColor = Qt.green
 		self.setVal(False)
 		self.setAutoFillBackground(True)
+		#self.setStyleSheet("border: 1px solid black;")
 	def default_code(self):
 		return """
 		from PyQt5.Qt import Qt

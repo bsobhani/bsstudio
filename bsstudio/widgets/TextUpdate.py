@@ -1,11 +1,12 @@
 from PyQt5 import QtDesigner, QtGui, QtWidgets, QtCore
 #from qtpy.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPushButton
-from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPushButton, QPlainTextEdit
+from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPushButton, QPlainTextEdit, QFrame
 #from qtpy.QtDesigner import QExtensionFactory
 from PyQt5.QtDesigner import QExtensionFactory
 from PyQt5.QtCore import pyqtProperty as Property
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import QReadWriteLock
+from PyQt5.Qt import Qt
 from ophyd.sim import det
 import inspect
 from itertools import dropwhile
@@ -129,7 +130,7 @@ class TextUpdateBase(CodeObject):
 		while not self.worker.isFinished() and self.worker.isRunning():
 			logger.info("worker not finished")
 			time.sleep(2)
-		super().closeEvent(self)
+		super().closeEvent(evt)
 
 	def resume_widget(self):
 		CodeObject.resume_widget(self)
@@ -153,4 +154,10 @@ class TextUpdate(QLabel, TextUpdateBase):
 		#super().__init__(parent)
 		QLabel.__init__(self, parent)
 		TextUpdateBase.__init__(self, parent, sig=sig)
+		#self.setStyleSheet("border: 1px solid black;")
+		#self.setLineWidth(1)
+		#self.setAlignment(Qt.AlignHCenter)
+		self.setAlignment(Qt.AlignCenter)
+		self.setFrameShape(QFrame.Box)
+		self.setFrameShadow(QFrame.Sunken)
 
