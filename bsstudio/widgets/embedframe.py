@@ -116,7 +116,8 @@ class EmbedFrame(QFrame, CodeObject):
 		original = self.resizeEvent
 		def resizeEvent(event):
 			original(event)
-			self.updateUi()
+			#self.updateUi()
+			self.runCode()
 		self.resizeEvent = resizeEvent
 	
 	def updateUi(self):
