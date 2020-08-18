@@ -122,6 +122,12 @@ class EmbedFrame(QFrame, CodeObject):
 
 	def runPaused(self):
 		self.updateUi()
+
+	def getAbsPath(self):
+		filename = self.fileName.toLocalFile()
+		if not QDir.isAbsolutePath(filename):
+			filename = absPath(self.windowFileName(), filename)
+		return filename
 	
 	def updateUi(self):
 		from PyQt5.QtWidgets import QWidget

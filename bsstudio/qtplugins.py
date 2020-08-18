@@ -23,6 +23,11 @@ from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QTreeView, QFileSystemModel
+import inspect
+import bsstudio
+from PyQt5.QtCore import QFile
+from PyQt5.Qt import Qt
+from PyQt5.QtDesigner import QDesignerFormWindowInterface
 import time
 
 
@@ -38,6 +43,64 @@ def clearLayout(layout):
 		child = layout.takeAt(0)
 		if child.widget():
 			child.widget().deleteLater()
+
+global core
+
+class EditTemplateMenuEntry(QPyDesignerTaskMenuExtension):
+
+	def action(self):
+		from PyQt5.QtWidgets import QMessageBox
+		messageBox = QMessageBox(None)
+		messageBox.setText("Coming soon...")
+		self.messageBox = messageBox
+		#self.messageBox.show()
+		self.open_template()
+
+	def open_template(self):
+		#filename = "/home/bsobhani/bsw/bss_test83.ui"
+		filename = self.widget.getAbsPath()
+		print(filename)
+		file = QFile(filename)
+		file.open(QFile.ReadWrite)
+		#core.formWindowManager().activeFormWindow().setContents(file)
+		#core.formWindowManager().addFormWindow(core.formWindowManager().createFormWindow())
+		orig = core.formWindowManager().activeFormWindow()
+		self.p = core.formWindowManager().activeFormWindow().parent()
+		#self.p = QWidget()
+		self.win = core.formWindowManager().createFormWindow(self.p,Qt.Widget)
+		print("win width", self.win.width())
+		print("win height", self.win.height())
+		self.win.setContents(file)
+		print(self.win.contents())
+		print("win width", self.win.geometry().width())
+		print("win height", self.win.height())
+		self.win.setHidden(False)
+		#self.win.setVisible(True)
+		self.win.setFileName(filename)
+		self.win.show()
+		
+		core.formWindowManager().addFormWindow(self.win)
+		core.formWindowManager().setActiveFormWindow(self.win)
+		main = core.actionEditor().parent().parent().parent()
+		mdiArea = main.children()[5]
+		from PyQt5.QtWidgets import QMdiSubWindow
+		self.subwindow = QMdiSubWindow(mdiArea)
+		self.subwindow.setWidget(self.win)
+		self.subwindow.show()
+
+	def __init__(self, widget, parent):
+
+		QPyDesignerTaskMenuExtension.__init__(self, parent)
+
+		self.widget = widget
+		self.editStateAction = QAction(self.tr("Edit template..."), self)
+		self.editStateAction.triggered.connect(self.action)
+
+	def preferredEditAction(self):
+		return self.editStateAction
+
+	def taskActions(self):
+		return [self.editStateAction]
 
 class EditCodeMenuEntry(QPyDesignerTaskMenuExtension):
 
@@ -57,9 +120,6 @@ class EditCodeMenuEntry(QPyDesignerTaskMenuExtension):
   def taskActions(self):
       return [self.editStateAction]
 
-  def updateLocation(self):
-      dialog = GeoLocationDialog(self.widget)
-      dialog.exec_()
 
 class EditCodeTaskMenuFactory(QExtensionFactory):
 
@@ -77,6 +137,10 @@ class EditCodeTaskMenuFactory(QExtensionFactory):
       if isinstance(obj, CodeButton):
           print("wrhwrt")
           return EditCodeMenuEntry(obj, parent)
+
+      if isinstance(obj, EmbedFrame):
+          print("wrhwrt")
+          #return EditTemplateMenuEntry(obj, parent)
 
       return None
 
@@ -133,6 +197,7 @@ def plugin_factory(cls, is_container=False):
 			global core_initialized
 			if core_initialized:
 				return
+			global core
 			core = self.core
 			children = core.formWindowManager().children()
 			a = QAction("zzz",core.formWindowManager())
@@ -177,14 +242,17 @@ def plugin_factory(cls, is_container=False):
 				#self.view.repaint()
 
 
+			def diff_between_objects(a, b):
+				for k in dir(a):
+					if getattr(a, k) != getattr(b, k):
+						print(k, getattr(a, k), getattr(b, k))	
 			
+
 
 			def preview():
 				import os
 				print("preview")
 				fileName = core.formWindowManager().activeFormWindow().fileName()
-				import inspect
-				import bsstudio
 				path = os.path.dirname(inspect.getfile(bsstudio))
 				path_import = "import sys\nsys.path.insert(0, '"+path+"')"
 
@@ -192,9 +260,15 @@ def plugin_factory(cls, is_container=False):
 				cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", False)"'
 				#print(core.formWindowManager().children())
 				os.system(cmd + " &")
+				
+				#debug_prompt(locals())
+				#diff_between_objects(orig, self.win)
+				#core.formWindowManager().actionVerticalLayout()
+				#QDesignerFormWindowInterface(None,Qt.Dialog)
 				#for c in core.children():
 				#	print(c.dumpObjectInfo())
 
+				#open_template()
 				#p = core.formWindowManager().findChildren(QObject)
 				#make_git()
 
@@ -215,7 +289,7 @@ def plugin_factory(cls, is_container=False):
 			self.manager = core.extensionManager()
 			if self.manager:
 				factory = EditCodeTaskMenuFactory(parent=self.manager)
-				#self.manager.registerExtensions(factory,'org.qt-project.Qt.Designer.TaskMenu')	
+				self.manager.registerExtensions(factory,'org.qt-project.Qt.Designer.TaskMenu')	
 			self.initialized = True
 
 
