@@ -65,7 +65,10 @@ def create_main_window(f):
 			print("close event")
 			#for child in self.children():
 			for child in self.findChildren(QtWidgets.QWidget):
-				child.close()
+				try:
+					child.close()
+				except:
+					None
 			self.deleteLater()
 
 	global mainWindow

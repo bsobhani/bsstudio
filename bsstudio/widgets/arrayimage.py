@@ -70,6 +70,11 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		logger.info("time at end of runCode: "+str(t1-t0))
 		"""[1:]
 
+	def closeEvent(self, evt):
+		self.pause_widget()
+		self.worker.cancel()
+		pg.GraphicsLayoutWidget.closeEvent(self,evt)
+		TextUpdateBase.closeEvent(self,evt)
 
 	def resume_widget(self):
 		TextUpdateBase.resume_widget(self)
