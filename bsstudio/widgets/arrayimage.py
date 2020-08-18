@@ -2,6 +2,7 @@ from .TextUpdate import TextUpdateBase
 from .mplwidget import MplWidget
 from .REButton import makeProperty
 from PyQt5 import QtCore
+from PyQt5.QtWidgets import QVBoxLayout
 import pyqtgraph as pg
 import time
 
@@ -18,6 +19,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		pg.GraphicsLayoutWidget.__init__(self, parent)
 		TextUpdateBase.__init__(self, parent)
 		self._updatePeriod = "10000"
+		self._enableHistogram = False
 		self.updatePeriod_ = eval(self._updatePeriod)
 		#self.threadpool.setMaxThreadCount(1)
 		self.threadType = "qthread"
@@ -34,6 +36,10 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		self.view.setContentsMargins(0,0,0,0)
 		print(self.centralWidget)
 		self.view.addItem(self.imv)
+		self.hist = pg.HistogramLUTItem(image=self.imv,fillHistogram=True)
+		#self.hist.setLevels(0,256)
+		self.setLayout(QVBoxLayout())
+		self.addItem(self.hist)
 		#pg.GraphicsView.setCentralItem(self, self.imv)
 	
 	def setUpdatePeriod(self, p):
@@ -49,6 +55,8 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		from bsstudio.functions import widgetValue
 		from bsstudio.worker import Worker, WorkerSignals
 		import numpy as np
+		if not self.enableHistogram:
+			self.hist.hide()
 		#self.canvas.ax.clear()
 		array = None
 		logger.info("time before eval source: "+str(time.time()-t0))
@@ -59,8 +67,12 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		t2 = time.time()
 		logger.info("time before imshow: "+str(t2-t0))
 		#self.canvas.ax.imshow(array)
-		self.imv.setImage(array)
-		self.view.autoRange(padding=0)
+		if not hasattr(self,"ran_once"):
+			self.imv.setImage(array,autoRange=True, autoLevels=True)
+			self.hist.setHistogramRange(self.imv.levels[0],self.imv.levels[1],padding=0)
+			self.view.autoRange(padding=0)
+		else:
+			self.imv.setImage(array,autoRange=False, autoLevels=False)
 		t3 = time.time()
 		logger.info("time after imshow: "+str(t3-t0))
 		#self.canvas.draw()
@@ -68,6 +80,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		self.setUpdatePeriod(eval(self.updatePeriod))
 		t1 = time.time()
 		logger.info("time at end of runCode: "+str(t1-t0))
+		self.ran_once = True
 		"""[1:]
 
 	def closeEvent(self, evt):
@@ -78,6 +91,8 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 
 	def resume_widget(self):
 		TextUpdateBase.resume_widget(self)
+
+	enableHistogram = makeProperty("enableHistogram", bool)
 
 
 class ArrayImage2(TextUpdateBase, MplWidget):
