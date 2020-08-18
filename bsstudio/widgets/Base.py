@@ -83,7 +83,10 @@ class BaseWidget:
 		self.hide()
 		#self.worker.cancel()
 		for child in self.findChildren(QWidget):
-			child.close()
+			try:
+				child.close()
+			except:
+				None
 		#super().closeEvent(self)
 
 
