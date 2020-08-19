@@ -9,3 +9,4 @@ from .databrowser import DataBrowser
 from .arrayimage import ArrayImage
 from .ophydproperties import OphydProperties
 from .booleanled import BooleanLED
+from .barupdate import BarUpdate

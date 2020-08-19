@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox
+from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox, QLineEdit
 from bluesky.callbacks import LivePlot, LiveGrid
 import matplotlib.pyplot as plt
 from collections import Iterable
@@ -60,6 +60,8 @@ def defaultValueField(w):
 		return "value"
 	if isinstance(w, QDoubleSpinBox):
 		return "value"
+	if issubclass(w.__class__, QLineEdit):
+		return "text"
 
 	return None
 
