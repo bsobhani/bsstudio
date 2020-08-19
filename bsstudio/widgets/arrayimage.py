@@ -41,6 +41,14 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		self.setLayout(QVBoxLayout())
 		self.addItem(self.hist)
 		#pg.GraphicsView.setCentralItem(self, self.imv)
+		histogramAction = self.view.menu.addAction("Histogram")
+		histogramAction.triggered.connect(self.histogramToggle)
+		
+	def histogramToggle(self):
+		if self.hist.isVisible():
+			self.hist.hide()
+		else:
+			self.hist.show()
 	
 	def setUpdatePeriod(self, p):
 		self.updatePeriod_ = p
