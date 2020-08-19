@@ -63,8 +63,8 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		from bsstudio.functions import widgetValue
 		from bsstudio.worker import Worker, WorkerSignals
 		import numpy as np
-		if not self.enableHistogram:
-			self.hist.hide()
+		#if not self.enableHistogram:
+		#	self.hist.hide()
 		#self.canvas.ax.clear()
 		array = None
 		logger.info("time before eval source: "+str(time.time()-t0))
@@ -100,7 +100,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 	def resume_widget(self):
 		TextUpdateBase.resume_widget(self)
 
-	enableHistogram = makeProperty("enableHistogram", bool)
+	#enableHistogram = makeProperty("enableHistogram", bool)
 
 
 class ArrayImage2(TextUpdateBase, MplWidget):
