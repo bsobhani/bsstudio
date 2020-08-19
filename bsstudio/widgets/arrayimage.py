@@ -43,6 +43,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		#pg.GraphicsView.setCentralItem(self, self.imv)
 		histogramAction = self.view.menu.addAction("Histogram")
 		histogramAction.triggered.connect(self.histogramToggle)
+		self.hist.hide()
 		
 	def histogramToggle(self):
 		if self.hist.isVisible():
