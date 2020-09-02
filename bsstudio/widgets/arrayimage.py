@@ -27,7 +27,11 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		#self.ui.roiBtn.hide()
 		#self.ui.menuBtn.hide()
 		self.imv = pg.ImageItem()
-		self.view = self.addViewBox()
+		#self.plot = pg.PlotItem()
+		#self.view = self.addViewBox()
+		self.view = self.addPlot()
+		#self.view.invertY(True)
+		#self.view.addItem(self.plot)
 		#self.view.setBorder(None)
 		#self.centralWidget.setBorder((0,0,0))
 		self.centralWidget.layout.setSpacing(0)
@@ -36,20 +40,41 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		self.view.setContentsMargins(0,0,0,0)
 		print(self.centralWidget)
 		self.view.addItem(self.imv)
+		self.lineh = self.view.addLine(y=.5)
+		self.lineh.setMovable(True)
+		self.linev = self.view.addLine(x=.5)
+		self.linev.setMovable(True)
+		self.linesToggle()
+		#self.plot.addItem(self.imv)
 		self.hist = pg.HistogramLUTItem(image=self.imv,fillHistogram=True)
 		#self.hist.setLevels(0,256)
 		self.setLayout(QVBoxLayout())
 		self.addItem(self.hist)
 		#pg.GraphicsView.setCentralItem(self, self.imv)
-		histogramAction = self.view.menu.addAction("Histogram")
+		histogramAction = self.view.getViewBox().menu.addAction("Histogram")
+		linesAction = self.view.getViewBox().menu.addAction("Lines")
 		histogramAction.triggered.connect(self.histogramToggle)
+		linesAction.triggered.connect(self.linesToggle)
 		self.hist.hide()
 		
+	def toggleWidgetVisibility(self, w):
+		if w.isVisible():
+			w.hide()
+		else:
+			w.show()
+
 	def histogramToggle(self):
+		"""
 		if self.hist.isVisible():
 			self.hist.hide()
 		else:
 			self.hist.show()
+		"""
+		self.toggleWidgetVisibility(self.hist)
+
+	def linesToggle(self):
+		self.toggleWidgetVisibility(self.lineh)
+		self.toggleWidgetVisibility(self.linev)
 	
 	def setUpdatePeriod(self, p):
 		self.updatePeriod_ = p
@@ -79,7 +104,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		if not hasattr(self,"ran_once"):
 			self.imv.setImage(array,autoRange=True, autoLevels=True)
 			self.hist.setHistogramRange(self.imv.levels[0],self.imv.levels[1],padding=0)
-			self.view.autoRange(padding=0)
+			#self.view.autoRange(padding=0)
 		else:
 			self.imv.setImage(array,autoRange=False, autoLevels=False)
 		t3 = time.time()

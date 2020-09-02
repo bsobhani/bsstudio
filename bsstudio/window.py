@@ -6,6 +6,7 @@ import typing
 from .widgets import BaseWidget
 #from .widgets import all_bss_widgets
 import threading
+import logging
 
 def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 	# Global function to find the (open) QMainWindow in application
@@ -76,7 +77,11 @@ def create_main_window(f):
 
 		
 
-def load(f, noexec=False):
+def load(f, noexec=False, verbose=False):
+	if verbose:
+		logging.basicConfig(level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
+	else:
+		logging.basicConfig(filename="log", filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
 	if not app: # create QApplication if it doesnt exist 
 		app = QtWidgets.QApplication(sys.argv)
