@@ -227,6 +227,7 @@ def plugin_factory(cls, is_container=False):
 				self.tabs.addTab(self.view, "Files")
 				self.commit_view = git.make_commit()
 				self.tabs.addTab(self.commit_view, "Commit")
+				### test
 				#self.branches_view = git.make_branches()
 				#self.tabs.addTab(self.branches_view, "Branches")
 				#self.status_view = git.make_status()
