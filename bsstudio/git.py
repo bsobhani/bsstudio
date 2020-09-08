@@ -57,12 +57,13 @@ def run():
 
 def make_commit():
 	args = cola.main.parse_args(["cola"])
-	context = cola.app.application_init(args)
+	context = new_context(args)
+	#context = cola.app.application_init(args)
 	commit_editor = CommitMessageEditor(context, None)
 	cola.app.initialize_view(context, commit_editor)
 	cola.app.default_start(context, commit_editor)
 	#commit_editor.show()
-	context.app.start()
+	#context.app.start()
 	return commit_editor
 
 def new_context(args):

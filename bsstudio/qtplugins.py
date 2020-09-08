@@ -215,6 +215,7 @@ def plugin_factory(cls, is_container=False):
 			#debug_prompt(locals())
 
 			def make_git():
+				main = core.actionEditor().parent().parent().parent()
 				#self.asdf = QLabel("asdf")
 				self.asdf = QTreeView()
 				self.asdf.model = QFileSystemModel()
@@ -241,6 +242,7 @@ def plugin_factory(cls, is_container=False):
 				#self.view.hide()
 				#self.view.show()
 				#self.view.repaint()
+				git.make_menu(main.menuWidget().addMenu("aaaaaaaaa"))
 
 
 			def diff_between_objects(a, b):
@@ -265,10 +267,8 @@ def plugin_factory(cls, is_container=False):
 				#os.system(cmd + " &")
 				
 				#debug_prompt(locals())
-				main = core.actionEditor().parent().parent().parent()
 				#main.menuWidget().addMenu(git.git_menu())
 				make_git()
-				git.make_menu(main.menuWidget().addMenu("aaaaaaaaa"))
 				
 				#diff_between_objects(orig, self.win)
 				#core.formWindowManager().actionVerticalLayout()
