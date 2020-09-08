@@ -22,10 +22,12 @@ def make_menu(menu):
 	for a in actions:
 		menu.addAction(a)
 
+context = None
 def cmd_browse(args):
 	from cola.widgets.browse import worktree_browser
 
 	#context = cola.app.application_init(args)
+	global context
 	context = new_context(args)
 	#view = worktree_browser(context, show=False, update=False, settings=args.settings)
 	view = worktree_browser(context, show=False, update=False)
@@ -48,16 +50,12 @@ def run():
 	#app = QApplication.instance()
 	args = cola.main.parse_args(["cola"])
 
-	#view = worktree_browser(context,show=False)
-	#view.show()
-	#return view
-	
-	#return cola.main.cmd_browse(args)
 	return cmd_browse(args)
 
 def make_commit():
 	args = cola.main.parse_args(["cola"])
-	context = new_context(args)
+	#context = new_context(args)
+	global context
 	#context = cola.app.application_init(args)
 	commit_editor = CommitMessageEditor(context, None)
 	cola.app.initialize_view(context, commit_editor)
