@@ -30,6 +30,7 @@ from PyQt5.QtCore import QFile
 from PyQt5.Qt import Qt
 from PyQt5.QtDesigner import QDesignerFormWindowInterface
 import time
+from . import git
 
 
 #splash = QLabel("test")
@@ -219,15 +220,14 @@ def plugin_factory(cls, is_container=False):
 				self.asdf.model = QFileSystemModel()
 				self.asdf.model.setRootPath('')
 				self.asdf.setModel(self.asdf.model)
-				from . import git
 				from PyQt5.QtWidgets import QTabWidget
 				self.view = git.run()
 				self.tabs = QTabWidget()
 				self.tabs.addTab(self.view, "Files")
 				self.commit_view = git.make_commit()
 				self.tabs.addTab(self.commit_view, "Commit")
-				self.branches_view = git.make_branches()
-				self.tabs.addTab(self.branches_view, "Branches")
+				#self.branches_view = git.make_branches()
+				#self.tabs.addTab(self.branches_view, "Branches")
 				#self.status_view = git.make_status()
 				#core.actionEditor().layout().addWidget(self.view)
 				clearLayout(core.actionEditor().layout())
@@ -253,16 +253,23 @@ def plugin_factory(cls, is_container=False):
 			def preview():
 				import os
 				print("preview")
+				core = self.core
 				fileName = core.formWindowManager().activeFormWindow().fileName()
 				path = os.path.dirname(inspect.getfile(bsstudio))
 				path_import = "import sys\nsys.path.insert(0, '"+path+"')"
 
 				#cmd = 'ipython --profile=collection --matplotlib=qt5 -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", verbose=True)"'
-				cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
+				#cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
+				cmd = 'bsui -c "import bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
 				#print(core.formWindowManager().children())
-				os.system(cmd + " &")
+				#os.system(cmd + " &")
 				
 				#debug_prompt(locals())
+				main = core.actionEditor().parent().parent().parent()
+				#main.menuWidget().addMenu(git.git_menu())
+				make_git()
+				git.make_menu(main.menuWidget().addMenu("aaaaaaaaa"))
+				
 				#diff_between_objects(orig, self.win)
 				#core.formWindowManager().actionVerticalLayout()
 				#QDesignerFormWindowInterface(None,Qt.Dialog)
@@ -271,7 +278,6 @@ def plugin_factory(cls, is_container=False):
 
 				#open_template()
 				#p = core.formWindowManager().findChildren(QObject)
-				#make_git()
 
 	
 				
