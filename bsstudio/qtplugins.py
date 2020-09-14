@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPush
 #from qtpy.QtDesigner import QExtensionFactory
 from PyQt5.QtDesigner import QExtensionFactory, QDesignerPropertyEditorInterface 
 from PyQt5.QtCore import pyqtProperty as Property
-from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import QVariant, QCoreApplication
 from PyQt5.QtCore import pyqtSlot, QObject
 from ophyd.sim import det
 import inspect
@@ -43,8 +43,15 @@ from . import git
 def clearLayout(layout):
 	while layout.count():
 		child = layout.takeAt(0)
-		if child.widget():
-			child.widget().deleteLater()
+		try:
+			child.widget().hide()
+			#if child.widget():
+			#	child.widget().hide()
+			#child.hide()
+		except:
+			None
+		#if child.widget():
+		#	child.widget().deleteLater()
 
 global core
 
@@ -61,7 +68,7 @@ class EditTemplateMenuEntry(QPyDesignerTaskMenuExtension):
 	def open_template(self):
 		#filename = "/home/bsobhani/bsw/bss_test83.ui"
 		filename = self.widget.getAbsPath()
-		print(filename)
+		#print(filename)
 		file = QFile(filename)
 		file.open(QFile.ReadWrite)
 		#core.formWindowManager().activeFormWindow().setContents(file)
@@ -70,12 +77,12 @@ class EditTemplateMenuEntry(QPyDesignerTaskMenuExtension):
 		self.p = core.formWindowManager().activeFormWindow().parent()
 		#self.p = QWidget()
 		self.win = core.formWindowManager().createFormWindow(self.p,Qt.Widget)
-		print("win width", self.win.width())
-		print("win height", self.win.height())
+		#print("win width", self.win.width())
+		#print("win height", self.win.height())
 		self.win.setContents(file)
-		print(self.win.contents())
-		print("win width", self.win.geometry().width())
-		print("win height", self.win.height())
+		#print(self.win.contents())
+		#print("win width", self.win.geometry().width())
+		#print("win height", self.win.height())
 		self.win.setHidden(False)
 		#self.win.setVisible(True)
 		self.win.setFileName(filename)
@@ -128,21 +135,22 @@ class EditCodeTaskMenuFactory(QExtensionFactory):
   def __init__(self, parent = None):
 
       QExtensionFactory.__init__(self, parent)
-      print("factory...", self.createExtension)
+      #print("factory...", self.createExtension)
 
   def createExtension(self, obj, iid, parent):
-      print("create extensions...")
+      #print("create extensions...")
 
       if iid != "org.qt-project.Qt.Designer.TaskMenu":
           return None
 
       if isinstance(obj, CodeButton):
-          print("wrhwrt")
+          #print("wrhwrt")
           return EditCodeMenuEntry(obj, parent)
 
       if isinstance(obj, EmbedFrame):
-          print("wrhwrt")
+          pass
           #return EditTemplateMenuEntry(obj, parent)
+			
 
       return None
 
@@ -159,11 +167,10 @@ def debug_prompt(vars):
 
 core_initialized = False
 def plugin_factory(cls, is_container=False):
-	print(cls)
 	class PyBSPlugin(QtDesigner.QPyDesignerCustomWidgetPlugin):
 		def __init__(self, cls):
 			QtDesigner.QPyDesignerCustomWidgetPlugin.__init__(self)
-			print("init")
+			#print("init")
 			self.cls = cls
 			self.initialized = False
 
@@ -197,6 +204,7 @@ def plugin_factory(cls, is_container=False):
 		
 		def init_core(self):
 			global core_initialized
+			#print("core initialized", core_initialized)
 			if core_initialized:
 				return
 			global core
@@ -204,18 +212,40 @@ def plugin_factory(cls, is_container=False):
 			children = core.formWindowManager().children()
 			a = QAction("zzz",core.formWindowManager())
 
-			print("lllllllllgasdf")
-			print(core)
-			print(dir(core.formWindowManager()))
+			#print("lllllllllgasdf")
+			#print(core)
+			#print(dir(core.formWindowManager()))
 			app = QApplication.instance()
 			app.setApplicationDisplayName("BS Studio")
 			from PyQt5.QtWidgets import QLabel
 			#self.asdf = QDockWidget()
 			#self.asdf.show()
 			#debug_prompt(locals())
+			
+			def try_until_successful(func):
+				import threading
+				thread = threading.Thread()
+				def run_func():
+					successful = False
+					while not successful:
+						try:
+							func()
+							successful = True
+						except:
+							None
+				thread.run = run_func
+				thread.start()
+				#run_func()
+
+			def make_git_context_menu():
+				self.main = core.actionEditor().parent().parent().parent()
+				self.menu = self.main.menuWidget().addMenu("aaaaaaaaa")
+				git.make_menu(self.menu)
+				#mainThread = QCoreApplication.instance().thread()
+				#self.menu.moveToThread(mainThread)
+				return self.menu
 
 			def make_git():
-				main = core.actionEditor().parent().parent().parent()
 				#self.asdf = QLabel("asdf")
 				self.asdf = QTreeView()
 				self.asdf.model = QFileSystemModel()
@@ -232,8 +262,12 @@ def plugin_factory(cls, is_container=False):
 				#self.tabs.addTab(self.branches_view, "Branches")
 				#self.status_view = git.make_status()
 				#core.actionEditor().layout().addWidget(self.view)
-				clearLayout(core.actionEditor().layout())
-				core.actionEditor().layout().addWidget(self.tabs)
+				def p2():
+					clearLayout(core.actionEditor().layout())
+					core.actionEditor().layout().addWidget(self.tabs)
+					#make_git_context_menu()
+				#try_until_successful(p2)
+				p2()
 				#core.actionEditor().layout().addWidget(self.commit_view)
 				#core.actionEditor().layout().addWidget(self.status_view)
 				#core.actionEditor().layout().addWidget(self.asdf)
@@ -243,8 +277,9 @@ def plugin_factory(cls, is_container=False):
 				#self.view.hide()
 				#self.view.show()
 				#self.view.repaint()
-				git.make_menu(main.menuWidget().addMenu("aaaaaaaaa"))
 
+
+			#try_until_successful(make_git)
 
 			def diff_between_objects(a, b):
 				for k in dir(a):
@@ -255,7 +290,7 @@ def plugin_factory(cls, is_container=False):
 
 			def preview():
 				import os
-				print("preview")
+				#print("preview")
 				core = self.core
 				fileName = core.formWindowManager().activeFormWindow().fileName()
 				path = os.path.dirname(inspect.getfile(bsstudio))
@@ -265,11 +300,11 @@ def plugin_factory(cls, is_container=False):
 				#cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
 				cmd = 'bsui -c "import bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
 				#print(core.formWindowManager().children())
-				#os.system(cmd + " &")
+				os.system(cmd + " &")
 				
 				#debug_prompt(locals())
 				#main.menuWidget().addMenu(git.git_menu())
-				make_git()
+				#make_git()
 				
 				#diff_between_objects(orig, self.win)
 				#core.formWindowManager().actionVerticalLayout()
@@ -285,8 +320,18 @@ def plugin_factory(cls, is_container=False):
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
 			p.triggered.disconnect()
 			p.triggered.connect(preview)
+			core.formWindowManager().formWindowAdded.connect(preview)
+			#print("make git", p)
+			#print(p.parent())
+			#print(p.parent().children())
+			#print(p.parent().parent().children())
+			#print(p.parent().parent().parent())
+			#print(p.parent().parent().parent().children())
+			#debug_prompt(locals())
+			
 			
 			core_initialized = True
+			#make_git()
 
 		def initialize(self, core):
 			if self.initialized:
@@ -304,6 +349,7 @@ def plugin_factory(cls, is_container=False):
 	class Plugin(PyBSPlugin):
 		def __init__(self):
 			super(Plugin, self).__init__(cls)
+
 
 	return Plugin
 

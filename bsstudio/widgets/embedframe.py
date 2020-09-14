@@ -15,21 +15,21 @@ logger.setLevel(logging.DEBUG)
 
 def relPath(selfPath, filePath):
 	#cp = os.path.commonpath([selfPath, filePath])
-	print("rel ins:",selfPath, filePath)
+	#print("rel ins:",selfPath, filePath)
 	selfDir = os.path.dirname(selfPath)
 	try:
 		path = os.path.relpath(filePath, selfDir)
 	except:
 		path = ""
-	print("rel out:",path)
+	#print("rel out:",path)
 	return path
 
 def absPath(selfPath, relFilePath):
-	print("selfpath", selfPath)
-	print("relfilepath",relFilePath)
+	#print("selfpath", selfPath)
+	#print("relfilepath",relFilePath)
 	prefix = os.path.dirname(selfPath)
 	ap = os.path.join(prefix, relFilePath)
-	print("abs path", ap)
+	#print("abs path", ap)
 	return ap
 
 def convertPath(w, fileUrl,*,toRelative):
@@ -56,11 +56,11 @@ def convertPath(w, fileUrl,*,toRelative):
 		return val
 	if toRelative:
 		rp = relPath(self.windowFileName(), valPath)
-		print("w rp", rp)
+		#print("w rp", rp)
 		return QUrl("file:"+rp)
 	else:
 		ap = absPath(self.windowFileName(), valPath)
-		print("w ap", ap)
+		#print("w ap", ap)
 		return QUrl("file:"+ap)
 
 
@@ -161,10 +161,10 @@ class EmbedFrame(QFrame, CodeObject):
 		try:
 			uic.loadUi(fileObject, self.subWindow)
 		except:
-			print("Error opening file "+filename)
+			logger.info("Error opening file "+filename)
 			return
 		self.subWindow.resize(self.size())
-		print("subwindow show")
+		#print("subwindow show")
 		self.subWindow.show()
 		if not self._paused:
 			self.resume_children()
@@ -213,7 +213,7 @@ class EmbedFrame(QFrame, CodeObject):
 			
 		path = convertPath(self, val, toRelative=self._useRelativePath)
 		if path is not None:
-			print("path",path)
+			#print("path",path)
 			self._fileName=path
 			self.fileChanged.emit()
 		return

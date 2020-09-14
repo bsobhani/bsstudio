@@ -10,6 +10,10 @@ from cola.widgets.commitmsg import CommitMessageEditor
 from cola.widgets.status import StatusWidget
 from cola.widgets.branch import BranchesWidget
 from PyQt5.QtWidgets import QApplication, QMenu
+from PyQt5.QtCore import QCoreApplication
+
+import cola.models.prefs
+cola.models.prefs.Defaults.editor="designer"
 
 #cola.app.initialize()
 #args = cola.main.parse_args(["cola"])
@@ -18,9 +22,10 @@ from PyQt5.QtWidgets import QApplication, QMenu
 actions = []
 
 def make_menu(menu):
-	menu.addAction("asfbb")
 	for a in actions:
-		menu.addAction(a)
+		action = menu.addAction(a)
+		#mainThread = QCoreApplication.instance().thread()
+		#action.moveToThread(mainThread)
 
 context = None
 def cmd_browse(args):
@@ -34,8 +39,12 @@ def cmd_browse(args):
 	#return cola.app.application_run(context, view)
 	cola.app.initialize_view(context, view)
 	cola.app.default_start(context, view)
+	def open_repo(context):
+		cola.guicmds.open_repo(context)
+		
 	view.open_repo_action = add_action(
 		view, N_('Open...'), partial(cola.guicmds.open_repo, context))
+	#	view, N_('Open...'), partial(open_repo, context))
 	view.open_repo_action.triggered.connect(view.tree.action_refresh.trigger)
 	actions.append(view.open_repo_action)
 	#view.tree.update_actions()
@@ -80,8 +89,8 @@ def new_context(args):
 	#cola.guicmds.install()
 	#cola.icons.install(args.icon_themes)
 	cola.icons.install(cola.app.get_icon_themes(context))
-	toolbar = ToolBar.create(context, "asdf")
-	toolbar.show()
+	#toolbar = ToolBar.create(context, "asdf")
+	#toolbar.show()
 	#context.app = cola.app.new_application(context, args)
 	#context.timer = cola.app.Timer()
 

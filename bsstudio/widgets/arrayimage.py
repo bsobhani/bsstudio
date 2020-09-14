@@ -4,7 +4,9 @@ from .REButton import makeProperty
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QVBoxLayout
 import pyqtgraph as pg
+import matplotlib.cm
 import time
+from functools import partial
 
 import logging
 
@@ -56,6 +58,30 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		histogramAction.triggered.connect(self.histogramToggle)
 		linesAction.triggered.connect(self.linesToggle)
 		self.hist.hide()
+
+		vb = self.view.getViewBox()
+
+		submenu_cmaps = vb.menu.addMenu('cmaps');
+		col_inferno = submenu_cmaps.addAction('inferno')
+		col_viridis = submenu_cmaps.addAction('viridis')
+		col_cividis = submenu_cmaps.addAction('cividis')
+		col_magma = submenu_cmaps.addAction('magma')
+		col_gray = submenu_cmaps.addAction('gray')
+
+		def set_cmap(c):
+			import bsstudio.widgets.ut as ut
+			pos, rgba_colors = zip(*ut.cmapToColormap(c))
+			# Set the colormap
+			pgColormap = pg.ColorMap(pos, rgba_colors)
+			self.imv.setLookupTable(pgColormap.getLookupTable())
+			self.hist.gradient.setColorMap(pgColormap)
+		col_gray.triggered.connect(partial(set_cmap, matplotlib.cm.gray))
+		col_viridis.triggered.connect(partial(set_cmap, matplotlib.cm.viridis))
+		col_magma.triggered.connect(partial(set_cmap, matplotlib.cm.magma))
+		col_cividis.triggered.connect(partial(set_cmap, matplotlib.cm.cividis))
+		col_inferno.triggered.connect(partial(set_cmap, matplotlib.cm.inferno))
+
+
 		
 	def toggleWidgetVisibility(self, w):
 		if w.isVisible():
