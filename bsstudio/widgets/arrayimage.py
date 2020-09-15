@@ -13,6 +13,8 @@ import logging
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 logger.setLevel(logging.WARN)
+pg.setConfigOption('background', 'w')
+pg.setConfigOption('foreground', 'k')
 
 from ..worker import Worker, WorkerSignals
 class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
@@ -81,6 +83,10 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		col_cividis.triggered.connect(partial(set_cmap, matplotlib.cm.cividis))
 		col_inferno.triggered.connect(partial(set_cmap, matplotlib.cm.inferno))
 
+		vb.setMouseMode(vb.RectMode)
+		#self.view.getViewBox().setBackgroundColor("w")
+		#self.setBackground("w")
+
 
 		
 	def toggleWidgetVisibility(self, w):
@@ -115,6 +121,9 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		from bsstudio.functions import widgetValue
 		from bsstudio.worker import Worker, WorkerSignals
 		import numpy as np
+		import pyqtgraph as pg
+		pg.setConfigOption('background', 'w')
+		pg.setConfigOption('foreground', 'k')
 		#if not self.enableHistogram:
 		#	self.hist.hide()
 		#self.canvas.ax.clear()
@@ -153,49 +162,4 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		TextUpdateBase.resume_widget(self)
 
 	#enableHistogram = makeProperty("enableHistogram", bool)
-
-
-class ArrayImage2(TextUpdateBase, MplWidget):
-	def __init__(self, parent):
-		super().__init__(parent)
-		self._updatePeriod = "10000"
-		self.updatePeriod_ = eval(self._updatePeriod)
-		#self.threadpool.setMaxThreadCount(1)
-		self.threadType = "qthread"
-	
-	def setUpdatePeriod(self, p):
-		self.updatePeriod_ = p
-
-	def default_code(self):
-		return """
-		import logging
-		logger = logging.getLogger(__name__)
-		import time
-		t0 = time.time()
-		from PyQt5 import QtCore
-		from bsstudio.functions import widgetValue
-		from bsstudio.worker import Worker, WorkerSignals
-		import numpy as np
-		self.canvas.ax.clear()
-		array = None
-		logger.info("time before eval source: "+str(time.time()-t0))
-		if self.source != "":
-			array = eval(self.source)
-		logger.info("time before widgetValue: "+str(time.time()-t0))
-		array = widgetValue(array)
-		t2 = time.time()
-		logger.info("time before imshow: "+str(t2-t0))
-		self.canvas.ax.imshow(array)
-		t3 = time.time()
-		logger.info("time after imshow: "+str(t3-t0))
-		self.canvas.draw()
-		logger.info("time after draw: "+str(time.time()-t0))
-		self.setUpdatePeriod(eval(self.updatePeriod))
-		t1 = time.time()
-		logger.info("time at end of runCode: "+str(t1-t0))
-		"""[1:]
-
-
-	def resume_widget(self):
-		TextUpdateBase.resume_widget(self)
 
