@@ -178,7 +178,7 @@ def plugin_factory(cls, is_container=False):
 			return self.cls.__name__
 
 		def group(self):
-			return "group1"
+			return "BSStudio Widgets"
 
 		def isContainer(self):
 			return is_container

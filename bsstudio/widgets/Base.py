@@ -19,22 +19,13 @@ logger.setLevel(logging.WARN)
 
 all_bss_widgets = []
 
-global_id = 1
 class BaseWidget:
 	signal = pyqtSignal()
 
 	def __init__(self, parent=None):
 		self.parent = parent
-		global global_id
-		#self._id = global_id
-		self.id = global_id
-		self.id = 22
-		self.id = 25
-		#self.setProperty("id", 26)
-		#self.setVa
 		global all_bss_widgets
 		all_bss_widgets.append(self)
-		global_id += 1
 		self.isTopLevel = False
 
 	def initialize(self):
@@ -68,15 +59,6 @@ class BaseWidget:
 		children = self.findChildren(BaseWidget)
 		for c in children:
 			c.resume_widget()
-
-	@Property(int, designable=True, notify=signal, stored=True, final=True, constant=True)
-	def id(self):
-		return self._id
-
-	@id.setter
-	def id(self, val):
-		self._id = val
-		self.signal.emit()
 
 	def closeEvent(self, evt):
 		logger.info("close Event")

@@ -78,6 +78,10 @@ def create_main_window(f):
 		
 
 def load(f, noexec=False, verbose=False):
+	import os
+	log_dir = os.environ.get("BSSTUDIO_LOG_FILE_NAME")
+	if log_dir is None:
+		log_dir = "log"
 	if verbose:
 		logging.basicConfig(level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
 	else:
