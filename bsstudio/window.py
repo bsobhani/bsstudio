@@ -85,7 +85,7 @@ def load(f, noexec=False, verbose=False):
 	if verbose:
 		logging.basicConfig(level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
 	else:
-		logging.basicConfig(filename="log", filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
+		logging.basicConfig(filename=log_dir, filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
 	if not app: # create QApplication if it doesnt exist 
 		app = QtWidgets.QApplication(sys.argv)
