@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox, QLineEdit
-from bluesky.callbacks import LivePlot, LiveGrid
+#from bluesky.callbacks import LivePlot, LiveGrid
 import matplotlib.pyplot as plt
 from collections import Iterable
 import time
