@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPush
 #from qtpy.QtDesigner import QExtensionFactory
 from PyQt5.QtDesigner import QExtensionFactory
 from PyQt5.QtCore import pyqtProperty as Property
-from ophyd.sim import det
 import inspect
 from itertools import dropwhile
 import textwrap

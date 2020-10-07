@@ -7,12 +7,10 @@ from PyQt5.QtCore import pyqtProperty as Property
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import QReadWriteLock
 from PyQt5.Qt import Qt
-from ophyd.sim import det
 import inspect
 from itertools import dropwhile
 import textwrap
 from .CodeObject import CodeObject
-from ophyd.ophydobj import OphydObject
 import logging
 from ..worker import Worker
 import time
@@ -27,6 +25,7 @@ logger.setLevel(logging.WARN)
 main_thread = threading.current_thread()
 
 def isOphyd(obj):
+	from ophyd.ophydobj import OphydObject
 	return issubclass(obj, OphydObject)
 
 class WorkerThread(QThread):
