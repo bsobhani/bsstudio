@@ -10,10 +10,10 @@ requirements:
                 - python
                 - sip
                 - qt
-                - pyqt
+                - pyqtgraph
 
         run:
                 - python
                 - sip
                 - qt
-                - pyqt
+                - pyqtgraph
