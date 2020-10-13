@@ -17,8 +17,6 @@ class LineInput(QLineEdit, TextUpdateBase):
 		self._copyNameSpace = False
 		#CodeObject.__init__(self,parent,copyNameSpace=False)
 		self._destination = ""
-		self._lowLimit = ""
-		self._highLimit = ""
 		self.destination = sig
 		textUpdateCode = textwrap.dedent(TextUpdateBase.default_code(self))
 		self._textUpdateCode = bytes(textUpdateCode, "utf-8")
@@ -38,28 +36,11 @@ class LineInput(QLineEdit, TextUpdateBase):
 		return """
 			from bsstudio.functions import widgetValue
 			ui = self.ui
-			#destination = widgetValue(eval(self.destination))
 			val = widgetValue(eval(self.text()))
-			lim = False
-			try:
-				hl = eval(self.highLimit)
-			except:
-				hl = None
-			try:
-				ll = eval(self.lowLimit)
-			except:
-				ll = None
 
-			if hl is not None and hl>val:
-				lim = True
-			if ll is not None and ll<val:
-				lim = True
-
-			if self.hasFocus() and self.destination!="" and not lim:
+			if self.hasFocus() and self.destination!="":
 				exec(self.destination+" = "+self.text())
 			"""[1:]
 		
 	textUpdateCode = makeProperty("textUpdateCode", "QByteArray")
 	destination = makeProperty("destination")
-	lowLimit = makeProperty("lowLimit")
-	highLimit = makeProperty("highLimit")
