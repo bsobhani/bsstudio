@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox, QLineEdit
+from PyQt5.QtWidgets import QWidget, QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox, QLineEdit, QMessageBox
 #from bluesky.callbacks import LivePlot, LiveGrid
+import bsstudio.window
 import matplotlib.pyplot as plt
 from collections import Iterable
 import time
@@ -16,6 +17,11 @@ class dotdict(dict):
 	__getattr__ = dict.get
 	__setattr__ = dict.__setitem__
 	__delattr__ = dict.__delitem__
+
+def alert(message):
+	mb = QMessageBox(bsstudio.window.getMainWindow())
+	mb.setText(message)
+	mb.show()
 
 def getTopObject(w):
 	from .window import isMainWindow
