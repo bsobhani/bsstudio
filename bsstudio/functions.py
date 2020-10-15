@@ -149,6 +149,7 @@ def isWidget(obj):
 	return issubclass(obj.__class__, QWidget)
 	
 def makeLivePlots(plots, plotFields, plotKwargsList):
+	from bluesky.callbacks import LivePlot, LiveGrid
 	logger.info("plotFields"+str(plotFields))
 	if plotFields is None or plotFields == [[]]:
 		return None

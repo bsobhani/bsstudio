@@ -124,6 +124,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		import pyqtgraph as pg
 		pg.setConfigOption('background', 'w')
 		pg.setConfigOption('foreground', 'k')
+		pg.setConfigOptions(antialias=False)
 		#if not self.enableHistogram:
 		#	self.hist.hide()
 		#self.canvas.ax.clear()
@@ -137,11 +138,11 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		logger.info("time before imshow: "+str(t2-t0))
 		#self.canvas.ax.imshow(array)
 		if not hasattr(self,"ran_once"):
-			self.imv.setImage(array,autoRange=True, autoLevels=True)
+			self.imv.setImage(array,autoRange=True, autoLevels=True, autoDownSample=False)
 			self.hist.setHistogramRange(self.imv.levels[0],self.imv.levels[1],padding=0)
 			#self.view.autoRange(padding=0)
 		else:
-			self.imv.setImage(array,autoRange=False, autoLevels=False)
+			self.imv.setImage(array,autoRange=False, autoLevels=False, autoDownSample=False)
 		t3 = time.time()
 		logger.info("time after imshow: "+str(t3-t0))
 		#self.canvas.draw()
