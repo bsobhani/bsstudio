@@ -4,9 +4,11 @@ from .REButton import makeProperty
 from PyQt5.QtCore import QDateTime
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDateTimeEdit
+from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QMenu, QAction
 from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtWidgets import QScrollArea
+from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QWidget, QDialog
 from PyQt5.QtWidgets import QListWidget, QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout, QLabel, QPushButton
@@ -18,18 +20,72 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+
+class FieldListWidget(QWidget):
+	def filter_fields(self, field_list):
+		header = self.header
+		field_list2 = []
+		for i in range(len(field_list)):
+			data = list(header.data(field_list[i]))
+
+			if True in [str==type(d) for d in data]:
+				continue
+
+			if not hasattr(data,"__len__") or len(data)<2:
+				continue
+			field_list2.append(field_list[i])
+		return field_list2
+		
+	def __init__(self, parent, header):
+		self.header = header
+		QWidget.__init__(self,parent)
+		field_list = list(header.fields())
+		self.vl = QVBoxLayout()
+		self.tableWidget = QTableWidget()
+		self.tableWidget.setColumnCount(2)
+		field_list = self.filter_fields(field_list)
+		self.tableWidget.setRowCount(len(field_list))
+		for i in range(len(field_list)):
+			label = QLabel(self)
+			label.setText(field_list[i])
+			checkbox = QCheckBox(self)
+			self.tableWidget.setCellWidget(i,1,label)
+			self.tableWidget.setCellWidget(i,0,checkbox)
+		self.vl.addWidget(self.tableWidget)
+		self.setLayout(self.vl)
+
+	def checkedFields(self):
+		N = self.tableWidget.rowCount()
+		return [self.tableWidget.cellWidget(i,1).text() for i in range(N) if self.tableWidget.cellWidget(i,0).isChecked()]
+		
+		
+
 class ScrollMessageBox(QDialog):
-	def __init__(self, *args, **kwargs):
-		QMessageBox.__init__(self, *args, **kwargs)
-		#scroll = QScrollArea(self)
-		#scroll.setWidgetResizable(True)
-		layout = QVBoxLayout()
+	def __init__(self, parent):
+		QDialog.__init__(self, parent)
+		self.scroll = QScrollArea()
+		self.scroll.setWidgetResizable(True)
+		self.vl = QVBoxLayout()
+		self.vl.addWidget(self.scroll)
+		self.setLayout(self.vl)
 		self.content = QLabel(self)
 		self.content.setWordWrap(True)
-		layout.addWidget(self.content)
-		self.setLayout(layout)
-		#scroll.setWidget(self.content)
-		#self.setStyleSheet("QScrollArea{min-width:300 px; min-height: 400px}")
+		self.scroll.setWidget(self.content)
+		self.content.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+class ChannelsBox(ScrollMessageBox):
+	def saveCheckedFields(self):
+		self.parent.checked_fields[self.uid] = self.fl.checkedFields()
+		
+	def __init__(self, parent):
+		ScrollMessageBox.__init__(self, parent)
+		self.parent = parent
+		self.uid = self.parent.currentUid()
+		self.fl = FieldListWidget(self, parent.dbObj[self.uid])
+		self.scroll.setWidget(self.fl)
+		button = QPushButton(self)
+		self.vl.addWidget(button)
+		button.pressed.connect(self.saveCheckedFields)
 
 class DataTableWidgetItem(QTableWidgetItem):
 	def __lt__(self, other):
@@ -67,22 +123,30 @@ class DataBrowser(CodeContainer):
 
 		self.setContextMenuPolicy(Qt.CustomContextMenu)
 		self.customContextMenuRequested.connect(self.showMenu)
+		self.checked_fields = {}
+
+	def selectedFields(self, uid=None):
+		if self.currentUid() not in self.checked_fields.keys():
+			return []
+		if uid == None:
+			uid = self.currentUid()
+		return self.checked_fields[uid]
 
 	def showMenu(self,event):
 		menu = QMenu()
-		#clear_action = menu.addAction("Clear Selection", self)
 		action1 = QAction("Info", self)
-		#clear_action = menu.addAction("Clear Selection", self)
+		channels = QAction("Channels", self)
 		clear_action = menu.addAction(action1)
-		#action = menu.exec_(self.mapToGlobal(event.pos()))
+		channels_action = menu.addAction(channels)
 		action = menu.exec_(self.mapToGlobal(event))
-		print(action.text())
 		if action.text() == "Info":
 			messageBox = ScrollMessageBox(self)
 			messageBox.content.setText(str(self.dbObj[self.currentUid()].start))
 			messageBox.show()
-			#print("Information")
-			#print(self.dbObj[self.currentUid()].start)
+		if action.text() == "Channels":
+			messageBox = ChannelsBox(self)
+			messageBox.show()
+
 
 	def __updateTable(self):
 		self.runCode()
@@ -92,7 +156,7 @@ class DataBrowser(CodeContainer):
 
 	def __replot(self):
 		self.runCode()
-		self._replot()
+		#self._replot()
 
 	def updateTable(self, db, dbKwargs):
 		#self.listWidget.clear()
@@ -154,7 +218,10 @@ class DataBrowser(CodeContainer):
 		uids = self.currentUids()
 		if len(uids)==0:
 			return None
-		return uids[0]
+		#return uids[0]
+		uid_col = self.findHorizontalHeaderIndex("uid")
+		uid_row = self.listWidget.currentRow()
+		return self.listWidget.item(uid_row, uid_col).text()
 
 	def currentUids(self):
 		#rows = self.listWidget.selectedItems()
@@ -181,6 +248,7 @@ class DataBrowser(CodeContainer):
 		for p in plots:
 			if not hasattr(p, "ax"):
 				p._LivePlot__setup()
+
 		
 		for p in plots:
 			plotHeader(p, db[uid])
@@ -190,16 +258,17 @@ class DataBrowser(CodeContainer):
 	def replot(self, plots, db):
 		for uid in self.currentUids():
 			self.replotUid(plots, db, uid)
+		#self.replotUid(plots, db, self.currentUid())
 
 	def default_code(self):
 		return """
-			if 1==1:
 				ui = self.ui
 				from functools import partial
 				from bsstudio.functions import widgetValue
 				from bsstudio.functions import makeLivePlots 
 				db = widgetValue(eval(self.db))
 				self.dbObj = db
+				self.uid = None
 				#self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 				#self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 				plots = eval(self.plots)
@@ -217,7 +286,13 @@ class DataBrowser(CodeContainer):
 				#self.replot(plots, db)
 				#self.updateTable(db, dbKwargs)
 				#self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
-				self._replot = partial(self.replot, livePlots, db)
+				for uid in self.currentUids():
+					self.uid = uid
+					plots = eval(self.plots)
+					plotArgsList = widgetValue(eval(self.plotArgsList))
+					livePlots = makeLivePlots(plots, plotArgsList, plotKwargsList)
+					self.replotUid(livePlots, db, uid)
+				#self._replot = partial(self.replot, livePlots, db)
 				self._updateTable = partial(self.updateTable, db, dbKwargs)
 				#for plot in plots:
 				#	plot.canvas.update()
