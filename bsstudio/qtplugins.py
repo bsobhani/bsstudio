@@ -6,7 +6,6 @@ from PyQt5.QtDesigner import QExtensionFactory, QDesignerPropertyEditorInterface
 from PyQt5.QtCore import pyqtProperty as Property
 from PyQt5.QtCore import QVariant, QCoreApplication
 from PyQt5.QtCore import pyqtSlot, QObject
-from ophyd.sim import det
 import inspect
 from itertools import dropwhile
 import textwrap
@@ -30,7 +29,7 @@ from PyQt5.QtCore import QFile
 from PyQt5.Qt import Qt
 from PyQt5.QtDesigner import QDesignerFormWindowInterface
 import time
-from . import git
+#from . import git
 
 
 #splash = QLabel("test")

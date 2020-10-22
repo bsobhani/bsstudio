@@ -11,9 +11,15 @@ requirements:
                 - sip
                 - qt
                 - pyqtgraph
+                - pyqt
+                - matplotlib
+                - ipython
 
         run:
                 - python
                 - sip
                 - qt
                 - pyqtgraph
+                - pyqt
+                - matplotlib
+                - ipython
