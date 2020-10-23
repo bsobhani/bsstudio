@@ -131,7 +131,10 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		array = None
 		logger.info("time before eval source: "+str(time.time()-t0))
 		if self.source != "":
-			array = eval(self.source)
+			try:
+				array = eval(self.source)
+			except:
+				array = None
 		logger.info("time before widgetValue: "+str(time.time()-t0))
 		array = widgetValue(array)
 		t2 = time.time()
