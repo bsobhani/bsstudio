@@ -89,6 +89,7 @@ def load(f, noexec=False, verbose=False):
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
 	if not app: # create QApplication if it doesnt exist 
 		app = QtWidgets.QApplication(sys.argv)
+		#app = QtWidgets.QApplication([])
 	#app = QtWidgets.QApplication([])
 
 
