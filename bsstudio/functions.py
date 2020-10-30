@@ -173,6 +173,15 @@ def plotHeader(livePlot, header):
 	livePlot.start(header.start)
 	for e in header.events():
 		livePlot.event(e)
+	return livePlot.ax
+
+def plotLPList(y_list, header, samePlot=False):
+	from bluesky.callbacks import LivePlot
+	ax = None
+	for y in y_list:
+		ax_p = plotHeader(LivePlot(y, ax=ax), header)
+		if samePlot:
+			ax = ax_p
 
 def openFileAsString(filename, macros=[]):
 	try:

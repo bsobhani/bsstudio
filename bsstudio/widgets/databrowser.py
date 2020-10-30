@@ -1,3 +1,4 @@
+import numpy as np
 from .Base import BaseWidget
 from . import CodeContainer
 from .REButton import makeProperty
@@ -10,9 +11,10 @@ from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtWidgets import QScrollArea
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QWidget, QDialog
 from PyQt5.QtWidgets import QListWidget, QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout, QLabel, QPushButton
-from bsstudio.functions import widgetValue, plotHeader
+from bsstudio.functions import widgetValue, plotHeader, plotLPList
 from collections.abc import Iterable
 import time
 import logging
@@ -36,9 +38,13 @@ class FieldListWidget(QWidget):
 			field_list2.append(field_list[i])
 		return field_list2
 		
-	def __init__(self, parent, header):
+	def __init__(self, parent, header, dataBrowser):
+		#self.parent = parent
 		self.header = header
+		self.dataBrowser = dataBrowser
 		QWidget.__init__(self,parent)
+		self.setParent(parent)
+		print("parents:",parent,self.parent())
 		field_list = list(header.fields())
 		self.vl = QVBoxLayout()
 		self.tableWidget = QTableWidget()
@@ -55,6 +61,33 @@ class FieldListWidget(QWidget):
 			self.tableWidget.setCellWidget(i,0,checkbox)
 		self.vl.addWidget(self.tableWidget)
 		self.setLayout(self.vl)
+
+	def saveAliases(self):
+		N = self.tableWidget.rowCount()
+		for i in range(N):
+			alias = self.tableWidget.cellWidget(i,2).text()
+			if alias == "":
+				continue
+			field = self.tableWidget.cellWidget(i,1).text()
+			#print(self.parent(), self.parent().parent())
+			dataBrowser = self.dataBrowser
+			dbObj = dataBrowser.dbObj
+			aliases = dataBrowser.aliases
+			alias_fields_reverse = dataBrowser.alias_fields_reverse
+			#uid = self.parent().uid
+			uid = dataBrowser.currentUid()
+			aliases[alias] = np.array(list(dbObj[uid].data(field)))
+			try:
+				alias_fields_reverse[uid]
+			except KeyError:
+				alias_fields_reverse[uid] = {}
+			alias_fields_reverse[uid][field] = alias
+
+	#def getSavedAliases(self):
+	#	dataBrowser = self.dataBrowser
+	#	return dataBrowser.aliases[dataBrowser.currentUid()]
+			
+		
 
 	def checkedFields(self):
 		N = self.tableWidget.rowCount()
@@ -77,17 +110,65 @@ class ScrollMessageBox(QDialog):
 
 class ChannelsBox(ScrollMessageBox):
 	def saveCheckedFields(self):
-		self.parent.checked_fields[self.uid] = self.fl.checkedFields()
+		self.parent().checked_fields[self.uid] = self.fl.checkedFields()
+
+	def savedFields(self):
+		if self.uid not in self.parent().checked_fields:
+			return []
+		return self.parent().checked_fields[self.uid]
+		
+	def loadCheckedFields(self):
+		fields = self.savedFields()
+		N = self.fl.tableWidget.rowCount()
+		for i in range(N):
+			field = self.fl.tableWidget.cellWidget(i,1).text()
+			checkBox = self.fl.tableWidget.cellWidget(i,0)
+			if field in fields:
+				checkBox.setChecked(True)
+
+	def loadAliases(self):
+		#aliases = self.fl.getSavedAliases()
+		dataBrowser = self.parent()
+		alias_fields_reverse = dataBrowser.alias_fields_reverse
+		N = self.fl.tableWidget.rowCount()
+		uid = dataBrowser.currentUid()
+		if uid not in alias_fields_reverse.keys():
+			return
+		for i in range(N):
+			field = self.fl.tableWidget.cellWidget(i,1).text()
+			alias_cell = self.fl.tableWidget.cellWidget(i,2)
+			if field in alias_fields_reverse[uid].keys():
+				#try:
+				#	dataBrowser.alias_fields_reverse[uid]
+				#except KeyError:
+				#	dataBrowser.alias_fields_reverse[uid] = {}
+				alias = dataBrowser.alias_fields_reverse[uid][field]
+				alias_cell.setText(alias)
+
+
+		
+		
+
+
+	def saveAliases(self):
+		self.fl.saveAliases()
 		
 	def __init__(self, parent):
 		ScrollMessageBox.__init__(self, parent)
-		self.parent = parent
-		self.uid = self.parent.currentUid()
-		self.fl = FieldListWidget(self, parent.dbObj[self.uid])
+		self.setParent(parent)
+		#self.parent = parent
+		self.uid = self.parent().currentUid()
+		#self.fl = FieldListWidget(self, parent.dbObj[self.uid])
+		self.fl = FieldListWidget(self.scroll, parent.dbObj[self.uid], self.parent())
+		print("fl parent:",self.fl.parent())
 		self.scroll.setWidget(self.fl)
 		button = QPushButton(self)
+		button.setText("Apply")
 		self.vl.addWidget(button)
+		self.loadCheckedFields()
+		self.loadAliases()
 		button.pressed.connect(self.saveCheckedFields)
+		button.pressed.connect(self.saveAliases)
 
 class DataTableWidgetItem(QTableWidgetItem):
 	def __lt__(self, other):
@@ -107,6 +188,8 @@ class DataBrowser(CodeContainer):
 		self._plots = "[]"
 		self._plotArgsList = "[[]]"
 		self._plotKwargsList = "[{}]"
+		self.aliases = {}
+		self.alias_fields_reverse = {}
 		layout = QVBoxLayout()
 		#self.listWidget = QListWidget()
 		self.listWidget = QTableWidget()
@@ -138,16 +221,27 @@ class DataBrowser(CodeContainer):
 		menu = QMenu()
 		action1 = QAction("Info", self)
 		channels = QAction("Channels", self)
+		view_plot = QAction("View Plot", self)
 		clear_action = menu.addAction(action1)
 		channels_action = menu.addAction(channels)
+		view_plot_action = menu.addAction(view_plot)
 		action = menu.exec_(self.mapToGlobal(event))
 		if action.text() == "Info":
 			messageBox = ScrollMessageBox(self)
 			messageBox.content.setText(str(self.dbObj[self.currentUid()].start))
 			messageBox.show()
 		if action.text() == "Channels":
-			messageBox = ChannelsBox(self)
-			messageBox.show()
+			self.channelsBox = ChannelsBox(self)
+			self.channelsBox.show()
+		if action.text() == "View Plot":
+			from bluesky.callbacks import LivePlot
+			header = self.dbObj[self.currentUid()]
+			fields = self.selectedFields()
+			#lp = LivePlot(fields)
+			#lp.start(header.start)
+			#for e in header.events():
+			#	lp.event(e)
+			plotLPList(fields, header)
 
 
 	def __updateTable(self):

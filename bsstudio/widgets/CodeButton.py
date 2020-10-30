@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 
 class CodeButton(QPushButton, CodeObject):
 	def __init__(self, parent=None):
-		self.parent = parent
+		#self.parent = parent
 		QPushButton.__init__(self, parent)
 		CodeObject.__init__(self, parent)
 		self.clicked.connect(self.runCode)

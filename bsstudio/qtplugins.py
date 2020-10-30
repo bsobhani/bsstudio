@@ -172,6 +172,7 @@ def plugin_factory(cls, is_container=False):
 			#print("init")
 			self.cls = cls
 			self.initialized = False
+			self.is_container = is_container
 
 		def name(self):
 			return self.cls.__name__
@@ -180,7 +181,7 @@ def plugin_factory(cls, is_container=False):
 			return "BSStudio Widgets"
 
 		def isContainer(self):
-			return is_container
+			return self.is_container
 
 		def icon(self):
 			return QtGui.QIcon()
@@ -324,7 +325,7 @@ def plugin_factory(cls, is_container=False):
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
 			p.triggered.disconnect()
 			p.triggered.connect(preview)
-			core.formWindowManager().formWindowAdded.connect(preview)
+			#core.formWindowManager().formWindowAdded.connect(preview)
 			#print("make git", p)
 			#print(p.parent())
 			#print(p.parent().children())
