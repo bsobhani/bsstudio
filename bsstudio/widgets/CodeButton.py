@@ -30,10 +30,4 @@ class CodeButton(QPushButton, CodeObject):
 		print(self.objectName()+" pressed...")
 		"""[1:]
 		return code_string
-
-	def runCode(self):
-		if self.threadpool.waitForDone(0):
-			CodeObject.runCode(self)
-		else:
-			logger.info("Thread still running for CodeButton")
 	

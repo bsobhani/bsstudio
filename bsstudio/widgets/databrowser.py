@@ -203,7 +203,9 @@ class DataBrowser(CodeContainer):
 		layout.addWidget(self.listWidget)
 		self.setLayout(layout)
 
-		self.loadScansButton.clicked.connect(self.__updateTable)
+		self.worker.setFunc(self.__updateTable)
+		#self.loadScansButton.clicked.connect(self.__updateTable)
+		self.loadScansButton.clicked.connect(self.worker.start)
 		self.listWidget.itemSelectionChanged.connect(self.__replot)
 
 		self.setContextMenuPolicy(Qt.CustomContextMenu)
