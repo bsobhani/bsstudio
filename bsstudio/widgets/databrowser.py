@@ -30,10 +30,10 @@ class FieldListWidget(QWidget):
 		for i in range(len(field_list)):
 			data = list(header.data(field_list[i]))
 
-			if True in [str==type(d) for d in data]:
+			if not hasattr(data,"__len__") or len(data)<2:
 				continue
 
-			if not hasattr(data,"__len__") or len(data)<2:
+			if True in [str==type(d) for d in data]:
 				continue
 			field_list2.append(field_list[i])
 		return field_list2
@@ -46,10 +46,12 @@ class FieldListWidget(QWidget):
 		self.setParent(parent)
 		print("parents:",parent,self.parent())
 		field_list = list(header.fields())
+		#field_list = header.fields()
 		self.vl = QVBoxLayout()
 		self.tableWidget = QTableWidget()
 		self.tableWidget.setColumnCount(3)
-		field_list = self.filter_fields(field_list)
+		#field_list = self.filter_fields(field_list)
+		#Disabling filter fields because it is too slow
 		self.tableWidget.setRowCount(len(field_list))
 		for i in range(len(field_list)):
 			alias = QLineEdit(self)
@@ -77,11 +79,16 @@ class FieldListWidget(QWidget):
 			#uid = self.parent().uid
 			uid = dataBrowser.currentUid()
 			aliases[alias] = np.array(list(dbObj[uid].data(field)))
-			try:
-				alias_fields_reverse[uid]
-			except KeyError:
-				alias_fields_reverse[uid] = {}
-			alias_fields_reverse[uid][field] = alias
+			#try:
+			#	alias_fields_reverse[uid]
+			#except KeyError:
+			#	alias_fields_reverse[uid] = {}
+			existing_field_keys = [key for key, val in alias_fields_reverse.items() if val == alias]
+			for key in existing_field_keys:
+				alias_fields_reverse[key] = ""
+				
+			alias_fields_reverse[uid, field] = alias
+			
 
 	#def getSavedAliases(self):
 	#	dataBrowser = self.dataBrowser
@@ -132,17 +139,17 @@ class ChannelsBox(ScrollMessageBox):
 		alias_fields_reverse = dataBrowser.alias_fields_reverse
 		N = self.fl.tableWidget.rowCount()
 		uid = dataBrowser.currentUid()
-		if uid not in alias_fields_reverse.keys():
-			return
+		#if uid not in alias_fields_reverse.keys():
+		#	return
 		for i in range(N):
 			field = self.fl.tableWidget.cellWidget(i,1).text()
 			alias_cell = self.fl.tableWidget.cellWidget(i,2)
-			if field in alias_fields_reverse[uid].keys():
+			if (uid, field) in alias_fields_reverse.keys():
 				#try:
 				#	dataBrowser.alias_fields_reverse[uid]
 				#except KeyError:
 				#	dataBrowser.alias_fields_reverse[uid] = {}
-				alias = dataBrowser.alias_fields_reverse[uid][field]
+				alias = dataBrowser.alias_fields_reverse[uid, field]
 				alias_cell.setText(alias)
 
 
@@ -156,11 +163,8 @@ class ChannelsBox(ScrollMessageBox):
 	def __init__(self, parent):
 		ScrollMessageBox.__init__(self, parent)
 		self.setParent(parent)
-		#self.parent = parent
 		self.uid = self.parent().currentUid()
-		#self.fl = FieldListWidget(self, parent.dbObj[self.uid])
 		self.fl = FieldListWidget(self.scroll, parent.dbObj[self.uid], self.parent())
-		print("fl parent:",self.fl.parent())
 		self.scroll.setWidget(self.fl)
 		button = QPushButton(self)
 		button.setText("Apply")
@@ -260,7 +264,24 @@ class DataBrowser(CodeContainer):
 		#self.listWidget.clear()
 		since = self.startDateTime.dateTime().toString("yyyy-MM-dd HH:mm:ss")
 		until = self.endDateTime.dateTime().toString("yyyy-MM-dd HH:mm:ss")
-		results = list(db(since=since, until=until, **dbKwargs))
+		logger.info("Reading results started")
+		#results = list(db(since=since, until=until, **dbKwargs))
+		results = []
+		original_text = self.loadScansButton.text()
+		self.loadScansButton.clicked.disconnect()
+		self.loadScansButton.clicked.connect(self.worker.cancel)
+		for i,r in enumerate(db(since=since, until=until, **dbKwargs)):
+			results.append(r)
+			N = 4
+			k = (i//10)%N
+			self.loadScansButton.setText("Loading"+"."*(k)+" "*(N-k))
+			if self.worker.cancelled:
+				break
+		self.worker.resume()
+		self.loadScansButton.clicked.disconnect()
+		self.loadScansButton.clicked.connect(self.worker.start)
+		self.loadScansButton.setText(original_text)
+		logger.info("Reading results stopped")
 		self.listWidget.setRowCount(len(results))
 		self.listWidget.setSortingEnabled(True)
 		self.listWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
