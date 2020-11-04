@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import QWidget, QDialog
 from PyQt5.QtWidgets import QListWidget, QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout, QLabel, QPushButton
 from bsstudio.functions import widgetValue, plotHeader, plotLPList
 from collections.abc import Iterable
+from functools import partial
 import time
 import logging
 
@@ -28,12 +29,18 @@ class FieldListWidget(QWidget):
 		header = self.header
 		field_list2 = []
 		for i in range(len(field_list)):
-			data = list(header.data(field_list[i]))
+			#data = list(header.data(field_list[i]))
 
-			if not hasattr(data,"__len__") or len(data)<2:
-				continue
+			#if not hasattr(data,"__len__") or len(data)<2:
+			#	continue
 
-			if True in [str==type(d) for d in data]:
+			#if True in [str==type(d) for d in data]:
+			#	continue
+			g = header.data(field_list[i])
+			try:
+				next(g)
+				next(g)
+			except StopIteration:
 				continue
 			field_list2.append(field_list[i])
 		return field_list2
@@ -49,17 +56,23 @@ class FieldListWidget(QWidget):
 		#field_list = header.fields()
 		self.vl = QVBoxLayout()
 		self.tableWidget = QTableWidget()
-		self.tableWidget.setColumnCount(3)
+		self.tableWidget.setColumnCount(4)
+		self.tableWidget.setSortingEnabled(True)
 		#field_list = self.filter_fields(field_list)
-		#Disabling filter fields because it is too slow
+		# Commenting out because filter_fields is too slow
 		self.tableWidget.setRowCount(len(field_list))
 		for i in range(len(field_list)):
+			view = QPushButton(self)
+			view.setText("View")
+			view.clicked.connect(partial(plotLPList,[field_list[i]], header))
 			alias = QLineEdit(self)
-			label = QLabel(self)
-			label.setText(field_list[i])
+			labelItem = QTableWidgetItem(field_list[i])
+			#label.setText(field_list[i])
 			checkbox = QCheckBox(self)
+			self.tableWidget.setCellWidget(i,3,view)
 			self.tableWidget.setCellWidget(i,2,alias)
-			self.tableWidget.setCellWidget(i,1,label)
+			#self.tableWidget.setCellWidget(i,1,label)
+			self.tableWidget.setItem(i,1,labelItem)
 			self.tableWidget.setCellWidget(i,0,checkbox)
 		self.vl.addWidget(self.tableWidget)
 		self.setLayout(self.vl)
@@ -70,7 +83,7 @@ class FieldListWidget(QWidget):
 			alias = self.tableWidget.cellWidget(i,2).text()
 			if alias == "":
 				continue
-			field = self.tableWidget.cellWidget(i,1).text()
+			field = self.tableWidget.item(i,1).text()
 			#print(self.parent(), self.parent().parent())
 			dataBrowser = self.dataBrowser
 			dbObj = dataBrowser.dbObj
@@ -98,7 +111,7 @@ class FieldListWidget(QWidget):
 
 	def checkedFields(self):
 		N = self.tableWidget.rowCount()
-		return [self.tableWidget.cellWidget(i,1).text() for i in range(N) if self.tableWidget.cellWidget(i,0).isChecked()]
+		return [self.tableWidget.item(i,1).text() for i in range(N) if self.tableWidget.cellWidget(i,0).isChecked()]
 		
 		
 
@@ -128,7 +141,7 @@ class ChannelsBox(ScrollMessageBox):
 		fields = self.savedFields()
 		N = self.fl.tableWidget.rowCount()
 		for i in range(N):
-			field = self.fl.tableWidget.cellWidget(i,1).text()
+			field = self.fl.tableWidget.item(i,1).text()
 			checkBox = self.fl.tableWidget.cellWidget(i,0)
 			if field in fields:
 				checkBox.setChecked(True)
@@ -142,7 +155,7 @@ class ChannelsBox(ScrollMessageBox):
 		#if uid not in alias_fields_reverse.keys():
 		#	return
 		for i in range(N):
-			field = self.fl.tableWidget.cellWidget(i,1).text()
+			field = self.fl.tableWidget.item(i,1).text()
 			alias_cell = self.fl.tableWidget.cellWidget(i,2)
 			if (uid, field) in alias_fields_reverse.keys():
 				#try:
@@ -223,11 +236,23 @@ class DataBrowser(CodeContainer):
 			uid = self.currentUid()
 		return self.checked_fields[uid]
 
+	def plotSelectedUids(self):
+		from bluesky.callbacks import LivePlot
+		for uid in self.currentUids():
+			header = self.dbObj[uid]
+			fields = self.selectedFields(uid)
+			#lp = LivePlot(fields)
+			#lp.start(header.start)
+			#for e in header.events():
+			#	lp.event(e)
+			plotLPList(fields, header)
+
+
 	def showMenu(self,event):
 		menu = QMenu()
 		action1 = QAction("Info", self)
 		channels = QAction("Channels", self)
-		view_plot = QAction("View Plot", self)
+		view_plot = QAction("Plot checked items", self)
 		clear_action = menu.addAction(action1)
 		channels_action = menu.addAction(channels)
 		view_plot_action = menu.addAction(view_plot)
@@ -239,16 +264,9 @@ class DataBrowser(CodeContainer):
 		if action.text() == "Channels":
 			self.channelsBox = ChannelsBox(self)
 			self.channelsBox.show()
-		if action.text() == "View Plot":
-			from bluesky.callbacks import LivePlot
-			header = self.dbObj[self.currentUid()]
-			fields = self.selectedFields()
-			#lp = LivePlot(fields)
-			#lp.start(header.start)
-			#for e in header.events():
-			#	lp.event(e)
-			plotLPList(fields, header)
-
+		if action.text() == "Plot checked items":
+			self.plotSelectedUids()
+			
 
 	def __updateTable(self):
 		self.runCode()
