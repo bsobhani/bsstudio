@@ -6,6 +6,7 @@ from PyQt5.QtCore import QDateTime
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDateTimeEdit
 from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMenu, QAction
 from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtWidgets import QScrollArea
@@ -300,12 +301,11 @@ class DataBrowser(CodeContainer):
 		self.loadScansButton.clicked.connect(self.worker.start)
 		self.loadScansButton.setText(original_text)
 		logger.info("Reading results stopped")
-		#self.listWidget.setSortingEnabled(True)
-		self.listWidget.setSortingEnabled(False)
-		self.listWidget.clear()
-		self.listWidget.clearContents()
 		self.listWidget.setRowCount(len(results))
-		#self.listWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+		self.listWidget.setSortingEnabled(True)
+		#self.listWidget.clear()
+		#self.listWidget.clearContents()
+		self.listWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
 		col_set=set([])
 		for r in results:
 			cols = [k for k,v in r.start.items() if not isinstance(v,Iterable) or type(v)==str]
@@ -316,6 +316,8 @@ class DataBrowser(CodeContainer):
 
 		self.listWidget.setColumnCount(len(cols))
 		self.listWidget.setHorizontalHeaderLabels(cols)
+
+		time.sleep(1) # Needed to make filtering columns work properly - unclear why
 		for i in range(len(results)):
 			r = results[i]
 			#logger.info("len results: "+str(len(results)) +", i:"+str(i))
@@ -333,6 +335,7 @@ class DataBrowser(CodeContainer):
 				#item = QTableWidgetItem(str(r.start[cols[j]]))
 				item = DataTableWidgetItem(str(field))
 				self.listWidget.setItem(i,j,item)
+				#time.sleep(.1)
 
 
 		#self.listWidget.setColumnCount(1)
@@ -342,9 +345,10 @@ class DataBrowser(CodeContainer):
 			#	self.listWidget.hideColumn(self.findHorizontalHeaderIndex(colName))
 			tableColumns = eval(self.tableColumns)
 			for i in range(self.listWidget.columnCount()):
-				colHeader = self.listWidget.horizontalHeaderItem(i)
-				if colHeader.text() not in tableColumns:
-					logger.info("hiding column "+colHeader.text())
+				#colHeader = self.listWidget.horizontalHeaderItem(i)
+				#if colHeader.text() not in tableColumns:
+				if self.listWidget.horizontalHeaderItem(i).text() not in tableColumns:
+					#logger.info("hiding column "+colHeader.text())
 					print(self.listWidget.isColumnHidden(i))
 					self.listWidget.hideColumn(i)
 					self.listWidget.update()
@@ -364,8 +368,9 @@ class DataBrowser(CodeContainer):
 	def findHorizontalHeaderIndex(self, key):
 		logger.info("horizonal header count: "+str(self.listWidget.columnCount()))
 		for i in range(self.listWidget.columnCount()):
-			colHeader = self.listWidget.horizontalHeaderItem(i)
-			if colHeader.text()==key:
+			#colHeader = self.listwidget.horizontalheaderitem(i)
+			#if colHeader.text()==key:
+			if self.listWidget.horizontalHeaderItem(i).text()==key:
 				logger.info(key + " found")
 				return i
 		return None
