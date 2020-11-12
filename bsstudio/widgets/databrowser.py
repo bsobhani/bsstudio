@@ -300,9 +300,12 @@ class DataBrowser(CodeContainer):
 		self.loadScansButton.clicked.connect(self.worker.start)
 		self.loadScansButton.setText(original_text)
 		logger.info("Reading results stopped")
+		#self.listWidget.setSortingEnabled(True)
+		self.listWidget.setSortingEnabled(False)
+		self.listWidget.clear()
+		self.listWidget.clearContents()
 		self.listWidget.setRowCount(len(results))
-		self.listWidget.setSortingEnabled(True)
-		self.listWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+		#self.listWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
 		col_set=set([])
 		for r in results:
 			cols = [k for k,v in r.start.items() if not isinstance(v,Iterable) or type(v)==str]
@@ -315,14 +318,15 @@ class DataBrowser(CodeContainer):
 		self.listWidget.setHorizontalHeaderLabels(cols)
 		for i in range(len(results)):
 			r = results[i]
-			logger.info("len results: "+str(len(results)) +", i:"+str(i))
+			#logger.info("len results: "+str(len(results)) +", i:"+str(i))
 			#self.listWidget.addItem(r.start['uid'])
 			for j in range(len(cols)):
 				#item = QTableWidgetItem(r.start['uid'])
-				logger.info(str(i)+" "+ str(j) + " "+str(cols[j]))
+				#logger.info(str(i)+" "+ str(j) + " "+str(cols[j]))
 				try:
 					field = r.start[cols[j]]
 				except KeyError:
+					#logger.info("Could not find field " + cols[j])
 					field = None
 				#print(str(i)+" "+ str(j) + " "+str(cols[j]))
 				#print(r.start[cols[j]])
@@ -330,22 +334,38 @@ class DataBrowser(CodeContainer):
 				item = DataTableWidgetItem(str(field))
 				self.listWidget.setItem(i,j,item)
 
+
+		#self.listWidget.setColumnCount(1)
+
 		if self.tableColumns!="":
 			#for colName in eval(self.tableColumns):
 			#	self.listWidget.hideColumn(self.findHorizontalHeaderIndex(colName))
 			tableColumns = eval(self.tableColumns)
 			for i in range(self.listWidget.columnCount()):
-				if self.listWidget.horizontalHeaderItem(i).text() not in tableColumns:
-					logger.info("hiding column "+self.listWidget.horizontalHeaderItem(i).text())
+				colHeader = self.listWidget.horizontalHeaderItem(i)
+				if colHeader.text() not in tableColumns:
+					logger.info("hiding column "+colHeader.text())
+					print(self.listWidget.isColumnHidden(i))
 					self.listWidget.hideColumn(i)
+					self.listWidget.update()
+					#assert self.listWidget.isColumnHidden(i) == True
 				else:
 					self.listWidget.showColumn(i)
+
+
+
+
+		for i in range(self.listWidget.columnCount()):
+			print(self.listWidget.isColumnHidden(i))
+
+
 					
 
 	def findHorizontalHeaderIndex(self, key):
 		logger.info("horizonal header count: "+str(self.listWidget.columnCount()))
 		for i in range(self.listWidget.columnCount()):
-			if self.listWidget.horizontalHeaderItem(i).text()==key:
+			colHeader = self.listWidget.horizontalHeaderItem(i)
+			if colHeader.text()==key:
 				logger.info(key + " found")
 				return i
 		return None
