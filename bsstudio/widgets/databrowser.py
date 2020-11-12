@@ -24,6 +24,10 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+class DBFetchResultsThread(QThread):
+	def run():
+		
+
 
 class FieldListWidget(QWidget):
 	def filter_fields(self, field_list):
@@ -222,8 +226,8 @@ class DataBrowser(CodeContainer):
 		self.setLayout(layout)
 
 		self.worker.setFunc(self.__updateTable)
-		#self.loadScansButton.clicked.connect(self.__updateTable)
-		self.loadScansButton.clicked.connect(self.worker.start)
+		self.loadScansButton.clicked.connect(self.__updateTable)
+		#self.loadScansButton.clicked.connect(self.worker.start)
 		self.listWidget.itemSelectionChanged.connect(self.__replot)
 
 		self.setContextMenuPolicy(Qt.CustomContextMenu)
