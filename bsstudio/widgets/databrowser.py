@@ -316,8 +316,8 @@ class DataBrowser(CodeContainer):
 
 		self.listWidget.setColumnCount(len(cols))
 		self.listWidget.setHorizontalHeaderLabels(cols)
+		time.sleep(2) # Needed to make filtering columns work properly - unclear why
 
-		time.sleep(1) # Needed to make filtering columns work properly - unclear why
 		for i in range(len(results)):
 			r = results[i]
 			#logger.info("len results: "+str(len(results)) +", i:"+str(i))
