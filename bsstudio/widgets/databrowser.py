@@ -8,6 +8,7 @@ from PyQt5.QtCore import QDateTime
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDateTimeEdit
 from PyQt5.QtCore import QThread
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMenu, QAction
@@ -28,8 +29,29 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 class DBFetchResultsThread(QThread):
-	def run():
-		pass	
+	resultsSignal = pyqtSignal(list)
+	updateButtonText = pyqtSignal(str)
+	cancelled=False
+
+	def resume(self):
+		self.cancelled = False
+
+
+	def cancel(self):
+		self.cancelled = True
+	
+	def run(self):
+		results = []
+		#db = self.db
+		#dbKwargs = self.dbKwargs:
+		for i,r in enumerate(self.dbGen):
+			results.append(r)
+			N = 4
+			k = (i//10)%N
+			self.updateButtonText.emit("Loading"+"."*(k)+" "*(N-k))
+			if self.cancelled:
+				break
+		self.resultsSignal.emit(results)
 		
 
 	
@@ -62,7 +84,8 @@ class DataBrowser(CodeContainer):
 		now = QDateTime.currentDateTime()
 		self.startDateTime = QDateTimeEdit(now.addMonths(-6))
 		self.endDateTime = QDateTimeEdit(now)
-		self.loadScansButton = QPushButton("Load Scans")
+		buttonText = "Load Scans"
+		self.loadScansButton = QPushButton(buttonText)
 		layout.addWidget(self.startDateTime)
 		layout.addWidget(self.endDateTime)
 		layout.addWidget(self.loadScansButton)
@@ -70,6 +93,10 @@ class DataBrowser(CodeContainer):
 		self.setLayout(layout)
 
 		#self.worker.setFunc(self.__updateTable)
+		self.fr_thread = DBFetchResultsThread()
+		self.fr_thread.resultsSignal.connect(self.updateTableFromResults)
+		self.fr_thread.updateButtonText.connect(self.loadScansButton.setText)
+		self.fr_thread.finished.connect(partial(self.loadScansButton.setText, buttonText))
 		self.loadScansButton.clicked.connect(self.__updateTable)
 		#self.loadScansButton.clicked.connect(self.worker.start)
 		self.listWidget.itemSelectionChanged.connect(self.__replot)
@@ -119,6 +146,7 @@ class DataBrowser(CodeContainer):
 
 	def __updateTable(self):
 		self.runCode()
+		#self._updateTable()
 		self._updateTable()
 		#self.updateTable(self.dbObj, {})
 
@@ -133,21 +161,20 @@ class DataBrowser(CodeContainer):
 		until = self.endDateTime.dateTime().toString("yyyy-MM-dd HH:mm:ss")
 		logger.info("Reading results started")
 		#results = list(db(since=since, until=until, **dbKwargs))
-		results = []
-		original_text = self.loadScansButton.text()
+		#original_text = self.loadScansButton.text()
 		self.loadScansButton.clicked.disconnect()
-		self.loadScansButton.clicked.connect(self.worker.cancel)
-		for i,r in enumerate(db(since=since, until=until, **dbKwargs)):
-			results.append(r)
-			N = 4
-			k = (i//10)%N
-			self.loadScansButton.setText("Loading"+"."*(k)+" "*(N-k))
-			if self.worker.cancelled:
-				break
-		self.worker.resume()
+		self.loadScansButton.clicked.connect(self.fr_thread.cancel)
+		dbGen = db(since=since, until=until, **dbKwargs)
+		self.fr_thread.dbGen = dbGen
+		self.fr_thread.start()
+		
+
+
+	def updateTableFromResults(self, results):
+		self.fr_thread.resume()
 		self.loadScansButton.clicked.disconnect()
-		self.loadScansButton.clicked.connect(self.worker.start)
-		self.loadScansButton.setText(original_text)
+		self.loadScansButton.clicked.connect(self.__updateTable)
+		#self.loadScansButton.setText(original_text)
 		logger.info("Reading results stopped")
 		self.listWidget.setRowCount(len(results))
 		self.listWidget.setSortingEnabled(True)
@@ -164,7 +191,7 @@ class DataBrowser(CodeContainer):
 
 		self.listWidget.setColumnCount(len(cols))
 		self.listWidget.setHorizontalHeaderLabels(cols)
-		time.sleep(2) # Needed to make filtering columns work properly - unclear why
+		#time.sleep(2) # Needed to make filtering columns work properly - unclear why
 
 		for i in range(len(results)):
 			r = results[i]
