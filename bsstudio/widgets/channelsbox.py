@@ -1,7 +1,16 @@
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QScrollArea
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QTableWidget
 from PyQt5.QtWidgets import QCheckBox
+from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
+from functools import partial
+from bsstudio.functions import widgetValue, plotHeader, plotLPList
 
 class ScrollMessageBox(QDialog):
 	def __init__(self, parent):
