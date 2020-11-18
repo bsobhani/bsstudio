@@ -194,19 +194,11 @@ class DataBrowser(CodeContainer):
 				#if self.listWidget.horizontalHeaderItem(i).text() not in tableColumns:
 				colHeader = self.listWidget.horizontalHeaderItem(i)
 				if colHeader.text() not in tableColumns:
-					print(self.listWidget.isColumnHidden(i))
 					self.listWidget.hideColumn(i)
 					self.listWidget.update()
 					#assert self.listWidget.isColumnHidden(i) == True
 				else:
 					self.listWidget.showColumn(i)
-
-
-
-
-		for i in range(self.listWidget.columnCount()):
-			print(self.listWidget.isColumnHidden(i))
-
 
 					
 
@@ -214,7 +206,7 @@ class DataBrowser(CodeContainer):
 		logger.info("horizonal header count: "+str(self.listWidget.columnCount()))
 		for i in range(self.listWidget.columnCount()):
 			#if self.listWidget.horizontalHeaderItem(i).text()==key:
-			colHeader = self.listwidget.horizontalheaderitem(i)
+			colHeader = self.listWidget.horizontalHeaderItem(i)
 			if colHeader.text()==key:
 				logger.info(key + " found")
 				return i

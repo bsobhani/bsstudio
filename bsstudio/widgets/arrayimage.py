@@ -129,16 +129,16 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		#	self.hist.hide()
 		#self.canvas.ax.clear()
 		array = None
-		logger.info("time before eval source: "+str(time.time()-t0))
+		logger.debug("time before eval source: "+str(time.time()-t0))
 		if self.source != "":
 			try:
 				array = eval(self.source)
 			except:
 				array = None
-		logger.info("time before widgetValue: "+str(time.time()-t0))
+		logger.debug("time before widgetValue: "+str(time.time()-t0))
 		array = widgetValue(array)
 		t2 = time.time()
-		logger.info("time before imshow: "+str(t2-t0))
+		logger.debug("time before imshow: "+str(t2-t0))
 		#self.canvas.ax.imshow(array)
 		if not hasattr(self,"ran_once"):
 			self.imv.setImage(array,autoRange=True, autoLevels=True, autoDownSample=False)
@@ -147,12 +147,12 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		else:
 			self.imv.setImage(array,autoRange=False, autoLevels=False, autoDownSample=False)
 		t3 = time.time()
-		logger.info("time after imshow: "+str(t3-t0))
+		logger.debug("time after imshow: "+str(t3-t0))
 		#self.canvas.draw()
-		logger.info("time after draw: "+str(time.time()-t0))
+		logger.debug("time after draw: "+str(time.time()-t0))
 		self.setUpdatePeriod(eval(self.updatePeriod))
 		t1 = time.time()
-		logger.info("time at end of runCode: "+str(t1-t0))
+		logger.debug("time at end of runCode: "+str(t1-t0))
 		self.ran_once = True
 		"""[1:]
 
