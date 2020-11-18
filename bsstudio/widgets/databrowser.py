@@ -42,8 +42,6 @@ class DBFetchResultsThread(QThread):
 	
 	def run(self):
 		results = []
-		#db = self.db
-		#dbKwargs = self.dbKwargs:
 		for i,r in enumerate(self.dbGen):
 			results.append(r)
 			N = 4
@@ -79,7 +77,6 @@ class DataBrowser(CodeContainer):
 		self.aliases = {}
 		self.alias_fields_reverse = {}
 		layout = QVBoxLayout()
-		#self.listWidget = QListWidget()
 		self.listWidget = QTableWidget()
 		now = QDateTime.currentDateTime()
 		self.startDateTime = QDateTimeEdit(now.addMonths(-6))
@@ -92,7 +89,6 @@ class DataBrowser(CodeContainer):
 		layout.addWidget(self.listWidget)
 		self.setLayout(layout)
 
-		#self.worker.setFunc(self.__updateTable)
 		self.fr_thread = DBFetchResultsThread()
 		self.fr_thread.resultsSignal.connect(self.updateTableFromResults)
 		self.fr_thread.updateButtonText.connect(self.loadScansButton.setText)
@@ -117,10 +113,6 @@ class DataBrowser(CodeContainer):
 		for uid in self.currentUids():
 			header = self.dbObj[uid]
 			fields = self.selectedFields(uid)
-			#lp = LivePlot(fields)
-			#lp.start(header.start)
-			#for e in header.events():
-			#	lp.event(e)
 			plotLPList(fields, header)
 
 
@@ -146,22 +138,16 @@ class DataBrowser(CodeContainer):
 
 	def __updateTable(self):
 		self.runCode()
-		#self._updateTable()
 		self._updateTable()
-		#self.updateTable(self.dbObj, {})
 
 
 	def __replot(self):
 		self.runCode()
-		#self._replot()
 
 	def updateTable(self, db, dbKwargs):
-		#self.listWidget.clear()
 		since = self.startDateTime.dateTime().toString("yyyy-MM-dd HH:mm:ss")
 		until = self.endDateTime.dateTime().toString("yyyy-MM-dd HH:mm:ss")
 		logger.info("Reading results started")
-		#results = list(db(since=since, until=until, **dbKwargs))
-		#original_text = self.loadScansButton.text()
 		self.loadScansButton.clicked.disconnect()
 		self.loadScansButton.clicked.connect(self.fr_thread.cancel)
 		dbGen = db(since=since, until=until, **dbKwargs)
@@ -174,12 +160,9 @@ class DataBrowser(CodeContainer):
 		self.fr_thread.resume()
 		self.loadScansButton.clicked.disconnect()
 		self.loadScansButton.clicked.connect(self.__updateTable)
-		#self.loadScansButton.setText(original_text)
 		logger.info("Reading results stopped")
 		self.listWidget.setRowCount(len(results))
 		self.listWidget.setSortingEnabled(True)
-		#self.listWidget.clear()
-		#self.listWidget.clearContents()
 		self.listWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
 		col_set=set([])
 		for r in results:
@@ -191,39 +174,26 @@ class DataBrowser(CodeContainer):
 
 		self.listWidget.setColumnCount(len(cols))
 		self.listWidget.setHorizontalHeaderLabels(cols)
-		#time.sleep(2) # Needed to make filtering columns work properly - unclear why
 
 		for i in range(len(results)):
 			r = results[i]
-			#logger.info("len results: "+str(len(results)) +", i:"+str(i))
-			#self.listWidget.addItem(r.start['uid'])
 			for j in range(len(cols)):
-				#item = QTableWidgetItem(r.start['uid'])
-				#logger.info(str(i)+" "+ str(j) + " "+str(cols[j]))
 				try:
 					field = r.start[cols[j]]
 				except KeyError:
-					#logger.info("Could not find field " + cols[j])
+					logger.info("Could not find field " + cols[j])
 					field = None
-				#print(str(i)+" "+ str(j) + " "+str(cols[j]))
-				#print(r.start[cols[j]])
-				#item = QTableWidgetItem(str(r.start[cols[j]]))
 				item = DataTableWidgetItem(str(field))
 				self.listWidget.setItem(i,j,item)
-				#time.sleep(.1)
 
 
-		#self.listWidget.setColumnCount(1)
 
 		if self.tableColumns!="":
-			#for colName in eval(self.tableColumns):
-			#	self.listWidget.hideColumn(self.findHorizontalHeaderIndex(colName))
 			tableColumns = eval(self.tableColumns)
 			for i in range(self.listWidget.columnCount()):
-				#colHeader = self.listWidget.horizontalHeaderItem(i)
-				#if colHeader.text() not in tableColumns:
-				if self.listWidget.horizontalHeaderItem(i).text() not in tableColumns:
-					#logger.info("hiding column "+colHeader.text())
+				#if self.listWidget.horizontalHeaderItem(i).text() not in tableColumns:
+				colHeader = self.listWidget.horizontalHeaderItem(i)
+				if colHeader.text() not in tableColumns:
 					print(self.listWidget.isColumnHidden(i))
 					self.listWidget.hideColumn(i)
 					self.listWidget.update()
@@ -243,9 +213,9 @@ class DataBrowser(CodeContainer):
 	def findHorizontalHeaderIndex(self, key):
 		logger.info("horizonal header count: "+str(self.listWidget.columnCount()))
 		for i in range(self.listWidget.columnCount()):
-			#colHeader = self.listwidget.horizontalheaderitem(i)
-			#if colHeader.text()==key:
-			if self.listWidget.horizontalHeaderItem(i).text()==key:
+			#if self.listWidget.horizontalHeaderItem(i).text()==key:
+			colHeader = self.listwidget.horizontalheaderitem(i)
+			if colHeader.text()==key:
 				logger.info(key + " found")
 				return i
 		return None
@@ -255,15 +225,12 @@ class DataBrowser(CodeContainer):
 		uids = self.currentUids()
 		if len(uids)==0:
 			return None
-		#return uids[0]
 		uid_col = self.findHorizontalHeaderIndex("uid")
 		uid_row = self.listWidget.currentRow()
 		return self.listWidget.item(uid_row, uid_col).text()
 
 	def currentUids(self):
-		#rows = self.listWidget.selectedItems()
 		uid_col = self.findHorizontalHeaderIndex("uid")
-		#uids = [item.text() for item in rows if item.column()==uid_col]
 		rows = [item.row() for item in self.listWidget.selectedItems()]
 		rows = list(set(rows))
 		uids = [self.listWidget.item(row, uid_col).text() for row in rows]
@@ -295,7 +262,6 @@ class DataBrowser(CodeContainer):
 	def replot(self, plots, db):
 		for uid in self.currentUids():
 			self.replotUid(plots, db, uid)
-		#self.replotUid(plots, db, self.currentUid())
 
 	def default_code(self):
 		return """
@@ -306,8 +272,6 @@ class DataBrowser(CodeContainer):
 				db = widgetValue(eval(self.db))
 				self.dbObj = db
 				self.uid = None
-				#self.startDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
-				#self.endDateTime.dateTimeChanged.connect(partial(self.updateTable, db))
 				plots = eval(self.plots)
 				for plot in plots:
 					plot.canvas.ax.clear()
@@ -320,21 +284,13 @@ class DataBrowser(CodeContainer):
 				plotKwargsList = eval(self.plotKwargsList)
 				dbKwargs = widgetValue(eval(self.dbKwargs))
 				livePlots = makeLivePlots(plots, plotArgsList, plotKwargsList)
-				#self.replot(plots, db)
-				#self.updateTable(db, dbKwargs)
-				#self.listWidget.currentTextChanged.connect(partial(self.replot, plots, db))
 				for uid in self.currentUids():
 					self.uid = uid
 					plots = eval(self.plots)
 					plotArgsList = widgetValue(eval(self.plotArgsList))
 					livePlots = makeLivePlots(plots, plotArgsList, plotKwargsList)
 					self.replotUid(livePlots, db, uid)
-				#self._replot = partial(self.replot, livePlots, db)
 				self._updateTable = partial(self.updateTable, db, dbKwargs)
-				#for plot in plots:
-				#	plot.canvas.update()
-				#	plot.update()
-				#	plot.canvas.draw()
 				
 				
 			"""[1:]
