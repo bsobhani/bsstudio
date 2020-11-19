@@ -7,10 +7,18 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 from functools import partial
 from bsstudio.functions import widgetValue, plotHeader, plotLPList
+import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+
 
 class ScrollMessageBox(QDialog):
 	def __init__(self, parent):
@@ -31,36 +39,33 @@ class FieldListWidget(QWidget):
 	def filter_fields(self, field_list):
 		header = self.header
 		field_list2 = []
+		table = header.table()
 		for i in range(len(field_list)):
+			logger.info("Iteration "+str(i))
 			#data = list(header.data(field_list[i]))
+			try:
+				data = table[field_list[i]]
+			except KeyError:
+				continue
 
-			#if not hasattr(data,"__len__") or len(data)<2:
-			#	continue
+			if not hasattr(data,"__len__") or len(data)<2:
+				continue
 
 			#if True in [str==type(d) for d in data]:
 			#	continue
-			g = header.data(field_list[i])
-			try:
-				next(g)
-				next(g)
-			except StopIteration:
-				continue
+			#g = header.data(field_list[i])
+			#try:
+			#	next(g)
+			#	next(g)
+			#except StopIteration:
+			#	continue
 			field_list2.append(field_list[i])
+			print(field_list2)
 		return field_list2
-		
-	def __init__(self, parent, header, dataBrowser):
-		#self.parent = parent
-		self.header = header
-		self.dataBrowser = dataBrowser
-		QWidget.__init__(self,parent)
-		self.setParent(parent)
-		print("parents:",parent,self.parent())
-		field_list = list(header.fields())
-		#field_list = header.fields()
-		self.vl = QVBoxLayout()
-		self.tableWidget = QTableWidget()
-		self.tableWidget.setColumnCount(4)
-		self.tableWidget.setSortingEnabled(True)
+
+	def populateFieldsFromList(self, field_list):
+		header = self.header
+		#field_list = list(header.fields())
 		#field_list = self.filter_fields(field_list)
 		# Commenting out because filter_fields is too slow
 		self.tableWidget.setRowCount(len(field_list))
@@ -77,8 +82,34 @@ class FieldListWidget(QWidget):
 			#self.tableWidget.setCellWidget(i,1,label)
 			self.tableWidget.setItem(i,1,labelItem)
 			self.tableWidget.setCellWidget(i,0,checkbox)
+
+	def populateFields(self, stream_name=None):
+		if stream_name == None:
+			field_list = list(self.header.fields())
+		else:
+			field_list = list(self.header.fields(stream_name))
+		self.populateFieldsFromList(field_list)
+
+	#def populateFieldsFiltered(self):
+	#	field_list = list(self.header.fields())
+	#	field_list = self.filter_fields(field_list)
+	#	self.populateFieldsFromList(field_list)
+		
+	def __init__(self, parent, header, dataBrowser):
+		#self.parent = parent
+		self.header = header
+		self.dataBrowser = dataBrowser
+		QWidget.__init__(self,parent)
+		self.setParent(parent)
+		self.vl = QVBoxLayout()
+		self.tableWidget = QTableWidget()
+		self.tableWidget.setColumnCount(4)
+		self.tableWidget.setSortingEnabled(True)
+
+		self.populateFields()
 		self.vl.addWidget(self.tableWidget)
 		self.setLayout(self.vl)
+		
 
 	def saveAliases(self):
 		N = self.tableWidget.rowCount()
@@ -161,19 +192,32 @@ class ChannelsBox(ScrollMessageBox):
 
 	def saveAliases(self):
 		self.fl.saveAliases()
+
+	def cb_selected(self):
+		stream = self.stream_cb.currentText()
+		if stream == "all":
+			stream = None
+		self.fl.populateFields(stream)
+			
 		
 	def __init__(self, parent):
 		ScrollMessageBox.__init__(self, parent)
 		self.setParent(parent)
 		self.uid = self.parent().currentUid()
-		self.fl = FieldListWidget(self.scroll, parent.dbObj[self.uid], self.parent())
+		header = parent.dbObj[self.uid]
+		self.fl = FieldListWidget(self.scroll, header, self.parent())
 		self.scroll.setWidget(self.fl)
 		button = QPushButton(self)
 		button.setText("Apply")
 		self.vl.addWidget(button)
+		self.stream_cb = QComboBox(self)
+		cb_choices = ["all"] + list(header.stream_names)
+		self.stream_cb.addItems(cb_choices)
+		self.vl.insertWidget(0, self.stream_cb)
 		self.loadCheckedFields()
 		self.loadAliases()
 		button.pressed.connect(self.saveCheckedFields)
 		button.pressed.connect(self.saveAliases)
+		self.stream_cb.currentTextChanged.connect(self.cb_selected)
 
 
