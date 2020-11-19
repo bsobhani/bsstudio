@@ -8,6 +8,7 @@ from PyQt5.QtCore import QDateTime
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDateTimeEdit
 from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QApplication
@@ -19,7 +20,7 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QWidget, QDialog
 from PyQt5.QtWidgets import QListWidget, QTableWidget, QTableWidgetItem, QFrame, QVBoxLayout, QLabel, QPushButton
-from bsstudio.functions import widgetValue, plotHeader, plotLPList
+from bsstudio.functions import widgetValue, plotHeader, plotLPList, evalInNs, getFunctionStdOut
 from collections.abc import Iterable
 from functools import partial
 import time
@@ -27,6 +28,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+
+	
 
 class DBFetchResultsThread(QThread):
 	resultsSignal = pyqtSignal(list)
@@ -100,6 +104,11 @@ class DataBrowser(CodeContainer):
 		self.setContextMenuPolicy(Qt.CustomContextMenu)
 		self.customContextMenuRequested.connect(self.showMenu)
 		self.checked_fields = {}
+		self.endDateTimer = QTimer(self)
+		self.endDateTimer.setInterval(1500)
+		self.endDateTimer.timeout.connect(self.setEndTimeToNow)
+		
+		self.makeMenu()
 
 	def selectedFields(self, uid=None):
 		if self.currentUid() not in self.checked_fields.keys():
@@ -115,25 +124,63 @@ class DataBrowser(CodeContainer):
 			fields = self.selectedFields(uid)
 			plotLPList(fields, header)
 
+	def setEndTimeToNow(self):
+		now = QDateTime.currentDateTime()
+		self.endDateTime.setDateTime(now)
 
-	def showMenu(self,event):
+	def enableAutoUpdateTime(self):
+		self.endDateTimer.start()
+
+
+	def disableAutoUpdateTime(self):
+		self.endDateTimer.stop()
+
+	def makeMenu(self):
 		menu = QMenu()
 		action1 = QAction("Info", self)
 		channels = QAction("Channels", self)
+		current_time = QAction("Auto update end time", self, checkable=True)
 		view_plot = QAction("Plot checked items", self)
 		clear_action = menu.addAction(action1)
 		channels_action = menu.addAction(channels)
 		view_plot_action = menu.addAction(view_plot)
-		action = menu.exec_(self.mapToGlobal(event))
-		if action.text() == "Info":
-			messageBox = ScrollMessageBox(self)
-			messageBox.content.setText(str(self.dbObj[self.currentUid()].start))
-			messageBox.show()
-		if action.text() == "Channels":
+		current_time_action = menu.addAction(current_time)
+		self.menu = menu
+
+	def showScrollBox(self, text):
+		messageBox = ScrollMessageBox(self)
+		messageBox.content.setText(text)
+		messageBox.show()
+	
+	def info_text(self):
+		return str(self.dbObj[self.currentUid()].start)
+		
+
+	def showMenu(self,event):
+		
+		action = self.menu.exec_(self.mapToGlobal(event))
+		if action == None:
+			pass
+		elif action.text() == "Info":
+			#messageBox = ScrollMessageBox(self)
+			#messageBox.content.setText(str(self.dbObj[self.currentUid()].start))
+			#messageBox.show()
+			#info_text = str(self.dbObj[self.currentUid()].start)
+			#info_text = evalInNs(self, "self.getFunctionStdOut(scan_info(['{}']))".format(self.currentUid()))
+			##self.getFunctionStdOut = getFunctionStdOut
+			##info_text = evalInNs(self, "self.getFunctionStdOut(scan_info, ['{}'], Baseline=True)".format(self.currentUid()))
+			#info_text = self.getFunctionStdOut(self.print_hi)
+			self.showScrollBox(self.info_text())
+		elif action.text() == "Channels":
 			self.channelsBox = ChannelsBox(self)
 			self.channelsBox.show()
-		if action.text() == "Plot checked items":
+		elif action.text() == "Plot checked items":
 			self.plotSelectedUids()
+		elif action.text() == "Auto update end time":
+			if action.isChecked():
+				self.enableAutoUpdateTime()
+			else:
+				self.disableAutoUpdateTime()
 			
 
 	def __updateTable(self):

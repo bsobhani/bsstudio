@@ -7,6 +7,8 @@ import time
 import re
 from IPython import get_ipython
 from .lib.pydollarmacro import pydollarmacro
+from functools import partial
+from io import StringIO
 
 import logging
 logger = logging.getLogger(__name__)
@@ -200,3 +202,14 @@ def openFileAsString(filename, macros=[]):
 	return fileContents
 
 
+def getFunctionStdOut(*args, **kwargs):
+	f = partial(*args, **kwargs)
+	import sys
+	old_stdout = sys.stdout
+	result = StringIO()
+	sys.stdout = result
+	f()
+	result_string = result.getvalue()
+	sys.stdout = old_stdout
+
+	return result_string
