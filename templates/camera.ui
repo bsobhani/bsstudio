@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>420</width>
+    <height>458</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="CodeButton" name="codebutton">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>430</y>
+     <width>60</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Droid Arabic Kufi</family>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>On/Off</string>
+   </property>
+   <property name="code" stdset="0">
+    <cstring>ui = self.ui
+if $(camera).cam.acquire.get() == 0:
+	$(camera).cam.acquire.put(1)
+else:
+	$(camera).cam.acquire.put(0)</cstring>
+   </property>
+  </widget>
+  <widget class="ArrayImage" name="arrayimage">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>421</width>
+     <height>431</height>
+    </rect>
+   </property>
+   <property name="source" stdset="0">
+    <string>np.rot90($(camera).image.image,k=3)</string>
+   </property>
+   <property name="updatePeriod" stdset="0">
+    <string>500</string>
+   </property>
+  </widget>
+  <widget class="OpenWindowButton" name="openwindowbutton">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>430</y>
+     <width>50</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Droid Arabic Kufi</family>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>param</string>
+   </property>
+   <property name="fileName" stdset="0">
+    <url>
+     <string>file:ophydPropertyWindow.ui</string>
+    </url>
+   </property>
+   <property name="macros" stdset="0">
+    <stringlist>
+     <string>ophydObject:$(camera).cam</string>
+    </stringlist>
+   </property>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CodeButton</class>
+   <extends>QPushButton</extends>
+   <header>bsstudio.widgets.CodeButton</header>
+  </customwidget>
+  <customwidget>
+   <class>OpenWindowButton</class>
+   <extends>CodeButton</extends>
+   <header>bsstudio.widgets.embedframe</header>
+  </customwidget>
+  <customwidget>
+   <class>ArrayImage</class>
+   <extends>QGraphicsView</extends>
+   <header>bsstudio.widgets.arrayimage</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

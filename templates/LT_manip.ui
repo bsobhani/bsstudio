@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>533</width>
+    <height>89</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>9</y>
+     <width>121</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Droid Arabic Kufi</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="title">
+    <string>$(name1)</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <widget class="CodeButton" name="codebutton1m">
+    <property name="geometry">
+     <rect>
+      <x>7</x>
+      <y>50</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>30</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>ui = self.ui
+$(motor1).user_setpoint.value -= eval(ui().lineEdit1.text())</cstring>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit1">
+    <property name="geometry">
+     <rect>
+      <x>38</x>
+      <y>50</y>
+      <width>50</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: orange</string>
+    </property>
+    <property name="text">
+     <string>$(defaultStep1)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="CodeButton" name="codebutton1p">
+    <property name="geometry">
+     <rect>
+      <x>95</x>
+      <y>50</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>30</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>ui = self.ui
+$(motor1).user_setpoint.value += eval(ui().lineEdit1.text())</cstring>
+    </property>
+   </widget>
+   <widget class="LineInput" name="lineinput1">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: orange</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor1).user_readback.value</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:3.3f}'.format( widgetValue( eval( self.source) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+    </property>
+    <property name="destination" stdset="0">
+     <string>$(motor1).user_setpoint.value</string>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled1">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>30</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.green
+self.onColor = Qt.red
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor1).motor_is_moving.get()</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>9</y>
+     <width>121</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Droid Arabic Kufi</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="title">
+    <string>$(name2)</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <widget class="CodeButton" name="codebutton2m">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>30</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>ui = self.ui
+$(motor2).user_setpoint.value -= eval(ui().lineEdit2.text())</cstring>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit2">
+    <property name="geometry">
+     <rect>
+      <x>41</x>
+      <y>50</y>
+      <width>50</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: orange</string>
+    </property>
+    <property name="text">
+     <string>$(defaultStep2)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="CodeButton" name="codebutton2p">
+    <property name="geometry">
+     <rect>
+      <x>98</x>
+      <y>50</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>30</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>ui = self.ui
+$(motor2).user_setpoint.value += eval(ui().lineEdit2.text())</cstring>
+    </property>
+   </widget>
+   <widget class="LineInput" name="lineinput2">
+    <property name="geometry">
+     <rect>
+      <x>21</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: orange</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor2).user_readback.value</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:3.3f}'.format( widgetValue( eval( self.source) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+    </property>
+    <property name="destination" stdset="0">
+     <string>$(motor2).user_setpoint.value</string>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled2">
+    <property name="geometry">
+     <rect>
+      <x>103</x>
+      <y>30</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.green
+self.onColor = Qt.red
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor2).motor_is_moving.get()</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>9</y>
+     <width>121</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Droid Arabic Kufi</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="title">
+    <string>$(name3)</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <widget class="CodeButton" name="codebutton3m">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>30</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>ui = self.ui
+$(motor3).user_setpoint.value -= eval(ui().lineEdit3.text())</cstring>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit3">
+    <property name="geometry">
+     <rect>
+      <x>41</x>
+      <y>50</y>
+      <width>50</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: orange</string>
+    </property>
+    <property name="text">
+     <string>$(defaultStep3)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="CodeButton" name="codebutton3p">
+    <property name="geometry">
+     <rect>
+      <x>98</x>
+      <y>50</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>30</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>ui = self.ui
+$(motor3).user_setpoint.value += eval(ui().lineEdit3.text())</cstring>
+    </property>
+   </widget>
+   <widget class="LineInput" name="lineinput3">
+    <property name="geometry">
+     <rect>
+      <x>21</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: orange</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor3).user_readback.value</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:3.3f}'.format( widgetValue( eval( self.source) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+    </property>
+    <property name="destination" stdset="0">
+     <string>$(motor3).user_setpoint.value</string>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled3">
+    <property name="geometry">
+     <rect>
+      <x>103</x>
+      <y>30</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.green
+self.onColor = Qt.red
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor3).motor_is_moving.get()</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>9</y>
+     <width>121</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Droid Arabic Kufi</family>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="title">
+    <string>$(name4)</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <widget class="CodeButton" name="codebutton4m">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>30</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>ui = self.ui
+$(motor4).user_setpoint.value -= eval(ui().lineEdit4.text())</cstring>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit4">
+    <property name="geometry">
+     <rect>
+      <x>41</x>
+      <y>50</y>
+      <width>50</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: orange</string>
+    </property>
+    <property name="text">
+     <string>$(defaultStep4)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="CodeButton" name="codebutton4p">
+    <property name="geometry">
+     <rect>
+      <x>98</x>
+      <y>50</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>30</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>ui = self.ui
+$(motor4).user_setpoint.value += eval(ui().lineEdit4.text())</cstring>
+    </property>
+   </widget>
+   <widget class="LineInput" name="lineinput4">
+    <property name="geometry">
+     <rect>
+      <x>21</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: orange</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor4).user_readback.value</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:3.3f}'.format( widgetValue( eval( self.source) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+    </property>
+    <property name="destination" stdset="0">
+     <string>$(motor4).user_setpoint.value</string>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled4">
+    <property name="geometry">
+     <rect>
+      <x>103</x>
+      <y>30</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.green
+self.onColor = Qt.red
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor4).motor_is_moving.get()</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CodeButton</class>
+   <extends>QPushButton</extends>
+   <header>bsstudio.widgets.CodeButton</header>
+  </customwidget>
+  <customwidget>
+   <class>LineInput</class>
+   <extends>QLineEdit</extends>
+   <header>bsstudio.widgets.lineinput</header>
+  </customwidget>
+  <customwidget>
+   <class>BooleanLED</class>
+   <extends>QFrame</extends>
+   <header>bsstudio.widgets.booleanled</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

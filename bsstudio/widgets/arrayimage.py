@@ -26,7 +26,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		self._enableHistogram = False
 		self.updatePeriod_ = eval(self._updatePeriod)
 		#self.threadpool.setMaxThreadCount(1)
-		self.threadType = "qthread"
+		self.threadType = "qtimer"
 		#self.ui.histogram.hide()
 		#self.ui.roiBtn.hide()
 		#self.ui.menuBtn.hide()

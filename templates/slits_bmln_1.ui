@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>206</width>
+    <height>87</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="1" rowspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="font">
+      <font>
+       <family>Droid Arabic Kufi</family>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <stylestrategy>NoAntialias</stylestrategy>
+       <kerning>false</kerning>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="title">
+      <string>PGM Slits</string>
+     </property>
+     <widget class="LineInput" name="lineinput">
+      <property name="geometry">
+       <rect>
+        <x>105</x>
+        <y>50</y>
+        <width>50</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: orange</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="source" stdset="0">
+       <string>$(mtr2).user_readback.value</string>
+      </property>
+      <property name="textUpdateCode" stdset="0">
+       <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:3.1f}'.format( widgetValue( eval( self.source) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+      </property>
+      <property name="destination" stdset="0">
+       <string>$(mtr2).user_setpoint.value</string>
+      </property>
+     </widget>
+     <widget class="BooleanLED" name="booleanled">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>55</y>
+        <width>15</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="id" stdset="0">
+       <number>19</number>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.green
+self.onColor = Qt.red
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+      </property>
+      <property name="source" stdset="0">
+       <string>$(mtr2).motor_is_moving.get()</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>25</y>
+        <width>120</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>$(mtr1)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>50</y>
+        <width>120</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>$(mtr2)</string>
+      </property>
+     </widget>
+     <widget class="LineInput" name="lineinput_2">
+      <property name="geometry">
+       <rect>
+        <x>105</x>
+        <y>25</y>
+        <width>50</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: orange</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="id" stdset="0">
+       <number>21</number>
+      </property>
+      <property name="source" stdset="0">
+       <string>$(mtr1).user_readback.value</string>
+      </property>
+      <property name="textUpdateCode" stdset="0">
+       <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:3.1f}'.format( widgetValue( eval( self.source) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+      </property>
+      <property name="destination" stdset="0">
+       <string>$(mtr1).user_setpoint.value</string>
+      </property>
+     </widget>
+     <widget class="BooleanLED" name="booleanled_2">
+      <property name="geometry">
+       <rect>
+        <x>165</x>
+        <y>30</y>
+        <width>15</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.green
+self.onColor = Qt.red
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+      </property>
+      <property name="source" stdset="0">
+       <string>$(mtr1).motor_is_moving.get()</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineInput</class>
+   <extends>QLineEdit</extends>
+   <header>bsstudio.widgets.lineinput</header>
+  </customwidget>
+  <customwidget>
+   <class>BooleanLED</class>
+   <extends>QFrame</extends>
+   <header>bsstudio.widgets.booleanled</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
