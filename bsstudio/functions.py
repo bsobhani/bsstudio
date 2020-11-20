@@ -28,6 +28,7 @@ def alert(message):
 def getTopObject(w):
 	from .window import isMainWindow
 	obj = w.parentWidget()
+	count = 0
 	while True:
 		if hasattr(obj, "isTopLevel"):
 			if obj.isTopLevel==True:
@@ -40,6 +41,7 @@ def getTopObject(w):
 			#print(obj.findChildren(QWidget))
 			#return obj
 			break
+		logger.info("getTopObject while loop iteration "+str(count))
 		obj = obj.parentWidget()
 	return obj
 
