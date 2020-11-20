@@ -172,6 +172,7 @@ def plugin_factory(cls, is_container=False):
 			#print("init")
 			self.cls = cls
 			self.initialized = False
+			self.is_container = is_container
 
 		def name(self):
 			return self.cls.__name__
@@ -180,7 +181,7 @@ def plugin_factory(cls, is_container=False):
 			return "BSStudio Widgets"
 
 		def isContainer(self):
-			return is_container
+			return self.is_container
 
 		def icon(self):
 			return QtGui.QIcon()
@@ -297,7 +298,12 @@ def plugin_factory(cls, is_container=False):
 
 				#cmd = 'ipython --profile=collection --matplotlib=qt5 -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", verbose=True)"'
 				#cmd = 'bsui -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
-				cmd = 'bsui -c "import bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
+				if os.system("type bsui")==0:
+					#cmd = 'bsui -c "import bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
+					cmd = 'bsui -c "from PyQt5.QtWidgets import QApplication; app = QApplication([]); import bsstudio\nbsstudio.load(\\"'+fileName+'\\", False, verbose=True)"'
+				else:
+					cmd = 'ipython --profile=collection --matplotlib=qt5 -c "'+path_import+'\nimport bsstudio\nbsstudio.load(\\"'+fileName+'\\", verbose=True)"'
+					
 				#print(core.formWindowManager().children())
 				os.system(cmd + " &")
 				
@@ -319,7 +325,7 @@ def plugin_factory(cls, is_container=False):
 			p = core.formWindowManager().findChild(QAction, "__qt_default_preview_action")
 			p.triggered.disconnect()
 			p.triggered.connect(preview)
-			core.formWindowManager().formWindowAdded.connect(preview)
+			#core.formWindowManager().formWindowAdded.connect(preview)
 			#print("make git", p)
 			#print(p.parent())
 			#print(p.parent().children())

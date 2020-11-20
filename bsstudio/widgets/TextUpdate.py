@@ -51,7 +51,6 @@ class TextUpdateBase(CodeObject):
 		self._source = ""
 		self.source = sig
 		self._useThreading = False
-		self.threadpool.setMaxThreadCount(1)
 		#self.worker = Worker(self.start_thread)
 		t0 = time.time()
 		self.worker = WorkerThread(self)
@@ -133,8 +132,6 @@ class TextUpdateBase(CodeObject):
 
 	def resume_widget(self):
 		CodeObject.resume_widget(self)
-		#self.threadpool.clear()
-		#self.threadpool.start(self.worker)
 		t0 = time.time()
 		self.updatePeriod_ = eval(self.updatePeriod)
 		if self.threadMode == "qtimer":

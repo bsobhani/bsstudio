@@ -1,2 +1,0 @@
-#!/bin/bash
-script --flush --quiet --return console_log --command "ipython --profile=collection --matplotlib=qt5"

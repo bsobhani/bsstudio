@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 
 class CodeButton(QPushButton, CodeObject):
 	def __init__(self, parent=None):
-		self.parent = parent
+		#self.parent = parent
 		QPushButton.__init__(self, parent)
 		CodeObject.__init__(self, parent)
 		self.clicked.connect(self.runCode)
@@ -30,10 +30,4 @@ class CodeButton(QPushButton, CodeObject):
 		print(self.objectName()+" pressed...")
 		"""[1:]
 		return code_string
-
-	def runCode(self):
-		if self.threadpool.waitForDone(0):
-			CodeObject.runCode(self)
-		else:
-			logger.info("Thread still running for CodeButton")
 	
