@@ -78,6 +78,7 @@ class TextUpdateBase(CodeObject):
 		t0 = time.time()
 		WorkerThread.cancelled = False
 		while not WorkerThread.cancelled and not sip.isdeleted(self):
+			logger.info("text update start_thread while loop")
 			#if time.time()-t0>self.updatePeriod_/1000:
 			if time.time()-t0>self.updatePeriod_/1000 and main_thread.isAlive():
 				self.timeout()
