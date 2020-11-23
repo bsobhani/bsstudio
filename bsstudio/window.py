@@ -7,6 +7,11 @@ from .widgets import BaseWidget
 #from .widgets import all_bss_widgets
 import threading
 import logging
+import sip
+
+
+
+from .functions import deleteWidgetAndChildren
 
 def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 	# Global function to find the (open) QMainWindow in application
@@ -31,6 +36,7 @@ def getWidgetById(id):
 	return None
 
 mainWindow = None
+main_app = None
 
 def create_main_window(f):
 	#f = "/home/bsobhani/bsw/bss_test9.ui"
@@ -64,13 +70,22 @@ def create_main_window(f):
 
 		def closeEvent(self, evt):
 			print("close event")
-			#for child in self.children():
 			for child in self.findChildren(QtWidgets.QWidget):
 				try:
 					child.close()
+					#print(child, child.parent)
+					#print(child, child.parent())
+					#child.setParent(None)
+					if isinstance(child, BaseWidget):
+						#child.setParent(None)
+						child.deleteLater()
 				except:
 					None
+			#self.setParent(None)
 			self.deleteLater()
+			#sip.delete(self)
+			#deleteWidgetAndChildren(self)
+			main_app.exit()
 
 	global mainWindow
 	mainWindow = MainWindow()
@@ -91,6 +106,8 @@ def load(f, noexec=False, verbose=False):
 		app = QtWidgets.QApplication(sys.argv)
 		#app = QtWidgets.QApplication([])
 	#app = QtWidgets.QApplication([])
+	global main_app
+	main_app = app
 
 
 	#mainWindow = MainWindow(f)
@@ -103,5 +120,5 @@ def load(f, noexec=False, verbose=False):
 			w.resume_widget()
 	#app.exec_()
 	if not noexec:
-		app.exec_()
+		sys.exit( app.exec_() )
 	return app

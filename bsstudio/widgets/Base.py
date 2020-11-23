@@ -22,7 +22,7 @@ class BaseWidget:
 	signal = pyqtSignal()
 
 	def __init__(self, parent=None):
-		self.parent = parent
+		#self.parent = parent
 		#global all_bss_widgets
 		#all_bss_widgets.append(self)
 		self.isTopLevel = False

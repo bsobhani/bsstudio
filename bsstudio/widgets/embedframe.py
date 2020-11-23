@@ -82,12 +82,7 @@ class CodeContainer(QFrame, CodeObject):
 		self.runCode()
 		
 
-def deleteWidgetAndChildren(w):
-	w.setParent(None)
-	for c in w.children():
-		c.deleteLater()
-	w.deleteLater()
-
+from ..functions import deleteWidgetAndChildren
 
 class EmbedFrame(QFrame, CodeObject):
 

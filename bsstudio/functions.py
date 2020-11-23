@@ -14,6 +14,13 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
 
+def deleteWidgetAndChildren(w):
+	w.setParent(None)
+	for c in w.children():
+		c.setParent(None)
+		c.deleteLater()
+	w.deleteLater()
+
 
 class dotdict(dict):
 	__getattr__ = dict.get
