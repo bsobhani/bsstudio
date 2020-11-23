@@ -136,26 +136,17 @@ class EmbedFrame(QFrame, CodeObject):
 
 		from PyQt5 import uic
 		import io
-		#if hasattr(self,"subWindow"):
-		#	self.subWindow.setParent(None)
-		#	for c in self.subWindow.children():
-		#		c.deleteLater()
-		#	self.subWindow.deleteLater()
 		self.deleteSubWindow()
 
 		self.subWindow = QWidget(self)
 		
 		self.subWindow.isTopLevel = True
 		filename = self.fileName.toLocalFile()
-		#if filename=="" or filename==None:
-		#	return
 		if self.windowFileName() is None:
 			return
 		if not QDir.isAbsolutePath(filename):
 			filename = absPath(self.windowFileName(), filename)
 		self.subWindow.uiFilePath = filename
-		#if filename=="":
-		#	return
 		fileContents = openFileAsString(filename, self.macros)
 		fileObject = io.StringIO(fileContents)
 		try:
@@ -164,7 +155,6 @@ class EmbedFrame(QFrame, CodeObject):
 			logger.info("Error opening file "+filename)
 			return
 		self.subWindow.resize(self.size())
-		#print("subwindow show")
 		self.subWindow.show()
 		if not self._paused:
 			self.resume_children()
@@ -183,7 +173,6 @@ class EmbedFrame(QFrame, CodeObject):
 			"""[1:]
 
 	def resume_widget(self):
-		#self._paused = False
 		CodeObject.resume_widget(self)
 		self.runCode()
 		

@@ -19,42 +19,27 @@ pg.setConfigOption('foreground', 'k')
 from ..worker import Worker, WorkerSignals
 class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 	def __init__(self, parent):
-		#super().__init__(parent)
 		pg.GraphicsLayoutWidget.__init__(self, parent)
 		TextUpdateBase.__init__(self, parent)
 		self._updatePeriod = "10000"
 		self._enableHistogram = False
 		self.updatePeriod_ = eval(self._updatePeriod)
-		#self.threadpool.setMaxThreadCount(1)
 		self.threadType = "qtimer"
-		#self.ui.histogram.hide()
-		#self.ui.roiBtn.hide()
-		#self.ui.menuBtn.hide()
 		self.imv = pg.ImageItem()
-		#self.plot = pg.PlotItem()
-		#self.view = self.addViewBox()
 		self.view = self.addPlot()
-		#self.view.invertY(True)
-		#self.view.addItem(self.plot)
-		#self.view.setBorder(None)
-		#self.centralWidget.setBorder((0,0,0))
 		self.centralWidget.layout.setSpacing(0)
 		self.centralWidget.setContentsMargins(0,0,0,0)
 		self.centralWidget.layout.setContentsMargins(0,0,0,0)
 		self.view.setContentsMargins(0,0,0,0)
-		print(self.centralWidget)
 		self.view.addItem(self.imv)
 		self.lineh = self.view.addLine(y=.5)
 		self.lineh.setMovable(True)
 		self.linev = self.view.addLine(x=.5)
 		self.linev.setMovable(True)
 		self.linesToggle()
-		#self.plot.addItem(self.imv)
 		self.hist = pg.HistogramLUTItem(image=self.imv,fillHistogram=True)
-		#self.hist.setLevels(0,256)
 		self.setLayout(QVBoxLayout())
 		self.addItem(self.hist)
-		#pg.GraphicsView.setCentralItem(self, self.imv)
 		histogramAction = self.view.getViewBox().menu.addAction("Histogram")
 		linesAction = self.view.getViewBox().menu.addAction("Lines")
 		histogramAction.triggered.connect(self.histogramToggle)
@@ -84,8 +69,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		col_inferno.triggered.connect(partial(set_cmap, matplotlib.cm.inferno))
 
 		vb.setMouseMode(vb.RectMode)
-		#self.view.getViewBox().setBackgroundColor("w")
-		#self.setBackground("w")
+
 
 
 		
@@ -96,12 +80,6 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 			w.show()
 
 	def histogramToggle(self):
-		"""
-		if self.hist.isVisible():
-			self.hist.hide()
-		else:
-			self.hist.show()
-		"""
 		self.toggleWidgetVisibility(self.hist)
 
 	def linesToggle(self):
@@ -113,48 +91,74 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 
 	def default_code(self):
 		return """
-		import logging
-		logger = logging.getLogger(__name__)
-		import time
-		t0 = time.time()
-		from PyQt5 import QtCore
-		from bsstudio.functions import widgetValue
-		from bsstudio.worker import Worker, WorkerSignals
-		import numpy as np
-		import pyqtgraph as pg
-		pg.setConfigOption('background', 'w')
-		pg.setConfigOption('foreground', 'k')
-		pg.setConfigOptions(antialias=False)
-		#if not self.enableHistogram:
-		#	self.hist.hide()
-		#self.canvas.ax.clear()
-		array = None
-		logger.debug("time before eval source: "+str(time.time()-t0))
-		if self.source != "":
-			try:
-				array = eval(self.source)
-			except:
-				array = None
-		logger.debug("time before widgetValue: "+str(time.time()-t0))
-		array = widgetValue(array)
-		t2 = time.time()
-		logger.debug("time before imshow: "+str(t2-t0))
-		#self.canvas.ax.imshow(array)
-		if not hasattr(self,"ran_once"):
-			self.imv.setImage(array,autoRange=True, autoLevels=True, autoDownSample=False)
-			self.hist.setHistogramRange(self.imv.levels[0],self.imv.levels[1],padding=0)
-			#self.view.autoRange(padding=0)
-		else:
-			self.imv.setImage(array,autoRange=False, autoLevels=False, autoDownSample=False)
-		t3 = time.time()
-		logger.debug("time after imshow: "+str(t3-t0))
-		#self.canvas.draw()
-		logger.debug("time after draw: "+str(time.time()-t0))
-		self.setUpdatePeriod(eval(self.updatePeriod))
-		t1 = time.time()
-		logger.debug("time at end of runCode: "+str(t1-t0))
-		self.ran_once = True
-		"""[1:]
+			import logging
+			logger = logging.getLogger(__name__)
+			import time
+			t0 = time.time()
+			from PyQt5 import QtCore
+			from bsstudio.functions import widgetValue
+			from bsstudio.worker import Worker, WorkerSignals
+			import numpy as np
+			import pyqtgraph as pg
+			pg.setConfigOption('background', 'w')
+			pg.setConfigOption('foreground', 'k')
+			pg.setConfigOptions(antialias=False)
+			array = None
+			logger.debug("time before eval source: "+str(time.time()-t0))
+			if self.source != "":
+				try:
+					array = eval(self.source)
+				except:
+					array = None
+			logger.debug("time before widgetValue: "+str(time.time()-t0))
+			array = widgetValue(array)
+			t2 = time.time()
+			logger.debug("time before imshow: "+str(t2-t0))
+			if not hasattr(self,"ran_once"):
+				self.imv.setImage(array,autoRange=True, autoLevels=True, autoDownSample=False)
+				self.hist.setHistogramRange(self.imv.levels[0],self.imv.levels[1],padding=0)
+			else:
+				self.imv.setImage(array,autoRange=False, autoLevels=False, autoDownSample=False)
+			t3 = time.time()
+			logger.debug("time after imshow: "+str(t3-t0))
+			logger.debug("time after draw: "+str(time.time()-t0))
+			self.setUpdatePeriod(eval(self.updatePeriod))
+			t1 = time.time()
+			logger.debug("time at end of runCode: "+str(t1-t0))
+			self.ran_once = True
+			"""[1:]
+
+	"""
+	def setup_namespace(self):
+		self.ns = {}
+		return
+
+
+	def runInNameSpace(self, codeString):
+		if self._paused:
+			logger.info("widget paused")
+			return
+		#ns = vars(sys.modules[self.__class__.__module__])
+		self.setup_namespace()
+		logger.info("runInNameSpace for "+self.objectName())
+		
+		try:
+			#exec(self._code, ns)
+			t0 = time.time()
+			codeString = ""
+			#exec(codeString, self.ns)
+			exec("")
+			#exec(b'', self.ns)
+			#exec("", self.ns)
+			logger.info("exec duration for "+self.objectName()+": "+str(time.time()-t0))
+		except BaseException as e:
+			additional_info = " Check code in "+self.objectName()+" widget"
+			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
+		#for v in self.ns.values():
+		#	del v
+		#self.ns.clear()
+		#del self.ns
+	"""
 
 	def closeEvent(self, evt):
 		self.pause_widget()
@@ -165,5 +169,4 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 	def resume_widget(self):
 		TextUpdateBase.resume_widget(self)
 
-	#enableHistogram = makeProperty("enableHistogram", bool)
 

@@ -97,10 +97,16 @@ class CodeObject(BaseWidget):
 			#exec(self._code, ns)
 			t0 = time.time()
 			exec(codeString, self.ns)
+			#exec(b'', self.ns)
+			#exec("", self.ns)
 			logger.info("exec duration for "+self.objectName()+": "+str(time.time()-t0))
 		except BaseException as e:
 			additional_info = " Check code in "+self.objectName()+" widget"
 			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
+		#for v in self.ns.values():
+		#	del v
+		#self.ns.clear()
+		del self.ns
 
 
 	def runPaused(self):

@@ -16,15 +16,15 @@ logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 logger.setLevel(logging.WARN)
 
-all_bss_widgets = []
+#all_bss_widgets = []
 
 class BaseWidget:
 	signal = pyqtSignal()
 
 	def __init__(self, parent=None):
 		self.parent = parent
-		global all_bss_widgets
-		all_bss_widgets.append(self)
+		#global all_bss_widgets
+		#all_bss_widgets.append(self)
 		self.isTopLevel = False
 
 	def initialize(self):
