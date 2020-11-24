@@ -120,5 +120,6 @@ def load(f, noexec=False, verbose=False):
 			w.resume_widget()
 	#app.exec_()
 	if not noexec:
-		sys.exit( app.exec_() )
+		#sys.exit( app.exec_() )
+		app.exec_()
 	return app

@@ -59,6 +59,13 @@ class BaseWidget:
 		for c in children:
 			c.resume_widget()
 
+	def pause_children(self):
+		children = self.findChildren(BaseWidget)
+		for c in children:
+			c.pause_widget()
+
+
+
 	def closeEvent(self, evt):
 		logger.info("close Event")
 		self.hide()
