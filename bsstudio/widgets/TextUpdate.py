@@ -42,7 +42,7 @@ class WorkerThread(QThread):
 
 class TextUpdateBase(CodeObject):
 	def __init__(self, parent=None,*,sig=""):
-		self.parent = parent
+		#self.parent = parent
 		#super().__init__(parent)
 		#QLabel.__init__(self, parent)
 		CodeObject.__init__(self, parent)
@@ -147,7 +147,7 @@ class TextUpdateBase(CodeObject):
 
 class TextUpdate(QLabel, TextUpdateBase):
 	def __init__(self, parent=None,*,sig=""):
-		self.parent = parent
+		#self.parent = parent
 		#super().__init__(parent)
 		QLabel.__init__(self, parent)
 		TextUpdateBase.__init__(self, parent, sig=sig)

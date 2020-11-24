@@ -38,7 +38,7 @@ class WorkerThread(QThread):
 class CodeObject(BaseWidget):
 
 	def __init__(self, parent=None, copyNameSpace=True):
-		self.parent = parent
+		#self.parent = parent
 		super().__init__(parent)
 		code = textwrap.dedent(self.default_code())
 		self._code = bytes(code, "utf-8")

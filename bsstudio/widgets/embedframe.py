@@ -67,7 +67,9 @@ def convertPath(w, fileUrl,*,toRelative):
 
 class CodeContainer(QFrame, CodeObject):
 	def __init__(self, parent=None):
-		super().__init__(parent)
+		#super().__init__(parent)
+		QFrame.__init__(self,parent)
+		CodeObject.__init__(self,parent)
 		self.pause_widget()
 	
 
@@ -82,12 +84,7 @@ class CodeContainer(QFrame, CodeObject):
 		self.runCode()
 		
 
-def deleteWidgetAndChildren(w):
-	w.setParent(None)
-	for c in w.children():
-		c.deleteLater()
-	w.deleteLater()
-
+from ..functions import deleteWidgetAndChildren
 
 class EmbedFrame(QFrame, CodeObject):
 
@@ -128,7 +125,7 @@ class EmbedFrame(QFrame, CodeObject):
 		if not QDir.isAbsolutePath(filename):
 			filename = absPath(self.windowFileName(), filename)
 		return filename
-	
+
 	def updateUi(self):
 		from PyQt5.QtWidgets import QWidget
 		from PyQt5.QtWidgets import QVBoxLayout

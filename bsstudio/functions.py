@@ -14,6 +14,20 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
 
+"""
+def deleteWidgetAndChildren(w):
+	w.setParent(None)
+	for c in w.children():
+		c.setParent(None)
+		c.deleteLater()
+	w.deleteLater()
+"""
+def deleteWidgetAndChildren(w):
+	#w.setParent(None)
+	for c in w.children():
+		#c.setParent(None)
+		c.deleteLater()
+	w.deleteLater()
 
 class dotdict(dict):
 	__getattr__ = dict.get
@@ -53,7 +67,7 @@ def makeUiFunction(self):
 		d = {c.objectName(): c for c in children}
 		d["parent"] = obj.parent
 		def parentUi():
-			return obj.parent.ui()
+			return obj.parent().ui()
 		d["parentUi"] = parentUi
 		
 

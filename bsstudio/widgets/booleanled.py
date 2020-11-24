@@ -19,6 +19,8 @@ class BooleanLED(QFrame, TextUpdateBase):
 		self.setVal(False)
 		self.setAutoFillBackground(True)
 		#self.setStyleSheet("border: 1px solid black;")
+	#def timeout(self):
+	#	return
 	def default_code(self):
 		return """
 		from PyQt5.Qt import Qt
