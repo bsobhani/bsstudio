@@ -8,7 +8,7 @@ from PyQt5.QtCore import QDateTime
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDateTimeEdit
 from PyQt5.QtCore import QThread
-from PyQt5.QtCore import QTimer
+#from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QApplication
@@ -202,7 +202,6 @@ class DataBrowser(CodeContainer):
 		self.fr_thread.start()
 		
 
-
 	def updateTableFromResults(self, results):
 		self.fr_thread.resume()
 		self.loadScansButton.clicked.disconnect()
@@ -228,7 +227,7 @@ class DataBrowser(CodeContainer):
 				try:
 					field = r.start[cols[j]]
 				except KeyError:
-					logger.info("Could not find field " + cols[j])
+					logger.debug("Could not find field " + cols[j])
 					field = None
 				item = DataTableWidgetItem(str(field))
 				self.listWidget.setItem(i,j,item)
@@ -274,6 +273,9 @@ class DataBrowser(CodeContainer):
 		rows = list(set(rows))
 		uids = [self.listWidget.item(row, uid_col).text() for row in rows]
 		return uids
+
+	def selectedHeaders(self):
+		return [self.dbObj[uid] for uid in self.currentUids()]
 		
 
 	def startData(self,key):
@@ -281,21 +283,28 @@ class DataBrowser(CodeContainer):
 			return []
 		return self.dbObj[self.currentUid()].start[key]
 		
-
-	def replotUid(self, plots, db, uid):
-		logger.info("replot uid: "+uid)
-		if uid is None:
-			return
-		if plots is None:
-			return
+	def replotHeader(self, plots, header):
+		#if header is None:
+		#	return
+		#if plots is None:
+		#	return
 		for p in plots:
 			if not hasattr(p, "ax"):
 				p._LivePlot__setup()
-
 		
 		for p in plots:
-			plotHeader(p, db[uid])
+			plotHeader(p, header)
 			p.ax.figure.tight_layout()
+	
+
+	def replotUid(self, plots, db, uid):
+		logger.info("replot uid: "+uid)
+		#if uid is None:
+		#	return
+		#if db is None:
+		#	return
+
+		self.replotHeader(plots, db[uid])
 		
 
 	def replot(self, plots, db):

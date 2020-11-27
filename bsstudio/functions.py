@@ -170,7 +170,7 @@ def makeLivePlots(plots, plotFields, plotKwargsList):
 	from bluesky.callbacks import LivePlot, LiveGrid
 	logger.info("plotFields"+str(plotFields))
 	if plotFields is None or plotFields == [[]]:
-		return None
+		return []
 	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
 	livePlots = []
 	for i in range(len(plots)):
