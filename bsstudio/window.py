@@ -26,21 +26,10 @@ def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 def isMainWindow(w):
 	return isinstance(w, MainWindow)
 
-#def ui():
-#	return getMainWindow()
-
-def getWidgetById(id):
-	for w in all_bss_widgets:
-		if w.id == id:
-			return w
-	return None
-
 mainWindow = None
 main_app = None
 
 def create_main_window(f):
-	#f = "/home/bsobhani/bsw/bss_test9.ui"
-	#class MainWindow(QtWidgets.QMainWindow):
 	global MainWindow
 	class MainWindow(*uic.loadUiType(f)):
 		def __init__(self, parent=None):
@@ -49,17 +38,6 @@ def create_main_window(f):
 			self.uiFilePath = f
 
 			self.setupUi(self)
-			#self.ui = uic.loadUi(f)
-			#self.worker = Worker(self.ui.show)
-			self.worker = Worker(self.show)
-
-			def call_func(func, params):
-				func(*params)
-
-			self.threadpool = QtCore.QThreadPool(self)
-			self.threadpool.start(self.worker)
-			#self.ui.show()
-			self.worker.signals.trigger.connect(call_func)
 			self.isLoaded = True
 
 		def mousePressEvent(self, event):
@@ -69,26 +47,20 @@ def create_main_window(f):
 			QtWidgets.QWidget.mousePressEvent(self, event)	
 
 		def closeEvent(self, evt):
-			print("close event")
 			for child in self.findChildren(QtWidgets.QWidget):
 				try:
 					child.close()
-					#print(child, child.parent)
-					#print(child, child.parent())
-					#child.setParent(None)
 					if isinstance(child, BaseWidget):
 						#child.setParent(None)
 						child.deleteLater()
 				except:
 					None
-			#self.setParent(None)
 			self.deleteLater()
-			#sip.delete(self)
-			#deleteWidgetAndChildren(self)
 			main_app.exit()
 
 	global mainWindow
 	mainWindow = MainWindow()
+	mainWindow.show()
 
 		
 
@@ -104,13 +76,10 @@ def load(f, noexec=False, verbose=False):
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
 	if not app: # create QApplication if it doesnt exist 
 		app = QtWidgets.QApplication(sys.argv)
-		#app = QtWidgets.QApplication([])
-	#app = QtWidgets.QApplication([])
 	global main_app
 	main_app = app
 
 
-	#mainWindow = MainWindow(f)
 	global mainWindow
 	create_main_window(f)
 	mainWindow.show()

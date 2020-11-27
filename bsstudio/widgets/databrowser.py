@@ -8,7 +8,7 @@ from PyQt5.QtCore import QDateTime
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDateTimeEdit
 from PyQt5.QtCore import QThread
-#from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QApplication
