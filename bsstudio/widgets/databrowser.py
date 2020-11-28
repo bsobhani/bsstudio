@@ -98,7 +98,6 @@ class DataBrowser(CodeContainer):
 		self.fr_thread.updateButtonText.connect(self.loadScansButton.setText)
 		self.fr_thread.finished.connect(partial(self.loadScansButton.setText, buttonText))
 		self.loadScansButton.clicked.connect(self.__updateTable)
-		#self.loadScansButton.clicked.connect(self.worker.start)
 		self.listWidget.itemSelectionChanged.connect(self.__replot)
 
 		self.setContextMenuPolicy(Qt.CustomContextMenu)

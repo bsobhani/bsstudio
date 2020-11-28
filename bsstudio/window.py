@@ -13,6 +13,7 @@ import sip
 
 from .functions import deleteWidgetAndChildren
 
+
 def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 	# Global function to find the (open) QMainWindow in application
 	app = QtWidgets.QApplication.instance()
@@ -24,6 +25,7 @@ def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
 	return None
 
 def isMainWindow(w):
+	global MainWindow
 	return isinstance(w, MainWindow)
 
 mainWindow = None
@@ -56,7 +58,8 @@ def create_main_window(f):
 				except:
 					None
 			self.deleteLater()
-			main_app.exit()
+			#main_app.exit()
+
 
 	global mainWindow
 	mainWindow = MainWindow()

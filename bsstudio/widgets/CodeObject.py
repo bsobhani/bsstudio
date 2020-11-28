@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPush
 #from qtpy.QtDesigner import QExtensionFactory
 from PyQt5.QtDesigner import QExtensionFactory
 from PyQt5.QtCore import pyqtProperty as Property
+from PyQt5.QtCore import pyqtSignal
 import inspect
 from itertools import dropwhile
 import textwrap
@@ -11,28 +12,37 @@ from .Base import BaseWidget
 import sys
 from IPython import get_ipython
 from PyQt5 import QtCore
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QMutex, QObject
 from ..worker import Worker, WorkerSignals
 from functools import partial
 import logging
 import time
+import threading
 
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 logger.setLevel(logging.WARN)
 
+class CodeThread(QThread):
+	mutex = QMutex()
+	destroyAllThreads = pyqtSignal()
+	def safe_terminate(self):
+		if not self.isRunning():
+			return
+		while self.waitingForLock:
+			time.sleep(.1)
+		self.terminate()
+		self.wait()
+		CodeThread.mutex.unlock()
 
-class WorkerThread(QThread):
-	#lock = QReadWriteLock()
-	cancelled = False
-	def cancel(self):
-		WorkerThread.cancelled = True
-	def resume(self):
-		WorkerThread.cancelled = False
-	def setFunc(self, func):
-		self.func = func
 	def run(self):
-		self.func()	
+		self.waitingForLock = True
+		#CodeThread.destroyAllThreads.connect(self.quit)
+		CodeThread.mutex.lock()
+		self.waitingForLock = False
+		self.parent().runCode_()
+		CodeThread.mutex.unlock()
+
 
 
 class CodeObject(BaseWidget):
@@ -46,7 +56,6 @@ class CodeObject(BaseWidget):
 		self._useThreading = False
 		self._copyNameSpace = copyNameSpace
 		self.ns_extras = {}
-		self.worker = WorkerThread(self)
 
 	def addToNameSpace(self, key, val):
 		self.ns_extras[key] = val
@@ -58,7 +67,8 @@ class CodeObject(BaseWidget):
 	@code.setter
 	def code(self, val):
 		self._code = val
-	
+
+		
 	def default_code(self):
 		return ""
 
@@ -89,37 +99,38 @@ class CodeObject(BaseWidget):
 		if self._paused:
 			logger.info("widget paused")
 			return
-		#ns = vars(sys.modules[self.__class__.__module__])
 		self.setup_namespace()
 		logger.info("runInNameSpace for "+self.objectName())
 		
 		try:
-			#exec(self._code, ns)
 			t0 = time.time()
 			exec(codeString, self.ns)
-			#exec(b'', self.ns)
-			#exec("", self.ns)
 			logger.info("exec duration for "+self.objectName()+": "+str(time.time()-t0))
 		except BaseException as e:
 			additional_info = " Check code in "+self.objectName()+" widget"
 			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
-		#for v in self.ns.values():
-		#	del v
-		#self.ns.clear()
 		del self.ns
 
 
 	def runPaused(self):
 		pass
 
+	def runCode_(self):
+		self.runInNameSpace(self._code)
+
 	def runCode(self):
+		#CodeThread.destroyAllThreads.emit()
 		if self._paused:
 			self.runPaused()
 			return
 		if not self._useThreading:
-			self.runInNameSpace(self._code)
+			self.runCode_()
 		else:
-			#worker = Worker(partial(self.runInNameSpace, self._code))
-			#self.threadpool.start(worker)
-			self.worker.setFunc(partial(self.runInNameSpace, self._code))
-			self.worker.start()
+			code_thread = CodeThread(self)
+			self.closing.connect(code_thread.safe_terminate)
+			code_thread.start()
+			
+
+	def closeEvent(self, evt):
+		self.closing.emit()
+		super().closeEvent(evt)

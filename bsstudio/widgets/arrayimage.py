@@ -128,37 +128,6 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 			self.ran_once = True
 			"""[1:]
 
-	"""
-	def setup_namespace(self):
-		self.ns = {}
-		return
-
-
-	def runInNameSpace(self, codeString):
-		if self._paused:
-			logger.info("widget paused")
-			return
-		#ns = vars(sys.modules[self.__class__.__module__])
-		self.setup_namespace()
-		logger.info("runInNameSpace for "+self.objectName())
-		
-		try:
-			#exec(self._code, ns)
-			t0 = time.time()
-			codeString = ""
-			#exec(codeString, self.ns)
-			exec("")
-			#exec(b'', self.ns)
-			#exec("", self.ns)
-			logger.info("exec duration for "+self.objectName()+": "+str(time.time()-t0))
-		except BaseException as e:
-			additional_info = " Check code in "+self.objectName()+" widget"
-			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
-		#for v in self.ns.values():
-		#	del v
-		#self.ns.clear()
-		#del self.ns
-	"""
 
 	def closeEvent(self, evt):
 		self.pause_widget()

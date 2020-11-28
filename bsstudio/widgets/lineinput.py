@@ -11,11 +11,9 @@ logger.setLevel(logging.WARN)
 
 class LineInput(QLineEdit, TextUpdateBase):
 	def __init__(self, parent=None,*, sig=""):
-		#super().__init__(parent)
 		QLineEdit.__init__(self,parent)
 		TextUpdateBase.__init__(self,parent)
 		self._copyNameSpace = False
-		#CodeObject.__init__(self,parent,copyNameSpace=False)
 		self._destination = ""
 		self.destination = sig
 		textUpdateCode = textwrap.dedent(TextUpdateBase.default_code(self))
@@ -24,10 +22,6 @@ class LineInput(QLineEdit, TextUpdateBase):
 
 	def timeout(self):
 		if not self.hasFocus() and self.source!="":
-			#try:
-			#	self.runInNameSpace(self.textUpdateCode)
-			#except:
-			#	self.setText("unknown")
 			logger.info(self.objectName()+":timeout")
 			logger.info(self.objectName()+":code:"+str(self.textUpdateCode))
 			self.runInNameSpace(self.textUpdateCode)
