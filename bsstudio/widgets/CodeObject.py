@@ -25,10 +25,9 @@ logger.setLevel(logging.WARN)
 
 class CodeThread(QThread):
 	mutex = QMutex()
-	destroyAllThreads = pyqtSignal()
 	def safe_terminate(self):
-		if not self.isRunning():
-			return
+		#if not self.isRunning():
+		#	return
 		while self.waitingForLock:
 			time.sleep(.1)
 		self.terminate()
