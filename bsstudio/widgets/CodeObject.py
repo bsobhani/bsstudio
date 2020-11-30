@@ -21,7 +21,7 @@ import threading
 
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
-logger.setLevel(logging.WARN)
+logger.setLevel(logging.INFO)
 
 class CodeThread(QThread):
 	mutex = QMutex()

@@ -9,6 +9,7 @@ from itertools import dropwhile
 import textwrap
 from .CodeObject import CodeObject
 from functools import partial
+import time
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,7 +20,6 @@ class CodeButton(QPushButton, CodeObject):
 		QPushButton.__init__(self, parent)
 		CodeObject.__init__(self, parent)
 		self.clicked.connect(self.runCode)
-		self.threadType = "qthread"
 
 	@Property(bool, designable=True)
 	def runInThread(self):

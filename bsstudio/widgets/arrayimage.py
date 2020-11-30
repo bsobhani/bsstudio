@@ -23,7 +23,7 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		self._updatePeriod = "10000"
 		self._enableHistogram = False
 		self.updatePeriod_ = eval(self._updatePeriod)
-		self.threadMode = "qthread"
+		self.threadMode = "qtimer"
 		self._useThreading = False
 		self.imv = pg.ImageItem()
 		self.view = self.addPlot()

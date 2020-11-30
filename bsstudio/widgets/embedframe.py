@@ -7,6 +7,7 @@ from .CodeButton import CodeButton
 from .Base import BaseWidget
 from bsstudio.functions import openFileAsString, getTopObject
 import os
+import time
 
 import logging
 logger = logging.getLogger(__name__)
@@ -51,6 +52,15 @@ def convertPath(w, fileUrl,*,toRelative):
 		return QUrl("file:"+ap)
 
 
+def wait_until_unpaused(obj):
+	while obj._paused:
+		time.sleep(.1)
+
+def wait_until_all_children_unpaused(obj):
+	for c in obj.children():
+		if hasattr(c, "_paused"):
+			wait_until_unpaused(obj)
+			print(obj, obj._paused)
 
 class CodeContainer(QFrame, CodeObject):
 	def __init__(self, parent=None):
@@ -66,6 +76,8 @@ class CodeContainer(QFrame, CodeObject):
 
 	def resume_widget(self):
 		CodeObject.resume_widget(self)
+		#wait_until_all_children_unpaused(self)
+		self.resume_children()
 		self.runCode()
 		
 

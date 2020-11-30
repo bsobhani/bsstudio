@@ -8,10 +8,34 @@ from .widgets import BaseWidget
 import threading
 import logging
 import sip
+import sys
 
 
 
 from .functions import deleteWidgetAndChildren
+
+def setup_verbose_logging():
+	#fileh = logging.FileHandler('/tmp/logfile', 'a')
+	fileh = logging.StreamHandler(sys.stdout)
+	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+	fileh.setFormatter(formatter)
+
+	log = logging.getLogger()  # root logger
+	for hdlr in log.handlers[:]:  # remove all old handlers
+		log.removeHandler(hdlr)
+	log.addHandler(fileh)      # set the new handler
+
+def setup_file_logging(f="log"):
+	fileh = logging.FileHandler(f, 'a')
+	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+	fileh.setFormatter(formatter)
+
+	log = logging.getLogger()  # root logger
+	for hdlr in log.handlers[:]:  # remove all old handlers
+		log.removeHandler(hdlr)
+	log.addHandler(fileh)      # set the new handler
+
+
 
 
 def getMainWindow() -> typing.Union[QtWidgets.QMainWindow, None]:
@@ -72,10 +96,19 @@ def load(f, noexec=False, verbose=False):
 	log_dir = os.environ.get("BSSTUDIO_LOG_FILE_NAME")
 	if log_dir is None:
 		log_dir = "log"
+	logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
+	"""
+	logging.basicConfig(filename=log_dir, filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
 	if verbose:
-		logging.basicConfig(level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
+		print("enabling verbose")
+		#logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
 	else:
 		logging.basicConfig(filename=log_dir, filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
+	"""
+	if not verbose:
+		setup_file_logging()
+	else:
+		setup_verbose_logging()
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
 	if not app: # create QApplication if it doesnt exist 
 		app = QtWidgets.QApplication(sys.argv)
