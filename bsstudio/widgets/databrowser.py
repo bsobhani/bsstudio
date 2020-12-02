@@ -109,6 +109,8 @@ class DataBrowser(CodeContainer):
 		
 		self.makeMenu()
 
+		self.selected_uids = []
+
 	def selectedFields(self, uid=None):
 		if self.currentUid() not in self.checked_fields.keys():
 			return []
@@ -118,7 +120,7 @@ class DataBrowser(CodeContainer):
 
 	def plotSelectedUids(self):
 		from bluesky.callbacks import LivePlot
-		for uid in self.currentUids():
+		for uid in self.selectedUids():
 			header = self.dbObj[uid]
 			fields = self.selectedFields(uid)
 			plotLPList(fields, header)
@@ -259,22 +261,30 @@ class DataBrowser(CodeContainer):
 
 
 	def currentUid(self):
-		uids = self.currentUids()
+		uids = self.selectedUids()
 		if len(uids)==0:
 			return None
 		uid_col = self.findHorizontalHeaderIndex("uid")
 		uid_row = self.listWidget.currentRow()
 		return self.listWidget.item(uid_row, uid_col).text()
 
-	def currentUids(self):
+	def selectedUids_(self):
 		uid_col = self.findHorizontalHeaderIndex("uid")
 		rows = [item.row() for item in self.listWidget.selectedItems()]
 		rows = list(set(rows))
 		uids = [self.listWidget.item(row, uid_col).text() for row in rows]
 		return uids
 
+	def selectedUids(self):
+		uids_list = self.selectedUids_()
+		# The purpose of the following lines is to preserve order:
+		uids_to_be_added = [k for k in uids_list if k not in self.selected_uids]
+		self.selected_uids = [k for k in self.selected_uids if k in uids_list]
+		self.selected_uids = self.selected_uids + uids_to_be_added
+		return self.selected_uids
+
 	def selectedHeaders(self):
-		return [self.dbObj[uid] for uid in self.currentUids()]
+		return [self.dbObj[uid] for uid in self.selectedUids()]
 		
 
 	def startData(self,key):
@@ -307,7 +317,7 @@ class DataBrowser(CodeContainer):
 		
 
 	def replot(self, plots, db):
-		for uid in self.currentUids():
+		for uid in self.selectedUids():
 			self.replotUid(plots, db, uid)
 
 	def default_code(self):
@@ -331,7 +341,7 @@ class DataBrowser(CodeContainer):
 				plotKwargsList = eval(self.plotKwargsList)
 				dbKwargs = widgetValue(eval(self.dbKwargs))
 				livePlots = makeLivePlots(plots, plotArgsList, plotKwargsList)
-				for uid in self.currentUids():
+				for uid in self.selectedUids():
 					self.uid = uid
 					plots = eval(self.plots)
 					plotArgsList = widgetValue(eval(self.plotArgsList))

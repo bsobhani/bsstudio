@@ -72,7 +72,12 @@ class FieldListWidget(QWidget):
 		for i in range(len(field_list)):
 			view = QPushButton(self)
 			view.setText("View")
-			view.clicked.connect(partial(plotLPList,[field_list[i]], header))
+			def view_func():
+				import matplotlib.pyplot as plt
+				plotLPList([field_list[i]], header)
+				plt.show()
+			#view.clicked.connect(partial(plotLPList,[field_list[i]], header))
+			view.clicked.connect(view_func)
 			alias = QLineEdit(self)
 			labelItem = QTableWidgetItem(field_list[i])
 			#label.setText(field_list[i])
