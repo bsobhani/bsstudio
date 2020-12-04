@@ -222,3 +222,10 @@ def getFunctionStdOut(*args, **kwargs):
 	sys.stdout = old_stdout
 
 	return result_string
+
+def pop(ophydObject):
+	import epics
+	value = ophydObject.get()
+	epics.pv._PVcache_[ophydObject._read_pv._cache_key].clear_callbacks()
+	return value
+	
