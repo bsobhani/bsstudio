@@ -16,15 +16,11 @@ logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 logger.setLevel(logging.WARN)
 
-#all_bss_widgets = []
 
 class BaseWidget:
-	signal = pyqtSignal()
+	closing = pyqtSignal()
 
 	def __init__(self, parent=None):
-		#self.parent = parent
-		#global all_bss_widgets
-		#all_bss_widgets.append(self)
 		self.isTopLevel = False
 
 	def initialize(self):
@@ -67,14 +63,13 @@ class BaseWidget:
 
 
 	def closeEvent(self, evt):
+		self.closing.emit()
 		logger.info("close Event")
 		self.hide()
-		#self.worker.cancel()
 		for child in self.findChildren(QWidget):
 			try:
 				child.close()
 			except:
 				None
-		#super().closeEvent(self)
 
 

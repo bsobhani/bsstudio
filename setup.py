@@ -23,7 +23,7 @@ class PostInstallCommand(install):
         
 setuptools.setup(
     name="bsstudio",
-    version="0.0.1",
+    version="0.0.2",
     author="Bayan Alexander Sobhani",
     author_email="bsobhani@bnl.gov",
     description="Bluesky widgets for PyQt",

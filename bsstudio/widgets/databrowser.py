@@ -98,7 +98,6 @@ class DataBrowser(CodeContainer):
 		self.fr_thread.updateButtonText.connect(self.loadScansButton.setText)
 		self.fr_thread.finished.connect(partial(self.loadScansButton.setText, buttonText))
 		self.loadScansButton.clicked.connect(self.__updateTable)
-		#self.loadScansButton.clicked.connect(self.worker.start)
 		self.listWidget.itemSelectionChanged.connect(self.__replot)
 
 		self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -110,6 +109,8 @@ class DataBrowser(CodeContainer):
 		
 		self.makeMenu()
 
+		self.selected_uids = []
+
 	def selectedFields(self, uid=None):
 		if self.currentUid() not in self.checked_fields.keys():
 			return []
@@ -119,7 +120,7 @@ class DataBrowser(CodeContainer):
 
 	def plotSelectedUids(self):
 		from bluesky.callbacks import LivePlot
-		for uid in self.currentUids():
+		for uid in self.selectedUids():
 			header = self.dbObj[uid]
 			fields = self.selectedFields(uid)
 			plotLPList(fields, header)
@@ -202,7 +203,6 @@ class DataBrowser(CodeContainer):
 		self.fr_thread.start()
 		
 
-
 	def updateTableFromResults(self, results):
 		self.fr_thread.resume()
 		self.loadScansButton.clicked.disconnect()
@@ -228,7 +228,7 @@ class DataBrowser(CodeContainer):
 				try:
 					field = r.start[cols[j]]
 				except KeyError:
-					logger.info("Could not find field " + cols[j])
+					logger.debug("Could not find field " + cols[j])
 					field = None
 				item = DataTableWidgetItem(str(field))
 				self.listWidget.setItem(i,j,item)
@@ -261,19 +261,30 @@ class DataBrowser(CodeContainer):
 
 
 	def currentUid(self):
-		uids = self.currentUids()
+		uids = self.selectedUids()
 		if len(uids)==0:
 			return None
 		uid_col = self.findHorizontalHeaderIndex("uid")
 		uid_row = self.listWidget.currentRow()
 		return self.listWidget.item(uid_row, uid_col).text()
 
-	def currentUids(self):
+	def selectedUids_(self):
 		uid_col = self.findHorizontalHeaderIndex("uid")
 		rows = [item.row() for item in self.listWidget.selectedItems()]
 		rows = list(set(rows))
 		uids = [self.listWidget.item(row, uid_col).text() for row in rows]
 		return uids
+
+	def selectedUids(self):
+		uids_list = self.selectedUids_()
+		# The purpose of the following lines is to preserve order:
+		uids_to_be_added = [k for k in uids_list if k not in self.selected_uids]
+		self.selected_uids = [k for k in self.selected_uids if k in uids_list]
+		self.selected_uids = self.selected_uids + uids_to_be_added
+		return self.selected_uids
+
+	def selectedHeaders(self):
+		return [self.dbObj[uid] for uid in self.selectedUids()]
 		
 
 	def startData(self,key):
@@ -281,25 +292,32 @@ class DataBrowser(CodeContainer):
 			return []
 		return self.dbObj[self.currentUid()].start[key]
 		
-
-	def replotUid(self, plots, db, uid):
-		logger.info("replot uid: "+uid)
-		if uid is None:
-			return
-		if plots is None:
-			return
+	def replotHeader(self, plots, header):
+		#if header is None:
+		#	return
+		#if plots is None:
+		#	return
 		for p in plots:
 			if not hasattr(p, "ax"):
 				p._LivePlot__setup()
-
 		
 		for p in plots:
-			plotHeader(p, db[uid])
+			plotHeader(p, header)
 			p.ax.figure.tight_layout()
+	
+
+	def replotUid(self, plots, db, uid):
+		logger.info("replot uid: "+uid)
+		#if uid is None:
+		#	return
+		#if db is None:
+		#	return
+
+		self.replotHeader(plots, db[uid])
 		
 
 	def replot(self, plots, db):
-		for uid in self.currentUids():
+		for uid in self.selectedUids():
 			self.replotUid(plots, db, uid)
 
 	def default_code(self):
@@ -323,7 +341,7 @@ class DataBrowser(CodeContainer):
 				plotKwargsList = eval(self.plotKwargsList)
 				dbKwargs = widgetValue(eval(self.dbKwargs))
 				livePlots = makeLivePlots(plots, plotArgsList, plotKwargsList)
-				for uid in self.currentUids():
+				for uid in self.selectedUids():
 					self.uid = uid
 					plots = eval(self.plots)
 					plotArgsList = widgetValue(eval(self.plotArgsList))

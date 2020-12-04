@@ -1,6 +1,5 @@
-from .window import getMainWindow, getWidgetById, isMainWindow
+from .window import getMainWindow, isMainWindow
 from .window import load
-#from .window import ui
 from .window import deleteWidgetAndChildren
 import logging
 #logging.basicConfig(level=logging.WARN, format='%(message)s')

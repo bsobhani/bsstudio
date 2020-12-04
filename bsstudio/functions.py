@@ -12,16 +12,8 @@ from io import StringIO
 
 import logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.WARN)
+logger.setLevel(logging.INFO)
 
-"""
-def deleteWidgetAndChildren(w):
-	w.setParent(None)
-	for c in w.children():
-		c.setParent(None)
-		c.deleteLater()
-	w.deleteLater()
-"""
 def deleteWidgetAndChildren(w):
 	#w.setParent(None)
 	for c in w.children():
@@ -40,22 +32,23 @@ def alert(message):
 	mb.show()
 
 def getTopObject(w):
+	#import importlib
+	#importlib.reload(bsstudio.window)
 	from .window import isMainWindow
 	obj = w.parentWidget()
 	count = 0
 	while True:
 		if hasattr(obj, "isTopLevel"):
 			if obj.isTopLevel==True:
-				#return obj
 				break
 		if isMainWindow(obj):
 			while not obj.isLoaded:
 				time.sleep(1)
 				logger.info("sleeping for 1 second")
-			#print(obj.findChildren(QWidget))
-			#return obj
 			break
 		logger.info("getTopObject while loop iteration "+str(count))
+		if obj.parentWidget() is None:
+			logger.error("Object has None parent: " + str(obj) + obj.objectName())
 		obj = obj.parentWidget()
 	return obj
 
@@ -170,7 +163,7 @@ def makeLivePlots(plots, plotFields, plotKwargsList):
 	from bluesky.callbacks import LivePlot, LiveGrid
 	logger.info("plotFields"+str(plotFields))
 	if plotFields is None or plotFields == [[]]:
-		return None
+		return []
 	plotKwargsList = plotKwargsList + [{}]*(len(plots)-len(plotKwargsList))
 	livePlots = []
 	for i in range(len(plots)):

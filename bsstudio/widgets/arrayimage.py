@@ -16,7 +16,6 @@ logger.setLevel(logging.WARN)
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
 
-from ..worker import Worker, WorkerSignals
 class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 	def __init__(self, parent):
 		pg.GraphicsLayoutWidget.__init__(self, parent)
@@ -24,7 +23,8 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 		self._updatePeriod = "10000"
 		self._enableHistogram = False
 		self.updatePeriod_ = eval(self._updatePeriod)
-		self.threadType = "qtimer"
+		self.threadMode = "qtimer"
+		self._useThreading = False
 		self.imv = pg.ImageItem()
 		self.view = self.addPlot()
 		self.centralWidget.layout.setSpacing(0)
@@ -97,7 +97,6 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 			t0 = time.time()
 			from PyQt5 import QtCore
 			from bsstudio.functions import widgetValue
-			from bsstudio.worker import Worker, WorkerSignals
 			import numpy as np
 			import pyqtgraph as pg
 			pg.setConfigOption('background', 'w')
@@ -128,39 +127,9 @@ class ArrayImage(TextUpdateBase, pg.GraphicsLayoutWidget):
 			self.ran_once = True
 			"""[1:]
 
-	"""
-	def setup_namespace(self):
-		self.ns = {}
-		return
-
-
-	def runInNameSpace(self, codeString):
-		if self._paused:
-			logger.info("widget paused")
-			return
-		#ns = vars(sys.modules[self.__class__.__module__])
-		self.setup_namespace()
-		logger.info("runInNameSpace for "+self.objectName())
-		
-		try:
-			#exec(self._code, ns)
-			t0 = time.time()
-			codeString = ""
-			#exec(codeString, self.ns)
-			exec("")
-			#exec(b'', self.ns)
-			#exec("", self.ns)
-			logger.info("exec duration for "+self.objectName()+": "+str(time.time()-t0))
-		except BaseException as e:
-			additional_info = " Check code in "+self.objectName()+" widget"
-			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
-		#for v in self.ns.values():
-		#	del v
-		#self.ns.clear()
-		#del self.ns
-	"""
 
 	def closeEvent(self, evt):
+		#self.closing.emit()
 		self.pause_widget()
 		self.worker.cancel()
 		pg.GraphicsLayoutWidget.closeEvent(self,evt)

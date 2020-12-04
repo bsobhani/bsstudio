@@ -43,6 +43,9 @@ def makeProperty(name, propertyType=str, **kwargs):
 
 
 class REButton(CodeButton):
+
+	runInThread = Property(bool, designable=False) # Disabling property
+
 	def __init__(self, parent):
 		super().__init__(parent)
 		self._plots = "[]"
