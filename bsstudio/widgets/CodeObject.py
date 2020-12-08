@@ -25,22 +25,39 @@ logger.setLevel(logging.INFO)
 
 class CodeThread(QThread):
 	mutex = QMutex()
+	#terminating = False
+
 	def safe_terminate(self):
-		#if not self.isRunning():
-		#	return
+		self.terminating = True
 		while self.waitingForLock:
+			logger.info("waiting for lock" + str(self))
+			CodeThread.mutex.unlock()
 			time.sleep(.1)
+		logger.info("before terminate")
+		if self.wait(1):
+			return
 		self.terminate()
+		logger.info("after terminate")
 		self.wait()
 		CodeThread.mutex.unlock()
 
 	def run(self):
+		logger.info("starting thread" + str(self))
 		self.waitingForLock = True
-		#CodeThread.destroyAllThreads.connect(self.quit)
 		CodeThread.mutex.lock()
 		self.waitingForLock = False
+		if self.terminating:
+			logger.info("thread exiting due to terminate")
+			CodeThread.mutex.unlock()
+			return
 		self.parent().runCode_()
 		CodeThread.mutex.unlock()
+	def __init__(self, parent):
+		#super().__init__(parent)
+		QThread.__init__(self, parent)
+		self.waitingForLock = False
+		self.terminating = False
+		
 
 
 
@@ -117,6 +134,12 @@ class CodeObject(BaseWidget):
 	def runCode_(self):
 		self.runInNameSpace(self._code)
 
+	def terminate_thread(self):
+		while self.code_thread.waitingForLock:
+			time.sleep(.1)
+		self.code_thread.terminate()
+		self.code_thread.wait()
+
 	def runCode(self):
 		#CodeThread.destroyAllThreads.emit()
 		if self._paused:
@@ -125,11 +148,14 @@ class CodeObject(BaseWidget):
 		if not self._useThreading:
 			self.runCode_()
 		else:
-			code_thread = CodeThread(self)
-			self.closing.connect(code_thread.safe_terminate)
-			code_thread.start()
+			self.code_thread = CodeThread(self)
+			self.closing.connect(self.code_thread.safe_terminate)
+			#self.closing.connect(self.terminate_thread)
+			self.code_thread.start()
 			
 
 	def closeEvent(self, evt):
-		self.closing.emit()
+		#self.terminate_thread()
+		self.timer.stop()
+		#self.code_thread.wait()
 		super().closeEvent(evt)
