@@ -129,6 +129,7 @@ class TextUpdateBase(CodeObject):
 
 	def closeEvent(self, evt):
 		logger.info("close Event")
+		self.timer.stop()
 		self.worker.cancel()
 		while not self.worker.isFinished() and self.worker.isRunning():
 			logger.info("worker not finished")

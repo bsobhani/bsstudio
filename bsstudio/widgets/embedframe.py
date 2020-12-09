@@ -196,6 +196,13 @@ class EmbedFrame(QFrame, CodeObject):
 		self._useRelativePath = val
 		self.fileName = self._fileName
 
+	def __copy__(self):
+		ef = EmbedFrame(self.parent())
+		ef.macros = self.macros
+		ef.fileName = self.fileName
+		ef.useRelativePath = self.useRelativePath
+		return ef
+
 
 
 

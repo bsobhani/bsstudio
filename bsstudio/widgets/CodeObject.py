@@ -156,6 +156,5 @@ class CodeObject(BaseWidget):
 
 	def closeEvent(self, evt):
 		#self.terminate_thread()
-		self.timer.stop()
 		#self.code_thread.wait()
 		super().closeEvent(evt)
