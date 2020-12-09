@@ -66,7 +66,7 @@ class CodeContainer(QFrame, CodeObject):
 	def __init__(self, parent=None):
 		QFrame.__init__(self,parent)
 		CodeObject.__init__(self,parent)
-		self.pause_widget()
+		self.pauseWidget()
 	
 
 	def default_code(self):
@@ -74,10 +74,10 @@ class CodeContainer(QFrame, CodeObject):
 			ui = self.ui
 			"""[1:]
 
-	def resume_widget(self):
-		CodeObject.resume_widget(self)
+	def resumeWidget(self):
+		CodeObject.resumeWidget(self)
 		#wait_until_all_children_unpaused(self)
-		self.resume_children()
+		self.resumeChildren()
 		self.runCode()
 		
 
@@ -149,7 +149,7 @@ class EmbedFrame(QFrame, CodeObject):
 		self.subWindow.resize(self.size())
 		self.subWindow.show()
 		if not self._paused:
-			self.resume_children()
+			self.resumeChildren()
 
 		
 
@@ -164,8 +164,8 @@ class EmbedFrame(QFrame, CodeObject):
 			self.updateUi()
 			"""[1:]
 
-	def resume_widget(self):
-		CodeObject.resume_widget(self)
+	def resumeWidget(self):
+		CodeObject.resumeWidget(self)
 		self.runCode()
 		
 
@@ -260,10 +260,10 @@ class OpenWindowButton(CodeButton):
 			self.subWindow.update()
 			self.subWindow.repaint()
 			#QApplication.instance().processEvents()
-			self.resume_children()
+			self.resumeChildren()
 			"""[1:]
 
-	def resume_widget(self):
+	def resumeWidget(self):
 		self._paused = False
 	
 

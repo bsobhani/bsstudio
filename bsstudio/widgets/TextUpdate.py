@@ -124,7 +124,7 @@ class TextUpdateBase(CodeObject):
 	def source(self, val):
 		self._source = val
 
-	def pause_widget(self):
+	def pauseWidget(self):
 		self._paused = True
 
 	def closeEvent(self, evt):
@@ -136,8 +136,8 @@ class TextUpdateBase(CodeObject):
 			time.sleep(2)
 		super().closeEvent(evt)
 
-	def resume_widget(self):
-		CodeObject.resume_widget(self)
+	def resumeWidget(self):
+		CodeObject.resumeWidget(self)
 		t0 = time.time()
 		self.updatePeriod_ = eval(self.updatePeriod)
 		if self.threadMode == "qtimer":

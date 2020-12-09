@@ -88,11 +88,11 @@ class CodeObject(BaseWidget):
 	def default_code(self):
 		return ""
 
-	def pause_widget(self):
+	def pauseWidget(self):
 		logger.info("pausing widget")
 		self._paused = True
 
-	def resume_widget(self):
+	def resumeWidget(self):
 		logger.info("unpausing widget")
 		self._paused = False
 		#self.setup_namespace()

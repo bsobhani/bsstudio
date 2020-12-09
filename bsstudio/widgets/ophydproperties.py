@@ -73,10 +73,10 @@ class OphydProperties(CodeContainer):
 				logger.warn("error making row for " + obj_name + " and " + name)
 		self.setLayout(layout)
 			
-	def resume_widget(self):
+	def resumeWidget(self):
 		self._paused = False
 		self.runCode()
-		self.resume_children()
+		self.resumeChildren()
 
 	def default_code(self):
 		return """

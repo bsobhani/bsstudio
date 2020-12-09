@@ -122,7 +122,7 @@ def load(f, noexec=False, verbose=False):
 	widgets = app.allWidgets()
 	for w in widgets:
 		if issubclass(w.__class__, BaseWidget):
-			w.resume_widget()
+			w.resumeWidget()
 	#app.exec_()
 	if not noexec:
 		#sys.exit( app.exec_() )
