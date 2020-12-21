@@ -201,7 +201,7 @@ def openFileAsString(filename, macros=[]):
 	try:
 		fileContents = open(filename).read()
 	except:
-		logger.error("Read error")
+		logger.debug("Read error")
 		return
 
 	macro_dict = {}

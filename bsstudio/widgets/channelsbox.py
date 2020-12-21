@@ -82,11 +82,11 @@ class FieldListWidget(QWidget):
 			labelItem = QTableWidgetItem(field_list[i])
 			#label.setText(field_list[i])
 			checkbox = QCheckBox(self)
-			self.tableWidget.setCellWidget(i,3,view)
-			self.tableWidget.setCellWidget(i,2,alias)
-			#self.tableWidget.setCellWidget(i,1,label)
-			self.tableWidget.setItem(i,1,labelItem)
-			self.tableWidget.setCellWidget(i,0,checkbox)
+			self.tableWidget.setCellWidget(i,self.view_col_num,view)
+			self.tableWidget.setCellWidget(i,self.alias_col_num, alias)
+			#self.tableWidget.setCellWidget(i,label)
+			self.tableWidget.setItem(i,self.label_col_num,labelItem)
+			self.tableWidget.setCellWidget(i,self.checkbox_col_num,checkbox)
 
 	def populateFields(self, stream_name=None):
 		if stream_name == None:
@@ -108,6 +108,10 @@ class FieldListWidget(QWidget):
 		self.setParent(parent)
 		self.vl = QVBoxLayout()
 		self.tableWidget = QTableWidget()
+		self.checkbox_col_num = 0
+		self.label_col_num = 1
+		self.alias_col_num = 2
+		self.view_col_num = 3
 		self.tableWidget.setColumnCount(4)
 		self.tableWidget.setSortingEnabled(True)
 
@@ -119,10 +123,10 @@ class FieldListWidget(QWidget):
 	def saveAliases(self):
 		N = self.tableWidget.rowCount()
 		for i in range(N):
-			alias = self.tableWidget.cellWidget(i,2).text()
+			alias = self.tableWidget.cellWidget(i,self.alias_col_num).text()
 			if alias == "":
 				continue
-			field = self.tableWidget.item(i,1).text()
+			field = self.tableWidget.item(i,self.label_col_num).text()
 			#print(self.parent(), self.parent().parent())
 			dataBrowser = self.dataBrowser
 			dbObj = dataBrowser.dbObj
@@ -166,8 +170,8 @@ class ChannelsBox(ScrollMessageBox):
 		fields = self.savedFields()
 		N = self.fl.tableWidget.rowCount()
 		for i in range(N):
-			field = self.fl.tableWidget.item(i,1).text()
-			checkBox = self.fl.tableWidget.cellWidget(i,0)
+			field = self.fl.tableWidget.item(i,self.fl.label_col_num).text()
+			checkBox = self.fl.tableWidget.cellWidget(i,self.fl.checkbox_col_num)
 			if field in fields:
 				checkBox.setChecked(True)
 
@@ -180,8 +184,8 @@ class ChannelsBox(ScrollMessageBox):
 		#if uid not in alias_fields_reverse.keys():
 		#	return
 		for i in range(N):
-			field = self.fl.tableWidget.item(i,1).text()
-			alias_cell = self.fl.tableWidget.cellWidget(i,2)
+			field = self.fl.tableWidget.item(i,self.fl.label_col_num).text()
+			alias_cell = self.fl.tableWidget.cellWidget(i,self.fl.alias_col_num)
 			if (uid, field) in alias_fields_reverse.keys():
 				#try:
 				#	dataBrowser.alias_fields_reverse[uid]

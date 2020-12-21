@@ -121,6 +121,9 @@ class EmbedFrame(QFrame, CodeObject):
 			filename = absPath(self.windowFileName(), filename)
 		return filename
 
+	def frameUi(self):
+		return self.subWindow
+
 	def updateUi(self):
 		from PyQt5.QtWidgets import QWidget
 		from PyQt5.QtWidgets import QVBoxLayout
