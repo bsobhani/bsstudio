@@ -374,3 +374,9 @@ pOpenWindowButton = plugin_factory(OpenWindowButton)
 pArrayImage = plugin_factory(ArrayImage)
 pBooleanLED = plugin_factory(BooleanLED)
 pBarUpdate = plugin_factory(BarUpdate)
+
+from .bluesky_widgets_conversion import ExampleAppConversion, QtSearchesConversion, QtFiguresConversion, QtTreeViewConversion
+#pExampleApp = plugin_factory(ExampleAppConversion)
+pQtSearches = plugin_factory(QtSearchesConversion)
+pQtTreeView = plugin_factory(QtTreeViewConversion)
+pQtFigures = plugin_factory(QtFiguresConversion)
