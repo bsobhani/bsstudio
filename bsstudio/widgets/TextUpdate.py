@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QLabel, QApplication, QDoubleSpinBox, QWidget, QPush
 #from qtpy.QtDesigner import QExtensionFactory
 from PyQt5.QtDesigner import QExtensionFactory
 from PyQt5.QtCore import pyqtProperty as Property
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import QReadWriteLock
 from PyQt5.Qt import Qt
@@ -62,6 +63,7 @@ class TextUpdateBase(CodeObject):
 		self.threadMode = "qtimer"
 		self.start_time = time.time()
 
+
 	def timeout(self):
 		t0 = time.time()
 		self.runCode()
@@ -93,10 +95,12 @@ class TextUpdateBase(CodeObject):
 
 	def updateText(self, val):
 		if val == None:
-			self.setText("unknown")
+			#self.setText("unknown")
+			self.updateTextSignal.emit("unknown")
 			logger.info("setting text to unknown")
 		else:
-			self.setText(val)
+			#self.setText(val)
+			self.updateTextSignal.emit("unknown")
 	
 
 	def default_code(self):
@@ -120,19 +124,20 @@ class TextUpdateBase(CodeObject):
 	def source(self, val):
 		self._source = val
 
-	def pause_widget(self):
+	def pauseWidget(self):
 		self._paused = True
 
 	def closeEvent(self, evt):
 		logger.info("close Event")
+		self.timer.stop()
 		self.worker.cancel()
 		while not self.worker.isFinished() and self.worker.isRunning():
 			logger.info("worker not finished")
 			time.sleep(2)
 		super().closeEvent(evt)
 
-	def resume_widget(self):
-		CodeObject.resume_widget(self)
+	def resumeWidget(self):
+		CodeObject.resumeWidget(self)
 		t0 = time.time()
 		self.updatePeriod_ = eval(self.updatePeriod)
 		if self.threadMode == "qtimer":
@@ -146,6 +151,16 @@ class TextUpdateBase(CodeObject):
 
 
 class TextUpdate(QLabel, TextUpdateBase):
+	@Property(bool, designable=True)
+	def runInThread(self):
+		return self._useThreading
+
+	@runInThread.setter
+	def runInThread(self, val):
+		self._useThreading = val
+
+
+	updateTextSignal = pyqtSignal(str)
 	def __init__(self, parent=None,*,sig=""):
 		#self.parent = parent
 		#super().__init__(parent)
@@ -157,4 +172,5 @@ class TextUpdate(QLabel, TextUpdateBase):
 		self.setAlignment(Qt.AlignCenter)
 		self.setFrameShape(QFrame.Box)
 		self.setFrameShadow(QFrame.Sunken)
+		self.updateTextSignal.connect(self.setText)
 

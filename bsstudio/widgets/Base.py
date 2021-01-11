@@ -26,10 +26,10 @@ class BaseWidget:
 	def initialize(self):
 		pass
 
-	def pause_widget(self):
+	def pauseWidget(self):
 		pass
 
-	def resume_widget(self):
+	def resumeWidget(self):
 		pass
 
 
@@ -50,15 +50,15 @@ class BaseWidget:
 		_ui = makeUiFunction(self)
 		return _ui()
 
-	def resume_children(self):
+	def resumeChildren(self):
 		children = self.findChildren(BaseWidget)
 		for c in children:
-			c.resume_widget()
+			c.resumeWidget()
 
-	def pause_children(self):
+	def pauseChildren(self):
 		children = self.findChildren(BaseWidget)
 		for c in children:
-			c.pause_widget()
+			c.pauseWidget()
 
 
 

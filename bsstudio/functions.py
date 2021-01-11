@@ -57,6 +57,9 @@ def makeUiFunction(self):
 	def ui():
 		obj = getTopObject(self)
 		children = obj.findChildren(QWidget)
+		children = [c for c in children if obj == getTopObject(c)]
+		#for c in children:
+		#	print(getTopObject(c), obj, getTopObject(c).objectName(), obj.objectName(), getTopObject(c)==obj)
 		d = {c.objectName(): c for c in children}
 		d["parent"] = obj.parent
 		def parentUi():
@@ -198,7 +201,7 @@ def openFileAsString(filename, macros=[]):
 	try:
 		fileContents = open(filename).read()
 	except:
-		logger.error("Read error")
+		logger.debug("Read error")
 		return
 
 	macro_dict = {}
@@ -222,3 +225,10 @@ def getFunctionStdOut(*args, **kwargs):
 	sys.stdout = old_stdout
 
 	return result_string
+
+def pop(ophydObject):
+	import epics
+	value = ophydObject.get()
+	epics.pv._PVcache_[ophydObject._read_pv._cache_key].clear_callbacks()
+	return value
+	

@@ -198,7 +198,7 @@ def plugin_factory(cls, is_container=False):
 		def createWidget(self, parent):
 			w = self.cls(parent)
 			w.core = self.core
-			w.pause_widget()
+			w.pauseWidget()
 			return w
 
 		
