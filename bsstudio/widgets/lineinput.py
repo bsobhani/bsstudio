@@ -19,6 +19,7 @@ class LineInput(QLineEdit, TextUpdateBase):
 		textUpdateCode = textwrap.dedent(TextUpdateBase.default_code(self))
 		self._textUpdateCode = bytes(textUpdateCode, "utf-8")
 		self.returnPressed.connect(self.runCode)
+		self.updateTextSignal.connect(self.setText)
 
 	def timeout(self):
 		if not self.hasFocus() and self.source!="":
