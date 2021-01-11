@@ -99,8 +99,8 @@ class TextUpdateBase(CodeObject):
 			self.updateTextSignal.emit("unknown")
 			logger.info("setting text to unknown")
 		else:
-			#self.setText(val)
-			self.updateTextSignal.emit("unknown")
+			self.setText(val)
+			#self.updateTextSignal.emit(val)
 	
 
 	def default_code(self):
