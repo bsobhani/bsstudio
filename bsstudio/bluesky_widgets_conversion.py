@@ -4,6 +4,7 @@ from bluesky_widgets.qt.figures import QtFigures
 from bluesky_widgets.models.plot_specs import FigureSpecList
 from bluesky_widgets.models.run_tree import RunTree
 from bluesky_widgets.qt.run_tree import QtTreeView
+from bluesky_widgets.models.search import Search
 from .widgets.REButton import makeProperty
 from .functions import evalInNs
 from PyQt5.QtWidgets import QWidget
@@ -22,10 +23,17 @@ class ExampleAppConversion(QtSearchListWithButton, BaseWidget):
 class QtSearchesConversion(QtSearches, BaseWidget):
 	def __init__(self, parent):
 		BaseWidget.__init__(self, parent)
+		self._db = ""
 		self.searches = SearchListWithButton()
-		#QtSearchListWithButton.__init__(self, self.searches)
 		QtSearches.__init__(self, self.searches, parent=parent)
-		#QWidget.__init__(self, parent)
+
+	def setDbObj(self):
+		from bluesky_widgets.examples.utils.add_search_mixin import columns
+		db = evalInNs(self, self.db)
+		self.searches.append(Search(db, columns=columns))
+	def resumeWidget(self):
+		self.setDbObj()
+	db = makeProperty("db")
 
 class QtFiguresConversion(QtFigures, BaseWidget):
 	def __init__(self, parent):
