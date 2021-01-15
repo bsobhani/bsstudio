@@ -33,7 +33,7 @@ class OphydProperties(CodeContainer):
 		w.setFixedWidth(200)
 		hlayout.addWidget(w)
 		#w = TextUpdate(self, sig=obj_name+"."+name+".value")
-		if hasattr(sig, "value"):
+		if hasattr(sig, "get"):
 			logger.info("hasattr value:"+obj.name)
 			#w = TextUpdate(self, sig=obj_name+"."+name+".get(timeout=.5)")
 			w = TextUpdate(self, sig=obj_name+"."+name+".get()")
@@ -55,7 +55,6 @@ class OphydProperties(CodeContainer):
 
 		
 	def createFields(self, obj, obj_name):
-		print("create fields")
 		layout = QVBoxLayout()
 		hlayout = QHBoxLayout()
 		hlayout.setAlignment(Qt.AlignLeft)
