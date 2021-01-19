@@ -57,7 +57,7 @@ def makeUiFunction(self):
 	def ui():
 		obj = getTopObject(self)
 		children = obj.findChildren(QWidget)
-		children = [c for c in children if obj == getTopObject(c)]
+		##children = [c for c in children if obj == getTopObject(c)] #commented out for performance
 		#for c in children:
 		#	print(getTopObject(c), obj, getTopObject(c).objectName(), obj.objectName(), getTopObject(c)==obj)
 		d = {c.objectName(): c for c in children}

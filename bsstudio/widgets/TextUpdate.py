@@ -99,8 +99,8 @@ class TextUpdateBase(CodeObject):
 			self.updateTextSignal.emit("unknown")
 			logger.info("setting text to unknown")
 		else:
-			#self.setText(val)
-			self.updateTextSignal.emit("unknown")
+			self.setText(val)
+			#self.updateTextSignal.emit(val)
 	
 
 	def default_code(self):
@@ -148,6 +148,7 @@ class TextUpdateBase(CodeObject):
 		logger.info(str(time.time()-t0) +" seconds to start thread")
 
 	updatePeriod = makeProperty("updatePeriod")
+	updateTextSignal = pyqtSignal(str)
 
 
 class TextUpdate(QLabel, TextUpdateBase):
@@ -160,7 +161,6 @@ class TextUpdate(QLabel, TextUpdateBase):
 		self._useThreading = val
 
 
-	updateTextSignal = pyqtSignal(str)
 	def __init__(self, parent=None,*,sig=""):
 		#self.parent = parent
 		#super().__init__(parent)
