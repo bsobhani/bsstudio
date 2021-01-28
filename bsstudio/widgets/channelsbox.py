@@ -71,13 +71,15 @@ class FieldListWidget(QWidget):
 		self.tableWidget.setRowCount(len(field_list))
 		for i in range(len(field_list)):
 			view = QPushButton(self)
-			view.setText("View")
-			def view_func():
+			obj_str = field_list[i]
+			view.setText("View"+obj_str)
+			def view_func(obj_str):
 				import matplotlib.pyplot as plt
-				plotLPList([field_list[i]], header)
+				#plotLPList([field_list[i]], header)
+				plotLPList([obj_str], header)
 				plt.show()
 			#view.clicked.connect(partial(plotLPList,[field_list[i]], header))
-			view.clicked.connect(view_func)
+			view.clicked.connect(partial(view_func, obj_str))
 			alias = QLineEdit(self)
 			labelItem = QTableWidgetItem(field_list[i])
 			#label.setText(field_list[i])
