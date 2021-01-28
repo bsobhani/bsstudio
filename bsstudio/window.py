@@ -97,16 +97,11 @@ def load(f, noexec=False, verbose=False):
 	if log_dir is None:
 		log_dir = "log"
 	logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
-	"""
-	logging.basicConfig(filename=log_dir, filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
-	if verbose:
-		print("enabling verbose")
-		#logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
-	else:
-		logging.basicConfig(filename=log_dir, filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
-	"""
 	if not verbose:
-		setup_file_logging()
+		try:
+			setup_file_logging()
+		except PermissionError:
+			print("PermissionError: Cannot log to file")
 	else:
 		setup_verbose_logging()
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 

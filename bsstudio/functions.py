@@ -110,7 +110,7 @@ def evalInNs(w, cmd):
 
 	except:
 		#logger.warn("unable to evaluate command "+str(cmd)+" in namespace "+str(ns.keys()))
-		logger.warn("unable to evaluate command "+str(cmd)+" in namespace)
+		logger.warn("unable to evaluate command "+str(cmd)+" in namespace")
 		return None
 
 
