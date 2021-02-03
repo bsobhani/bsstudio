@@ -31,10 +31,14 @@ def alert(message):
 	mb.setText(message)
 	mb.show()
 
+gto_hash = {}
+
 def getTopObject(w):
 	#import importlib
 	#importlib.reload(bsstudio.window)
 	from .window import isMainWindow
+	if w in gto_hash.keys():
+		return gto_hash[w]
 	obj = w.parentWidget()
 	count = 0
 	while True:
@@ -46,10 +50,11 @@ def getTopObject(w):
 				time.sleep(1)
 				logger.info("sleeping for 1 second")
 			break
-		logger.info("getTopObject while loop iteration "+str(count))
+		#logger.info("getTopObject while loop iteration "+str(count))
 		if obj.parentWidget() is None:
 			logger.error("Object has None parent: " + str(obj) + obj.objectName())
 		obj = obj.parentWidget()
+	gto_hash[w] = obj
 	return obj
 
 
@@ -57,7 +62,7 @@ def makeUiFunction(self):
 	def ui():
 		obj = getTopObject(self)
 		children = obj.findChildren(QWidget)
-		##children = [c for c in children if obj == getTopObject(c)] #commented out for performance
+		children = [c for c in children if obj == getTopObject(c)] #commented out for performance
 		#for c in children:
 		#	print(getTopObject(c), obj, getTopObject(c).objectName(), obj.objectName(), getTopObject(c)==obj)
 		d = {c.objectName(): c for c in children}
@@ -207,7 +212,7 @@ def openFileAsString(filename, macros=[]):
 
 	macro_dict = {}
 	for m in macros:
-		left, right = m.split(":")
+		left, right = m.split(":", 1)
 		macro_dict[left] = right
 		#fileContents = fileContents.replace("$("+left+")", right)
 		#fileContents = fileContents.replace("$("+left+")", right)
