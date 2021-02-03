@@ -99,7 +99,8 @@ def load(f, noexec=False, verbose=False):
 	logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
 	if not verbose:
 		try:
-			setup_file_logging()
+			#setup_file_logging() #Commenting out file logging until log file size limits are implemented
+			pass
 		except PermissionError:
 			print("PermissionError: Cannot log to file")
 	else:
