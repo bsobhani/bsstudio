@@ -25,15 +25,22 @@ def setup_verbose_logging():
 		log.removeHandler(hdlr)
 	log.addHandler(fileh)      # set the new handler
 
+def remove_log_handlers():
+	log = logging.getLogger()  # root logger
+	for hdlr in log.handlers[:]:  # remove all old handlers
+		log.removeHandler(hdlr)
+
+
 def setup_file_logging(f="log"):
 	fileh = logging.FileHandler(f, 'a')
 	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 	fileh.setFormatter(formatter)
 
-	log = logging.getLogger()  # root logger
-	for hdlr in log.handlers[:]:  # remove all old handlers
-		log.removeHandler(hdlr)
-	log.addHandler(fileh)      # set the new handler
+	#log = logging.getLogger()  # root logger
+	#for hdlr in log.handlers[:]:  # remove all old handlers
+	#	log.removeHandler(hdlr)
+	#log.addHandler(fileh)      # set the new handler
+	remove_log_handlers()
 
 
 
@@ -100,11 +107,13 @@ def load(f, noexec=False, verbose=False):
 	if not verbose:
 		try:
 			#setup_file_logging() #Commenting out file logging until log file size limits are implemented
-			pass
+			#remove_log_handlers()
+			logging.disable(logging.CRITICAL)
 		except PermissionError:
 			print("PermissionError: Cannot log to file")
 	else:
 		setup_verbose_logging()
+		logging.disable(logging.NOTSET)
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
 	if not app: # create QApplication if it doesnt exist 
 		app = QtWidgets.QApplication(sys.argv)
