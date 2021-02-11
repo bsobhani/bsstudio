@@ -205,13 +205,16 @@ def plotLPList(y_list, header, samePlot=False):
 
 def openFileAsString(filename, macros=[]):
 	try:
-		fileContents = open(filename).read()
+		file_obj = open(filename)
+		fileContents = file_obj.read()
+		file_obj.close()
 	except:
 		logger.debug("Read error")
 		return
 
 	macro_dict = {}
 	for m in macros:
+		print(m)
 		left, right = m.split(":", 1)
 		macro_dict[left] = right
 		#fileContents = fileContents.replace("$("+left+")", right)

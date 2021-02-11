@@ -5,10 +5,12 @@ from .worker import Worker
 import typing
 from .widgets import BaseWidget
 #from .widgets import all_bss_widgets
+from .functions import openFileAsString
 import threading
 import logging
 import sip
 import sys
+import io
 
 
 
@@ -64,7 +66,9 @@ main_app = None
 
 def create_main_window(f):
 	global MainWindow
-	class MainWindow(*uic.loadUiType(f)):
+	file_contents = openFileAsString(f)
+	file_obj = io.StringIO(file_contents)
+	class MainWindow(*uic.loadUiType(file_obj)):
 		def __init__(self, parent=None):
 			self.isLoaded = False
 			super().__init__(parent)
