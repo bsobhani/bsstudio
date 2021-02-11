@@ -214,7 +214,6 @@ def openFileAsString(filename, macros=[]):
 
 	macro_dict = {}
 	for m in macros:
-		print(m)
 		left, right = m.split(":", 1)
 		macro_dict[left] = right
 		#fileContents = fileContents.replace("$("+left+")", right)
