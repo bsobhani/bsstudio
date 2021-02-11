@@ -5,10 +5,12 @@ from .worker import Worker
 import typing
 from .widgets import BaseWidget
 #from .widgets import all_bss_widgets
+from .functions import openFileAsString
 import threading
 import logging
 import sip
 import sys
+import io
 
 
 
@@ -25,15 +27,22 @@ def setup_verbose_logging():
 		log.removeHandler(hdlr)
 	log.addHandler(fileh)      # set the new handler
 
+def remove_log_handlers():
+	log = logging.getLogger()  # root logger
+	for hdlr in log.handlers[:]:  # remove all old handlers
+		log.removeHandler(hdlr)
+
+
 def setup_file_logging(f="log"):
 	fileh = logging.FileHandler(f, 'a')
 	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 	fileh.setFormatter(formatter)
 
-	log = logging.getLogger()  # root logger
-	for hdlr in log.handlers[:]:  # remove all old handlers
-		log.removeHandler(hdlr)
-	log.addHandler(fileh)      # set the new handler
+	#log = logging.getLogger()  # root logger
+	#for hdlr in log.handlers[:]:  # remove all old handlers
+	#	log.removeHandler(hdlr)
+	#log.addHandler(fileh)      # set the new handler
+	remove_log_handlers()
 
 
 
@@ -57,7 +66,9 @@ main_app = None
 
 def create_main_window(f):
 	global MainWindow
-	class MainWindow(*uic.loadUiType(f)):
+	file_contents = openFileAsString(f)
+	file_obj = io.StringIO(file_contents)
+	class MainWindow(*uic.loadUiType(file_obj)):
 		def __init__(self, parent=None):
 			self.isLoaded = False
 			super().__init__(parent)
@@ -97,18 +108,16 @@ def load(f, noexec=False, verbose=False):
 	if log_dir is None:
 		log_dir = "log"
 	logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
-	"""
-	logging.basicConfig(filename=log_dir, filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
-	if verbose:
-		print("enabling verbose")
-		#logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
-	else:
-		logging.basicConfig(filename=log_dir, filemode='a', level=logging.WARN, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s", datefmt='%Y-%m-%d %H:%M:%S')
-	"""
 	if not verbose:
-		setup_file_logging()
+		try:
+			#setup_file_logging() #Commenting out file logging until log file size limits are implemented
+			#remove_log_handlers()
+			logging.disable(logging.CRITICAL)
+		except PermissionError:
+			print("PermissionError: Cannot log to file")
 	else:
 		setup_verbose_logging()
+		logging.disable(logging.NOTSET)
 	app = QtWidgets.QApplication.instance() # checks if QApplication already exists 
 	if not app: # create QApplication if it doesnt exist 
 		app = QtWidgets.QApplication(sys.argv)
