@@ -168,8 +168,18 @@ class EmbedFrame(QFrame, CodeObject):
 			"""[1:]
 
 	def resumeWidget(self):
+		if not self._paused:
+			return
 		CodeObject.resumeWidget(self)
 		self.runCode()
+
+	#def resumeFrame(self):
+	#	#BaseWidget.resumeChildren(self.frameUi())
+	#	children = self.findChildren(BaseWidget)
+	#	for c in children:
+	#		c.resumeWidget()
+
+
 		
 
 	#fileName = makeProperty("fileName", QUrl, notify=fileChanged)
