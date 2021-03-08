@@ -67,13 +67,15 @@ class CodeContainer(QFrame, CodeObject):
 		QFrame.__init__(self,parent)
 		CodeObject.__init__(self,parent)
 		self.pauseWidget()
-		#original = self.resizeEvent
+		original = self.resizeEvent
 		#def resizeEvent(event):
-		#	print("codecontainer resize")
+		#	#print("codecontainer resize")
 		#	original(event)
 		#	if not self._paused:
 		#		self.resumeChildren()
-		#	self.runCode()
+		#	#self.runCode()
+		#	if self._paused:
+		#		self.runPaused()
 		#self.resizeEvent = resizeEvent
 
 	
@@ -117,12 +119,16 @@ class EmbedFrame(QFrame, CodeObject):
 		self._macros = []
 		self._useRelativePath = True
 		self.fileChanged.connect(self.updateUi)
-		#original = self.resizeEvent
-		#def resizeEvent(event):
-		#	print("embedframe resize")
-		#	original(event)
-		#	self.runCode()
-		#self.resizeEvent = resizeEvent
+		original = self.resizeEvent
+		def resizeEvent(event):
+			original(event)
+			#self.runCode()
+			if hasattr(self, "subWindow"):
+				self.subWindow.resize(self.size())
+
+			if self._paused:
+				self.runPaused()
+		self.resizeEvent = resizeEvent
 
 	def runPaused(self):
 		self.updateUi()
