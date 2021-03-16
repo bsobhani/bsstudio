@@ -79,6 +79,14 @@ class CodeContainer(QFrame, CodeObject):
 		#self.resizeEvent = resizeEvent
 
 	
+	@Property(bool, designable=True)
+	def runInThread(self):
+		return self._useThreading
+
+	@runInThread.setter
+	def runInThread(self, val):
+		self._useThreading = val
+
 
 	def default_code(self):
 		return """
