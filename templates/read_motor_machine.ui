@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>480</width>
+    <height>55</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>9</y>
+     <width>461</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="statusTip">
+    <string>ring current (mA)</string>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="title">
+    <string>$(name)</string>
+   </property>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>95</x>
+      <y>25</y>
+      <width>10</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>X</string>
+    </property>
+    <property name="buddy">
+     <cstring>lineread_X</cstring>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>268</x>
+      <y>25</y>
+      <width>20</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>dX (mrad)</string>
+    </property>
+    <property name="buddy">
+     <cstring>lineread_Xang</cstring>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>185</x>
+      <y>25</y>
+      <width>10</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Y (mm)</string>
+    </property>
+    <property name="buddy">
+     <cstring>lineread_Y</cstring>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>25</y>
+      <width>10</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>I</string>
+    </property>
+    <property name="buddy">
+     <cstring>lineread_I</cstring>
+    </property>
+   </widget>
+   <widget class="LineRead" name="lineread_Xang">
+    <property name="geometry">
+     <rect>
+      <x>285</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>beam hor. angle dX (microrad)</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: yellow</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor_Xang).get()</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:2.1f}'.format( 1000*float( widgetValue( eval( self.source ) ) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+    </property>
+   </widget>
+   <widget class="LineRead" name="lineread_I">
+    <property name="geometry">
+     <rect>
+      <x>15</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="Button">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Window">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="ToolTipBase">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>234</red>
+          <green>234</green>
+          <blue>18</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="Button">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Window">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="ToolTipBase">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>234</red>
+          <green>234</green>
+          <blue>18</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="Button">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Base">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="Window">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="ToolTipBase">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>234</red>
+          <green>234</green>
+          <blue>18</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+      <stylestrategy>PreferDefault</stylestrategy>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>ring current (mA)</string>
+    </property>
+    <property name="toolTipDuration">
+     <number>-1</number>
+    </property>
+    <property name="statusTip">
+     <string/>
+    </property>
+    <property name="whatsThis">
+     <string/>
+    </property>
+    <property name="accessibleDescription">
+     <string/>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: yellow </string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+#destination = widgetValue(eval(self.destination))
+#val = widgetValue(eval(self.text()))
+#if self.hasFocus() and self.destination!=&quot;&quot;:
+#	exec(self.destination+&quot; = &quot;+self.text())
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor_I).get()</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:2.2f}'.format( float( widgetValue( eval( self.source ) ) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+    </property>
+   </widget>
+   <widget class="LineRead" name="lineread_X">
+    <property name="geometry">
+     <rect>
+      <x>105</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;beam position X (microns)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: yellow</string>
+    </property>
+    <property name="cursorPosition">
+     <number>0</number>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="cursorMoveStyle">
+     <enum>Qt::VisualMoveStyle</enum>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor_X).get()</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:2.1f}'.format(1000* float( widgetValue( eval( self.source ) ) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+    </property>
+   </widget>
+   <widget class="LineRead" name="lineRead_Yang">
+    <property name="geometry">
+     <rect>
+      <x>375</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+      <stylestrategy>PreferDefault</stylestrategy>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>beam vert. angle dY (microrad)</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: yellow </string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+#destination = widgetValue(eval(self.destination))
+#val = widgetValue(eval(self.text()))
+#if self.hasFocus() and self.destination!=&quot;&quot;:
+#	exec(self.destination+&quot; = &quot;+self.text())
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor_Yang).get()</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:2.1f}'.format( 1000*float( widgetValue( eval( self.source ) ) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>358</x>
+      <y>25</y>
+      <width>20</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>dY (mrad)</string>
+    </property>
+    <property name="buddy">
+     <cstring>lineRead_Yang</cstring>
+    </property>
+   </widget>
+   <widget class="LineRead" name="lineread_Y">
+    <property name="geometry">
+     <rect>
+      <x>195</x>
+      <y>25</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Droid Arabic Kufi</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>beam position Y (microns)</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: yellow</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+#destination = widgetValue(eval(self.destination))
+#val = widgetValue(eval(self.text()))
+#if self.hasFocus() and self.destination!=&quot;&quot;:
+#	exec(self.destination+&quot; = &quot;+self.text())
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>$(motor_Y).get()</string>
+    </property>
+    <property name="textUpdateCode" stdset="0">
+     <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:2.1f}'.format(1000* float( widgetValue( eval( self.source ) ) ) ) 
+	self.updateText(txt)
+</cstring>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>1</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>FOE Shutters Enabled </string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.red
+self.onColor = Qt.green
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>EpicsSignal('XF:21IDA{Hu:A}Sts:GblEnbl-Sts').get() == 1</string>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled_2">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>1</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Beamline Enabled</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.red
+self.onColor = Qt.green
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string> EpicsSignal('XF:21IDA{Hu:A}Sts:Enbl-Sts').get() == 1</string>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled_3">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>1</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>A Hutch Beam On</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.red
+self.onColor = Qt.green
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>EpicsSignal('XF:21IDA{Hu:A}Sts:Beam-Sts').get() == 1</string>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled_4">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>1</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>PS Water/Temp</string>
+    </property>
+    <property name="source" stdset="0">
+     <string>EpicsSignal('XF:21ID-EPS{}Out:ExpIntlk-Sts').get() == 1</string>
+    </property>
+   </widget>
+   <widget class="BooleanLED" name="booleanled_6">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>1</y>
+      <width>15</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>PS Vacuum</string>
+    </property>
+    <property name="code" stdset="0">
+     <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.red
+self.onColor = Qt.green
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+    </property>
+    <property name="source" stdset="0">
+     <string>EpicsSignal('XF:21ID-EPS{}Vac-Sts').get() == 1</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>BooleanLED</class>
+   <extends>QFrame</extends>
+   <header>bsstudio.widgets.booleanled</header>
+  </customwidget>
+  <customwidget>
+   <class>LineRead</class>
+   <extends>QLineEdit</extends>
+   <header>bsstudio.widgets.lineread</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

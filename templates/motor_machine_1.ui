@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>823</width>
+    <height>110</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="title">
+      <string>$(name)</string>
+     </property>
+     <widget class="LineInput" name="lineinput">
+      <property name="geometry">
+       <rect>
+        <x>158</x>
+        <y>41</y>
+        <width>120</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: orange</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="source" stdset="0">
+       <string>eval(self.ui().comboBox.currentText()+'.gap.readback.value')</string>
+      </property>
+      <property name="textUpdateCode" stdset="0">
+       <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:2.2f}'.format( float( widgetValue( eval( self.source ) ) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+      </property>
+      <property name="destination" stdset="0">
+       <string>eval(self.ui().comboBox.currentText()+'.gap.setpoint.value')</string>
+      </property>
+     </widget>
+     <widget class="CodeButton" name="codebutton_2">
+      <property name="geometry">
+       <rect>
+        <x>395</x>
+        <y>40</y>
+        <width>25</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>&gt;</string>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>ui = self.ui
+$(ui.comboBox.currentText()).gap.user_setpoint.value += eval(ui().lineEdit.text())</cstring>
+      </property>
+     </widget>
+     <widget class="CodeButton" name="codebutton">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>40</y>
+        <width>25</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>&lt;</string>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>ui = self.ui
+$(ui.comboBox.currentText()).gap.user_setpoint.value -= eval(ui().lineEdit.text())</cstring>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>40</y>
+        <width>70</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::PreventContextMenu</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: orange</string>
+      </property>
+      <property name="text">
+       <string>$(defaultStep)</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="BooleanLED" name="booleanled">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>40</y>
+        <width>25</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.green
+self.onColor = Qt.red
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue( eval( self.source ))
+	self.setVal(b)
+</cstring>
+      </property>
+      <property name="source" stdset="0">
+       <string>eval(self.ui().comboBox.currentText()+'.gap.moving')</string>
+      </property>
+     </widget>
+     <widget class="LineInput" name="lineinput_2">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>40</y>
+        <width>120</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: orange
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="source" stdset="0">
+       <string>eval(self.ui().comboBox.currentText()+'.phase.readback.value')</string>
+      </property>
+      <property name="textUpdateCode" stdset="0">
+       <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:2.2f}'.format( float( widgetValue( eval( self.source ) ) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))
+</cstring>
+      </property>
+      <property name="destination" stdset="0">
+       <string>eval(self.ui().comboBox.currentText()+'.phase.setpoint.value')</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox">
+      <property name="geometry">
+       <rect>
+        <x>16</x>
+        <y>38</y>
+        <width>111</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+       </font>
+      </property>
+      <item>
+       <property name="text">
+        <string>$(obj1=)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>$(obj2=)</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="CodeButton" name="codebutton_3">
+      <property name="geometry">
+       <rect>
+        <x>605</x>
+        <y>40</y>
+        <width>25</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>&lt;</string>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>ui = self.ui
+$(ui.comboBox.currentText()).phase.user_setpoint.value -= eval(ui().lineEdit.text())</cstring>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_2">
+      <property name="geometry">
+       <rect>
+        <x>635</x>
+        <y>40</y>
+        <width>70</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: orange</string>
+      </property>
+      <property name="text">
+       <string>$(defaultStep1)</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="CodeButton" name="codebutton_4">
+      <property name="geometry">
+       <rect>
+        <x>710</x>
+        <y>40</y>
+        <width>25</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>&gt;</string>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>ui = self.ui
+$(ui.comboBox.currentText()).phase.user_setpoint.value += eval(ui().lineEdit.text())</cstring>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CodeButton</class>
+   <extends>QPushButton</extends>
+   <header>bsstudio.widgets.CodeButton</header>
+  </customwidget>
+  <customwidget>
+   <class>LineInput</class>
+   <extends>QLineEdit</extends>
+   <header>bsstudio.widgets.lineinput</header>
+  </customwidget>
+  <customwidget>
+   <class>BooleanLED</class>
+   <extends>QFrame</extends>
+   <header>bsstudio.widgets.booleanled</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

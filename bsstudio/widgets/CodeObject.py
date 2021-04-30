@@ -24,14 +24,23 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 class CodeThread(QThread):
-	mutex = QMutex()
+	#mutex = QMutex()
+	mutexes = {}
 	#terminating = False
+
+	def getMutex(self):
+		if self.parent() not in CodeThread.mutexes.keys():
+			CodeThread.mutexes[self.parent()] = QMutex()
+		return CodeThread.mutexes[self.parent()]
+		
+
 
 	def safe_terminate(self):
 		self.terminating = True
 		while self.waitingForLock:
 			logger.info("waiting for lock" + str(self))
-			CodeThread.mutex.unlock()
+			#CodeThread.mutex.unlock()
+			self.getMutex().unlock()
 			time.sleep(.1)
 		logger.info("before terminate")
 		if self.wait(1):
@@ -39,19 +48,23 @@ class CodeThread(QThread):
 		self.terminate()
 		logger.info("after terminate")
 		self.wait()
-		CodeThread.mutex.unlock()
+		#CodeThread.mutex.unlock()
+		self.getMutex().unlock()
 
 	def run(self):
 		logger.info("starting thread" + str(self))
 		self.waitingForLock = True
-		CodeThread.mutex.lock()
+		#CodeThread.mutex.lock()
+		self.getMutex().lock()
 		self.waitingForLock = False
 		if self.terminating:
 			logger.info("thread exiting due to terminate")
-			CodeThread.mutex.unlock()
+			#CodeThread.mutex.unlock()
+			self.getMutex().unlock()
 			return
 		self.parent().runCode_()
-		CodeThread.mutex.unlock()
+		#CodeThread.mutex.unlock()
+		self.getMutex().unlock()
 	def __init__(self, parent):
 		#super().__init__(parent)
 		QThread.__init__(self, parent)

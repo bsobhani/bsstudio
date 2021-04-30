@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>167</width>
+    <height>102</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="1" rowspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="CodeButton" name="codebutton">
+      <property name="geometry">
+       <rect>
+        <x>45</x>
+        <y>60</y>
+        <width>20</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="text">
+       <string>&lt;</string>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>ui = self.ui
+$(mtr2).user_setpoint.value -= eval(ui().lineEdit.text())</cstring>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>60</y>
+        <width>45</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: orange</string>
+      </property>
+      <property name="text">
+       <string>$(defaultStep)</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="CodeButton" name="codebutton_2">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>60</y>
+        <width>20</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>30</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>&gt;</string>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>ui = self.ui
+$(mtr2).user_setpoint.value += eval(ui().lineEdit.text())</cstring>
+      </property>
+     </widget>
+     <widget class="LineInput" name="lineinput">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>35</y>
+        <width>50</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: orange</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="source" stdset="0">
+       <string>$(mtr2).user_readback.value</string>
+      </property>
+      <property name="textUpdateCode" stdset="0">
+       <cstring>from bsstudio.functions import widgetValue
+ui = self.ui
+if self.source != &quot;&quot;:
+	txt = '{:3.1f}'.format( widgetValue( eval( self.source) ) ) 
+	self.updateText(txt)
+#	self.updateText(str(widgetValue(eval(self.source))))</cstring>
+      </property>
+      <property name="destination" stdset="0">
+       <string>$(mtr2).user_setpoint.value</string>
+      </property>
+     </widget>
+     <widget class="BooleanLED" name="booleanled">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>62</y>
+        <width>15</width>
+        <height>15</height>
+       </rect>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>from PyQt5.Qt import Qt
+from bsstudio.functions import widgetValue
+self.offColor = Qt.green
+self.onColor = Qt.red
+ui = self.ui
+if self.source != &quot;&quot;:
+	b = widgetValue(eval(self.source))
+	self.setVal(b)
+</cstring>
+      </property>
+      <property name="source" stdset="0">
+       <string>$(mtr2).motor_is_moving.get()</string>
+      </property>
+     </widget>
+     <widget class="TextUpdate" name="textupdate">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>10</y>
+        <width>50</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: yellow</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="code" stdset="0">
+       <cstring>from bsstudio.functions import widgetValue, fieldValue
+ui = self.ui
+try:
+	txt = '{:3.3f}'.format( widgetValue(fieldValue(self, &quot;source&quot;)) )
+	v = txt
+except:
+	v=None
+if v is not None:
+	v = str(v)
+self.updateText(v)
+</cstring>
+      </property>
+      <property name="source" stdset="0">
+       <string>$(mtr1).user_readback.get()</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>15</y>
+        <width>85</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>$(mtr1)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>40</y>
+        <width>85</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Droid Arabic Kufi</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>$(mtr2)</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CodeButton</class>
+   <extends>QPushButton</extends>
+   <header>bsstudio.widgets.CodeButton</header>
+  </customwidget>
+  <customwidget>
+   <class>TextUpdate</class>
+   <extends>QLabel</extends>
+   <header>bsstudio.widgets.TextUpdate</header>
+  </customwidget>
+  <customwidget>
+   <class>LineInput</class>
+   <extends>QLineEdit</extends>
+   <header>bsstudio.widgets.lineinput</header>
+  </customwidget>
+  <customwidget>
+   <class>BooleanLED</class>
+   <extends>QFrame</extends>
+   <header>bsstudio.widgets.booleanled</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
