@@ -46,8 +46,11 @@ class BaseWidget:
 
 
 	def ui(self):
+		if hasattr(self, "_ui"):
+			return self._ui()
 		from ..functions import makeUiFunction
 		_ui = makeUiFunction(self)
+		self._ui = _ui
 		return _ui()
 
 	def resumeChildren(self):
