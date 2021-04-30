@@ -60,6 +60,8 @@ def getTopObject(w):
 
 def makeUiFunction(self):
 	def ui():
+		if 1==0 and ui.ui_hash != None:
+			return ui.ui_hash
 		obj = getTopObject(self)
 		children = obj.findChildren(QWidget)
 		children = [c for c in children if obj == getTopObject(c)] #commented out for performance
@@ -73,7 +75,9 @@ def makeUiFunction(self):
 		
 
 		d = dotdict(d)
+		ui.ui_hash = d
 		return d
+	ui.ui_hash = None
 	return ui
 
 def defaultValueField(w):
@@ -97,13 +101,15 @@ def fieldValueAsString_(w, field):
 	return str(w.property(field))
 
 def fieldValueAsString(w, field):
-	try:
-		return fieldValueAsString_(w,field)
-	except:
-		logger.warn("unable to get value for field "+field+" as string")
-		return None
+	#try:
+	#	return fieldValueAsString_(w,field)
+	#except:
+	#	logger.warn("unable to get value for field "+field+" as string")
+	#	return None
+	return fieldValueAsString_(w,field)
 
 def evalInNs(w, cmd):
+	"""
 	try:
 		ip = get_ipython()
 		ns = ip.user_ns.copy()
@@ -114,9 +120,25 @@ def evalInNs(w, cmd):
 		return eval(cmd, ns)
 
 	except:
-		#logger.warn("unable to evaluate command "+str(cmd)+" in namespace "+str(ns.keys()))
-		logger.warn("unable to evaluate command "+str(cmd)+" in namespace")
+		#logger.warn("unable to evaluate command "+str(cmd)+" in namespace")
 		return None
+	"""
+	ip = get_ipython()
+	ns = ip.user_ns.copy()
+	ns['self'] = w
+	#if hasattr(w, "mui_hash"):
+	#	#print("caught")
+	#	ui = w.mui_hash
+	#else:
+	#	#print("not caught")
+	#	ui = makeUiFunction(w)
+	#	w.mui_hash = ui
+	ui = w.ui
+	ns["ui"] = ui
+	logger.info("evaluating command in namespace: "+cmd)
+	return eval(cmd, ns)
+
+
 
 
 

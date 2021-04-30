@@ -72,6 +72,11 @@ class CodeThread(QThread):
 		self.terminating = False
 		
 
+from PyQt5.QtWidgets import QToolTip
+from PyQt5.QtCore import QPoint
+
+def displayToolTipOnWidget(text, widget):
+	QToolTip.showText(widget.mapToGlobal(QPoint(0,0)), text, widget)
 
 
 class CodeObject(BaseWidget):
@@ -137,6 +142,7 @@ class CodeObject(BaseWidget):
 			logger.info("exec duration for "+self.objectName()+": "+str(time.time()-t0))
 		except BaseException as e:
 			additional_info = " Check code in "+self.objectName()+" widget"
+			displayToolTipOnWidget(str(e), self)
 			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
 		del self.ns
 
