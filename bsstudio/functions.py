@@ -60,7 +60,7 @@ def getTopObject(w):
 
 def makeUiFunction(self):
 	def ui():
-		if 1==0 and ui.ui_hash != None:
+		if 1==1 and ui.ui_hash != None:
 			return ui.ui_hash
 		obj = getTopObject(self)
 		children = obj.findChildren(QWidget)
