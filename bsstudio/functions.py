@@ -109,7 +109,6 @@ def fieldValueAsString(w, field):
 	return fieldValueAsString_(w,field)
 
 def evalInNs(w, cmd):
-	"""
 	try:
 		ip = get_ipython()
 		ns = ip.user_ns.copy()
@@ -122,6 +121,7 @@ def evalInNs(w, cmd):
 	except:
 		#logger.warn("unable to evaluate command "+str(cmd)+" in namespace")
 		return None
+
 	"""
 	ip = get_ipython()
 	ns = ip.user_ns.copy()
@@ -133,9 +133,13 @@ def evalInNs(w, cmd):
 	#	#print("not caught")
 	#	ui = makeUiFunction(w)
 	#	w.mui_hash = ui
-	ui = w.ui
+	try:
+		ui = w.ui
+	except:
+		return None
 	ns["ui"] = ui
 	logger.info("evaluating command in namespace: "+cmd)
+	"""
 	return eval(cmd, ns)
 
 
@@ -153,7 +157,7 @@ def comboBoxValue(w):
 	return fieldValue(w, key)
 	
 	
-def widgetValueString(self, w_string, continuous=True):
+def widgetValueString(self, w_string, continuous=False):
 	#ui = makeUiFunction(w)
 	w = evalInNs(self, w_string)
 	logger.debug("w in widgetValueString", w)
@@ -164,7 +168,7 @@ def widgetValueString(self, w_string, continuous=True):
 	return widgetValue(w, continuous, asString=True)
 
 
-def widgetValue(w, continuous=True,*,asString=False):
+def widgetValue(w, continuous=False,*,asString=False):
 	if type(w) is list:
 		return [widgetValue(x, continuous) for x in w]
 	if type(w) is dict:
@@ -179,6 +183,7 @@ def widgetValue(w, continuous=True,*,asString=False):
 	else:
 		wv = fieldValue(w, prop)
 	wv_string = fieldValueAsString(w, prop)
+
 	if not isWidget(wv) and asString:
 		return wv_string
 	if continuous:

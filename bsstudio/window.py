@@ -1,3 +1,4 @@
+import sip
 from PyQt5 import uic, QtWidgets, QtCore, QtGui
 import sys
 #from .widgets.REButton import Worker
@@ -8,7 +9,6 @@ from .widgets import BaseWidget
 from .functions import openFileAsString
 import threading
 import logging
-import sip
 import sys
 import io
 

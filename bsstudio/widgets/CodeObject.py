@@ -62,7 +62,10 @@ class CodeThread(QThread):
 			#CodeThread.mutex.unlock()
 			self.getMutex().unlock()
 			return
-		self.parent().runCode_()
+		try:
+			self.parent().runCode_()
+		except:
+			logger.info("exception in thread")
 		#CodeThread.mutex.unlock()
 		self.getMutex().unlock()
 	def __init__(self, parent):
@@ -142,7 +145,7 @@ class CodeObject(BaseWidget):
 			logger.info("exec duration for "+self.objectName()+": "+str(time.time()-t0))
 		except BaseException as e:
 			additional_info = " Check code in "+self.objectName()+" widget"
-			displayToolTipOnWidget(str(e), self)
+			#displayToolTipOnWidget(str(e), self)
 			raise type(e)(str(e) + additional_info).with_traceback(sys.exc_info()[2])
 		del self.ns
 
