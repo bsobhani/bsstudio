@@ -4,8 +4,8 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as Canvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.backends.backend_qt5 import StatusbarQt
-from matplotlib.backend_bases import StatusbarBase
+#from matplotlib.backends.backend_qt5 import StatusbarQt
+#from matplotlib.backend_bases import StatusbarBase
 import matplotlib
 from .Base import BaseWidget
 
